@@ -100,8 +100,8 @@ class MilvusSearchEngine:
                 embeddings.append(np.zeros(1024).tolist())
         return embeddings
 
-    def search_rag(self, collection_name: str, query: str = None, image_path: str = None, 
-                   embedding_field: str = "text_embedding", top_k: int = 5) -> List[Dict[str, Any]]:
+    def search_rag(self, collection_name: str, query: str = None, image_path: str = None,
+                   embedding_field: str = "text_embedding", top_k: int = 5, nprobe: int = 32) -> List[Dict[str, Any]]:
         """
         Unified search function for RAG collections (compatible with standard RAG schema)
         
@@ -152,12 +152,20 @@ class MilvusSearchEngine:
             else:
                 raise ValueError(f"embedding_field must be 'text_embedding' or 'vl_embedding', got {embedding_field}")
             
+            search_expr = None
+            if embedding_field == "vl_embedding":
+                # Exclude text chunks with placeholder visual vectors.
+                search_expr = 'field_type == "image"'
+
+            search_params: Dict[str, Any] = {"metric_type": "COSINE", "params": {"nprobe": nprobe}}
+
             results = rag_collection.search(
                 data=[query_embedding],
                 anns_field=embedding_field,
                 limit=top_k,
                 output_fields=["chunk_id", "doc_id", "field_type", "field_text", "file_url", "weight"],
-                param={"metric_type": "COSINE"},
+                param=search_params,
+                expr=search_expr,
             )
             
             hits = []

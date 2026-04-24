@@ -5,11 +5,12 @@
 
 import os
 from typing import List, Dict, Tuple, Any, Optional, Union
+from urllib.parse import urlparse
 from PIL import Image
 
 
 def process_vision_info(
-    conversations: List[Dict[str, Any]],
+    conversations: List[Any],
     image_patch_size: int = 16,
     return_video_metadata: bool = False,
     return_video_kwargs: bool = False,
@@ -31,55 +32,80 @@ def process_vision_info(
     video_inputs = None
     video_kwargs = {'do_sample_frames': False}
     
+    def _unwrap_local_file_uri(path_or_uri: str) -> str:
+        if not isinstance(path_or_uri, str):
+            return path_or_uri
+        if not path_or_uri.startswith("file://"):
+            return path_or_uri
+        parsed = urlparse(path_or_uri)
+        if parsed.netloc:
+            return f"/{parsed.netloc}{parsed.path}"
+        return parsed.path
+
+    def _extract_messages(conv: Any) -> List[Dict[str, Any]]:
+        if isinstance(conv, dict):
+            return [conv]
+        if isinstance(conv, list):
+            out: List[Dict[str, Any]] = []
+            for ele in conv:
+                if isinstance(ele, dict):
+                    out.append(ele)
+            return out
+        return []
+
     try:
         # 遍历对话内容提取视觉信息
         if not conversations:
             return images if images else None, video_inputs, video_kwargs
-            
+
         for conversation in conversations:
-            if 'content' not in conversation:
-                continue
-                
-            content = conversation['content']
-            if not isinstance(content, list):
-                continue
-            
-            for item in content:
-                if not isinstance(item, dict):
+            for message in _extract_messages(conversation):
+                content = message.get("content")
+                if not isinstance(content, list):
                     continue
-                    
-                item_type = item.get('type', '')
-                
-                # 处理图像
-                if item_type == 'image':
-                    image_data = item.get('image', item.get('image_url', None))
-                    if image_data:
+
+                for item in content:
+                    if not isinstance(item, dict):
+                        continue
+
+                    item_type = item.get("type", "")
+
+                    # 处理图像
+                    if item_type == "image":
+                        image_data = item.get("image", item.get("image_url", None))
+                        if not image_data:
+                            continue
                         if isinstance(image_data, str):
                             # 如果是URL或路径，尝试加载
-                            if image_data.startswith(('http://', 'https://')):
+                            if image_data.startswith(("http://", "https://")):
                                 images.append(image_data)
-                            elif os.path.exists(image_data):
-                                try:
-                                    images.append(Image.open(image_data))
-                                except Exception:
-                                    images.append(image_data)
+                            else:
+                                local_path = _unwrap_local_file_uri(image_data)
+                                if os.path.exists(local_path):
+                                    try:
+                                        images.append(Image.open(local_path))
+                                    except Exception:
+                                        images.append(local_path)
+                                else:
+                                    # 保底返回原值，让上游处理器自行决定
+                                    images.append(local_path)
                         elif isinstance(image_data, Image.Image):
                             images.append(image_data)
-                
-                # 处理视频
-                elif item_type == 'video':
-                    video_data = item.get('video', item.get('video_url', None))
-                    if video_data:
-                        # 视频处理的占位符实现
-                        if video_inputs is None:
-                            video_inputs = []
-                        video_inputs.append((video_data, {}))
-        
+
+                    # 处理视频
+                    elif item_type == "video":
+                        video_data = item.get("video", item.get("video_url", None))
+                        if video_data:
+                            # 视频处理的占位符实现
+                            if video_inputs is None:
+                                video_inputs = []
+                            video_inputs.append((video_data, {}))
+
         # 如果没有提取到图像，返回None
         if not images:
             images = None
-            
-    except Exception as e:
+
+    except Exception:
         # 如果处理失败，返回安全的默认值
         images = None
         video_inputs = None

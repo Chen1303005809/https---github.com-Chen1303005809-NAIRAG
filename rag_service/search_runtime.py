@@ -50,6 +50,6 @@ class SearchRuntime:
             collection_name=coll_name,
             query=query,
             embedding_field="vl_embedding",
-            top_k=5,
+            top_k=50,
         )
         return text_hits, image_hits

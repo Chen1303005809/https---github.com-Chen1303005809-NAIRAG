@@ -41,7 +41,9 @@ class Qwen3VLEmbedder:
         default_instruction: str = "Represent the user's input.",
         **kwargs,
     ):
-        device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+        # Keep device selection aligned with upstream behavior:
+        # use the default CUDA device when available.
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.max_length = max_length
         self.min_pixels = min_pixels
         self.max_pixels = max_pixels
