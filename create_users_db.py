@@ -6,7 +6,8 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # 数据库路径
-DB_PATH = "/home/RohonDev1/naiRAG/users.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "users.db")
 
 conn = sqlite3.connect(DB_PATH)
 c = conn.cursor()

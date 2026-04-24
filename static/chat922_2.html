@@ -1,1116 +1,449 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔍 智能文档检索系统</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>智能检索端</title>
     <style>
-        body { 
-            font-family: 'Microsoft YaHei', Arial, sans-serif; 
-            margin: 20px; 
-            background-color: #f5f5f5;
+        :root {
+            --bg: #eef3f8;
+            --panel: #ffffff;
+            --line: #d7e1ea;
+            --text: #0f172a;
+            --muted: #475569;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --ok: #0f766e;
+            --warn: #b91c1c;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--text); background: var(--bg); }
+        .top {
+            padding: 14px 20px;
+            background: linear-gradient(100deg, #0f172a, #0c4a6e);
+            color: #fff;
+            font-size: 14px;
+        }
+        .container { max-width: 1220px; margin: 20px auto 40px; padding: 0 14px; }
+        .layout { display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
+        .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+        .panel-head { padding: 14px 16px; border-bottom: 1px solid var(--line); font-weight: 700; }
+        .panel-body { padding: 14px 16px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #1f2937; }
+        input[type="text"], textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            font-size: 14px;
+            transition: .2s border-color, .2s box-shadow;
+            background: #fff;
         }
-        .form-group { 
-            margin-bottom: 20px; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: bold;
-            color: #333;
-        }
-        input[type="text"], 
-        input[type="file"] { 
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            box-sizing: border-box;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus,
-        input[type="file"]:focus {
+        input[type="text"]:focus, textarea:focus {
             outline: none;
-            border-color: #4CAF50;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(2,132,199,0.14);
         }
-        button { 
-            padding: 12px 24px; 
-            background-color: #4CAF50; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            margin-right: 15px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        button:hover { 
-            background-color: #45a049; 
-        }
-        button.secondary {
-            background-color: #ff9800;
-        }
-        button.secondary:hover {
-            background-color: #e68900;
-        }
-        #results { 
-            margin-top: 30px; 
-        }
-        .preview-container {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            margin-top: 15px;
+        .db-grid { display: grid; gap: 8px; grid-template-columns: 1fr; background: #f8fbff; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 10px; }
+        .db-grid label { margin: 0; font-weight: 500; color: #334155; cursor: pointer; }
+        .drop {
+            border: 1px dashed #94a3b8;
+            border-radius: 10px;
+            background: #f8fafc;
             min-height: 80px;
-            background-color: #fcfcfc;
-            border-radius: 8px;
-            transition: border-color 0.3s;
+            padding: 12px;
         }
-        .preview-container:hover {
-            border-color: #4CAF50;
+        .preview-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+        .preview-item {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            padding: 6px;
+            position: relative;
         }
-        .preview-image {
-            max-width: 150px;
-            max-height: 150px;
-            margin: 5px;
-            vertical-align: middle;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .preview-image:hover {
-            transform: scale(1.05);
-            border-color: #4CAF50;
-        }
-        .remove-btn {
-            background-color: #ff4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            cursor: pointer;
-            margin-left: 8px;
-            font-size: 12px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .remove-btn:hover { 
-            background-color: #cc0000; 
-        }
-        .result-container {
-            width: 100%;
-            min-height: 300px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
-            overflow: auto;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-        .result-block {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: box-shadow 0.3s;
-        }
-        .result-block:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        }
-        .result-image, 
-        .result-doc {
-            max-width: 100%;
-            margin: 15px 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            display: block;
-            transition: transform 0.2s;
-        }
-        .result-image:hover {
-            transform: scale(1.02);
-        }
-        .field-label {
-            font-weight: bold;
-            color: #1976d2;
-            font-size: 15px;
-        }
-        .field-value {
-            margin-left: 10px;
-            color: #555;
-            font-size: 15px;
-        }
-        .no-content {
-            color: #888;
-            font-style: italic;
-            margin: 10px 0;
-            font-size: 14px;
-        }
-        pre {
-            margin: 0 0 15px 0;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: inherit;
-            font-size: 15px;
-            line-height: 1.6;
-        }
-        .link {
-            color: #1976d2;
-            text-decoration: none;
-            cursor: pointer;
-            padding: 8px 12px;
-            border: 1px solid #1976d2;
-            border-radius: 4px;
-            display: inline-block;
-            margin: 5px 0;
-            transition: all 0.3s;
-        }
-        .link:hover {
-            color: #0069d9;
-            background-color: #f0f8ff;
-            border-color: #0069d9;
-        }
-        .answer-block {
-            background-color: #e8f5e8 !important;
-            border-left: 4px solid #2e7d32 !important;
-            padding: 25px !important;
-            margin: 20px 0 !important;
-        }
-        .answer-title {
-            color: #2e7d32 !important;
-            margin: 0 0 15px 0 !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
-        }
-        .score-badge {
-            background-color: #ffeb3b;
-            color: #333;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .section-title {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-            margin: 25px 0 15px 0;
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-size: 18px;
-        }
-        .error {
-            color: #d32f2f;
-            background-color: #ffebee;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 10px 0;
-            border-left: 4px solid #d32f2f;
-        }
-        .success {
-            color: #2e7d32;
-            background-color: #e8f5e8;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 10px 0;
-            border-left: 4px solid #2e7d32;
-        }
-        .doc-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border: 1px solid #1976d2;
-            border-radius: 6px;
-            background-color: #f0f8ff;
-            cursor: pointer;
-            margin: 5px;
-            transition: all 0.3s;
-        }
-        .doc-item:hover {
-            background-color: #e1f0ff;
-            border-color: #0069d9;
-        }
-        .doc-icon {
-            margin-right: 8px;
-            font-size: 18px;
-        }
-        .doc-name {
-            font-weight: 500;
-            color: #1976d2;
-            word-break: break-all;
-        }
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { 
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .modal-header {
+        .preview-item img { width: 100%; height: 112px; object-fit: cover; border-radius: 8px; }
+        .preview-name { margin-top: 4px; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .remove { position: absolute; top: 6px; right: 6px; border: 0; width: 22px; height: 22px; border-radius: 999px; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn { border: 0; border-radius: 10px; padding: 11px 10px; font-size: 14px; cursor: pointer; }
+        .btn.primary { background: var(--primary); color: #fff; }
+        .btn.primary:hover { background: var(--primary-hover); }
+        .btn.ghost { border: 1px solid #fca5a5; color: #b91c1c; background: #fff5f5; }
+        .result-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .answer { margin-top: 12px; background: #ecfeff; border: 1px solid #a5f3fc; border-left: 4px solid #0ea5e9; border-radius: 10px; padding: 12px; line-height: 1.65; }
+        .query-meta { margin-top: 10px; color: var(--muted); font-size: 13px; }
+        .doc-group { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+        .doc-header {
             display: flex;
             justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4CAF50;
+            background: #f8fbff;
+            border-bottom: 1px solid var(--line);
+            padding: 10px 12px;
         }
-        .modal-header h2 {
-            margin: 0;
-            color: #333;
-            font-size: 22px;
+        .doc-title { font-weight: 700; font-size: 14px; }
+        .doc-meta { font-size: 12px; color: var(--muted); }
+        .toggle { border: 1px solid #bfdbfe; border-radius: 8px; background: #eff6ff; color: #1d4ed8; padding: 6px 10px; cursor: pointer; }
+        .chunk-list { display: grid; gap: 10px; padding: 10px 12px; }
+        .chunk {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff;
         }
-        .modal-close {
-            color: #666;
-            font-size: 32px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: all 0.3s;
+        .chunk-top { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+        .chunk-text { white-space: pre-wrap; line-height: 1.6; font-size: 13px; }
+        .chunk-files { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .file-link { font-size: 12px; color: #0369a1; background: #e0f2fe; border-radius: 999px; padding: 4px 8px; text-decoration: none; }
+        .empty { margin-top: 12px; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 14px; color: var(--muted); }
+        .error { margin-top: 12px; border: 1px solid #fecaca; background: #fff1f2; color: var(--warn); border-radius: 10px; padding: 12px; }
+        .ok { margin-top: 12px; border: 1px solid #a7f3d0; background: #f0fdfa; color: var(--ok); border-radius: 10px; padding: 12px; }
+        @media (max-width: 980px) {
+            .layout { grid-template-columns: 1fr; }
+            .preview-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
-        .modal-close:hover {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        .modal-body {
-            color: #555;
-            line-height: 1.8;
-        }
-        .info-row {
-            display: flex;
-            margin-bottom: 15px;
-            padding: 12px;
-            background-color: #f9f9f9;
-            border-radius: 6px;
-            border-left: 4px solid #1976d2;
-        }
-        .info-label {
-            font-weight: bold;
-            color: #1976d2;
-            min-width: 120px;
-            word-break: break-word;
-        }
-        .info-value {
-            flex: 1;
-            color: #555;
-            word-break: break-all;
-            margin-left: 15px;
-            padding: 0 10px;
-            background-color: white;
-            border-radius: 4px;
-            padding: 8px;
-        }
-        .info-value a {
-            color: #1976d2;
-            text-decoration: none;
-            word-break: break-all;
-        }
-        .info-value a:hover {
-            text-decoration: underline;
+        @media (max-width: 640px) {
+            .preview-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .actions { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- 文档详情模态框 -->
-    <div id="docModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📄 文档详情</h2>
-                <span class="modal-close" onclick="closeDocModal()">&times;</span>
-            </div>
-            <div class="modal-body" id="docModalBody">
-                <!-- 动态内容 -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-    (function() {
-        const username = localStorage.getItem('authUsername');
-        const role = localStorage.getItem('authRole');
-        if (username) {
-            // 可以在这里加个欢迎横幅
-            const banner = document.createElement('div');
-            banner.style.cssText = 'background:#e8f5e8;padding:10px;text-align:center;font-weight:bold;color:#2e7d32';
-            banner.innerHTML = `欢迎 ${username} ${role ? '('+role+')' : ''} 使用智能查询系统`;
-            document.body.insertBefore(banner, document.body.firstChild);
-        }
-    })();
-    </script>
-    <div class="container">
-        <h1 style="color: #1976d2; text-align: center; margin-bottom: 30px;">🔍 智能文档检索系统</h1>
-        
-        <form id="queryForm" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="session_id">🆔 会话ID</label>
-                <input type="text" id="session_id" name="session_id" value="default" required placeholder="用于区分不同用户的对话历史">
-            </div>
-            
-            <div class="form-group">
-                <label>📚 选择查询数据库（可多选）</label>
-                <div style="background: #f0f0f0; padding: 15px; border-radius: 8px;">
-                    <label><input type="checkbox" name="database" value="rag_bge_m3_structured_v4_1"> 融航期货交易平台</label><br>
-                    <label><input type="checkbox" name="database" value="rag_bge_m3_structured_v4_2"> 融航AMS资管平台</label><br>
-                    <label><input type="checkbox" name="database" value="rag_bge_m3_structured_v4_3"> 融航HMS资产管理平台</label><br>
-                    <label><input type="checkbox" name="database" value="rag_bge_m3_structured_v4_4"> 核算模块</label><br>
-                    <label><input type="checkbox" name="database" value="rag_bge_m3_structured_v4_5"> 随心易终端</label><br>
-                    <label><input type="checkbox" name="database" value="TEST"> 多模态混合测试</label><br>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="query">📝 文字提问</label>
-                <input type="text" id="query" name="query" placeholder="请输入您的问题，例如：如何计算净头寸？">
-            </div>
-            
-            <div class="form-group">
-                <label for="files">🖼️ 图片识别（支持拖拽或粘贴截图）</label>
-                <input type="file" id="files" name="files" multiple accept="image/*" onchange="handleFiles(event)">
-                <div id="preview-container" class="preview-container" ondrop="handleDrop(event)" ondragover="allowDrop(event)">
-                    <p style="text-align: center; color: #666;">拖放图片或粘贴截图到这里</p>
-                    <div id="preview-images" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-                <button type="submit" style="padding: 15px 30px; font-size: 18px;">
-                    <span style="margin-right: 8px;">📤</span>提交查询
-                </button>
-                <button type="button" onclick="clearHistory()" class="secondary" style="padding: 15px 30px; font-size: 18px;">
-                    <span style="margin-right: 8px;">🧹</span>清空当前会话
-                </button>
-            </div>
-        </form>
-
-        <div id="results">
-            <h2 class="section-title">📊 查询结果</h2>
-            <div id="result-container" class="result-container">
-                <div class="loading">请提交查询以查看结果</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    // 表单提交时收集数据库选择
-    document.getElementById('queryForm').addEventListener('submit', function(event) {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"][name="database"]:checked');
-        const selectedDbs = Array.from(checkboxes).map(cb => cb.value).join(',');
-        let hiddenInput = document.querySelector('input[name="selected_dbs"]');
-        if (!hiddenInput) {
-            hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'selected_dbs';
-            this.appendChild(hiddenInput);
-        }
-        hiddenInput.value = selectedDbs || "";
-    });
-
-    // 清空历史
-    function clearHistory() {
-        if (confirm("确定要清空当前会话的历史记录吗？")) {
-            const form = document.getElementById('queryForm');
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'query';
-            input.value = 'clear';
-            form.appendChild(input);
-            form.submit();
-        }
-    }
-
-    // 文件处理函数
-    function allowDrop(event) { 
-        event.preventDefault(); 
-        event.dataTransfer.dropEffect = 'copy';
-    }
-    
-    function handleDrop(event) { 
-        event.preventDefault(); 
-        handleFiles({ dataTransfer: event.dataTransfer }); 
-    }
-    
-    function handleFiles(event) {
-        const files = event.target?.files || event.dataTransfer?.files;
-        if (!files || files.length === 0) return;
-
-        const previewImages = document.getElementById('preview-images');
-        const inputElement = document.getElementById('files');
-
-        const seenFiles = new Map();
-        const dt = new DataTransfer();
-
-        // 保留现有文件
-        const existingFiles = Array.from(inputElement.files || []);
-        for (const file of existingFiles) {
-            const fingerprint = `${file.name}-${file.size}-${file.lastModified}`;
-            seenFiles.set(fingerprint, file);
-            dt.items.add(file);
-        }
-
-        // 处理新文件
-        for (let file of files) {
-            if (!file.type.startsWith('image/')) {
-                alert(`跳过非图片文件: ${file.name}`);
-                continue;
-            }
-
-            const fingerprint = `${file.name}-${file.size}-${file.lastModified}`;
-            if (seenFiles.has(fingerprint)) {
-                console.log(`跳过重复文件: ${file.name}`);
-                continue;
-            }
-
-            dt.items.add(file);
-            seenFiles.set(fingerprint, file);
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const placeholder = document.querySelector('#preview-container > p');
-                if (placeholder && previewImages.children.length === 0) {
-                    placeholder.remove();
-                }
-
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'preview-image';
-                img.title = file.name;
-                img.alt = file.name;
-
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = '×';
-                removeBtn.className = 'remove-btn';
-                removeBtn.title = '移除图片';
-                removeBtn.onclick = function() {
-                    const newDt = new DataTransfer();
-                    const currentFiles = Array.from(inputElement.files);
-                    currentFiles.forEach(f => {
-                        const fp = `${f.name}-${f.size}-${f.lastModified}`;
-                        if (fp !== fingerprint) {
-                            newDt.items.add(f);
-                        }
-                    });
-                    inputElement.files = newDt.files;
-                    const container = img.parentElement;
-                    if (container) container.remove();
-
-                    if (previewImages.children.length === 0) {
-                        const containerDiv = document.getElementById('preview-container');
-                        if (!containerDiv.querySelector('p')) {
-                            const p = document.createElement('p');
-                            p.textContent = '拖放图片或粘贴截图到这里';
-                            p.style.textAlign = 'center';
-                            p.style.color = '#666';
-                            containerDiv.insertBefore(p, previewImages);
-                        }
-                    }
-                };
-
-                const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.style.margin = '5px 0';
-                container.style.padding = '5px';
-                container.style.border = '1px solid #eee';
-                container.style.borderRadius = '4px';
-                container.style.backgroundColor = '#fff';
-                container.appendChild(img);
-                container.appendChild(removeBtn);
-                previewImages.appendChild(container);
-            };
-            reader.readAsDataURL(file);
-        }
-        inputElement.files = dt.files;
-    }
-
-    // 粘贴截图支持
-    document.getElementById('preview-container').addEventListener('paste', function(event) {
-        const clipboardData = event.clipboardData || window.clipboardData;
-        if (!clipboardData) return;
-
-        const items = clipboardData.items;
-        if (!items) return;
-
-        let imageFile = null;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') === 0) {
-                imageFile = items[i].getAsFile();
-                break;
-            }
-        }
-
-        if (!imageFile) return;
-
-        const fingerprint = `${imageFile.name}-${imageFile.size}-${imageFile.lastModified}`;
-        const inputElement = document.getElementById('files');
-        const existingFiles = Array.from(inputElement.files || []);
-        const seenFiles = new Map();
-
-        existingFiles.forEach(f => {
-            const fp = `${f.name}-${f.size}-${f.lastModified}`;
-            seenFiles.set(fp, f);
-        });
-
-        if (seenFiles.has(fingerprint)) {
-            console.log("粘贴的图片已被添加，跳过");
-            return;
-        }
-
-        const dt = new DataTransfer();
-        existingFiles.forEach(f => dt.items.add(f));
-        dt.items.add(imageFile);
-        inputElement.files = dt.files;
-
-        handleFiles({ target: { files: [imageFile] } });
-    });
-
-    // 显示文档详情模态框
-    function showDocModal(result) {
-        const modal = document.getElementById('docModal');
-        const modalBody = document.getElementById('docModalBody');
-        
-        let content = `
-            <div class="info-row">
-                <span class="info-label">📋 Doc ID:</span>
-                <span class="info-value">${result.doc_id || '未知'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">🔖 Chunk ID:</span>
-                <span class="info-value">${result.chunk_id || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📊 相似度:</span>
-                <span class="info-value">${result.score}%</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📝 类型:</span>
-                <span class="info-value">${result.field_type || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📄 媒体类型:</span>
-                <span class="info-value">${result.media_type || 'N/A'}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">📌 内容:</span>
-                <span class="info-value" style="max-height: 200px; overflow-y: auto; display: block;">${result.field_text || 'N/A'}</span>
-            </div>
-        `;
-        
-        if (result.file_url && Array.isArray(result.file_url) && result.file_url.length > 0) {
-            result.file_url.forEach(url => {
-                if (url) {
-                    const filename = decodeURIComponent(url.split('/').pop());
-                    content += `
-                    <div class="info-row">
-                        <span class="info-label">🔗 文件链接:</span>
-                        <span class="info-value"><a href="${url}" target="_blank" title="点击打开文件">${filename}</a></span>
+<div class="top" id="welcome">智能检索端</div>
+<div class="container">
+    <div class="layout">
+        <section class="panel">
+            <div class="panel-head">查询输入</div>
+            <div class="panel-body">
+                <form id="queryForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="session_id">会话 ID</label>
+                        <input id="session_id" name="session_id" type="text" value="default" required />
                     </div>
-                    `;
-                }
-            });
-        }
-        
-        modalBody.innerHTML = content;
-        modal.style.display = 'block';
-    }
-    
-    function closeDocModal() {
-        const modal = document.getElementById('docModal');
-        modal.style.display = 'none';
-    }
-    
-    // 点击模态框外部关闭
-    window.onclick = function(event) {
-        const modal = document.getElementById('docModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-    
-    // 核心：提交并显示结果
-    document.getElementById('queryForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const resultContainer = document.getElementById('result-container');
-        
-        // 显示加载状态
-        resultContainer.innerHTML = `
-            <div class="loading">
-                <div style="margin-bottom: 20px;">⏳ 正在查询，请稍候...</div>
-                <div style="font-size: 14px; color: #666;">正在分析您的问题并检索相关文档...</div>
-            </div>
-        `;
 
-        try {
-            const response = await fetch('/query', {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            resultContainer.innerHTML = '';
-
-            // 清空历史的特殊处理
-            if (data.answer === "历史上下文已清空") {
-                resultContainer.innerHTML = '<div class="success">✅ 历史上下文已成功清空！</div>';
-                return;
-            }
-
-            // 创建主容器
-            const mainDiv = document.createElement('div');
-
-            // 添加查询信息
-            const queryInfo = document.createElement('div');
-            queryInfo.innerHTML = `
-                <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <p><span class="field-label">📝 原始查询:</span> <span class="field-value">${data.query || '无'}</span></p>
-                    ${data.extracted_text ? `<p><span class="field-label">🖼️ 图片提取文字:</span> <span class="field-value">${data.extracted_text}</span></p>` : ''}
-                </div>
-            `;
-            mainDiv.appendChild(queryInfo);
-
-            // 无结果处理
-            if (!data.text_results && !data.image_results) {
-                resultContainer.innerHTML = `
-                    <div class="error">
-                        <h3>❌ 未找到相关结果</h3>
-                        <p>请尝试：</p>
-                        <ul>
-                            <li>修改查询关键词</li>
-                            <li>选择更多数据库</li>
-                            <li>上传更清晰的图片</li>
-                        </ul>
+                    <div class="form-group">
+                        <label>选择数据库（可多选）</label>
+                        <div class="db-grid" id="dbGrid">
+                            <label><input type="checkbox" value="rag_bge_m3_structured_v4_1" /> 融航期货交易平台</label>
+                            <label><input type="checkbox" value="rag_bge_m3_structured_v4_2" /> 融航AMS资管平台</label>
+                            <label><input type="checkbox" value="rag_bge_m3_structured_v4_3" /> 融航HMS资产管理平台</label>
+                            <label><input type="checkbox" value="rag_bge_m3_structured_v4_4" /> 核算模块</label>
+                            <label><input type="checkbox" value="rag_bge_m3_structured_v4_5" /> 随心易终端</label>
+                            <label><input type="checkbox" value="TEST" /> 多模态混合测试</label>
+                        </div>
                     </div>
-                `;
-                return;
-            }
 
-            // 综合答案（显示在最前面）
-            if (data.answer) {
-                const answerBlock = document.createElement('div');
-                answerBlock.className = 'result-block answer-block';
-                
-                // 清理和格式化答案
-                let formattedAnswer = data.answer
-                    .replace(/\[A\]\(N\/A;N\/A;N\/A\)/g, '') // 移除无用的 [A](N/A;N/A;N/A) 内容
-                    .replace(/\(N\/A;.*?\)/g, '') // 移除无用的 (N/A;...) 内容
-                    .replace(/\[相似度: [0-9.]+%\]/g, ''); // 移除重复的相似度信息
-                
-                answerBlock.innerHTML = `
-                    <h3 class="answer-title">💡 综合答案</h3>
-                    <div style="line-height: 1.8; font-size: 16px; white-space: pre-wrap;">${formattedAnswer}</div>
-                `;
-                mainDiv.appendChild(answerBlock);
-            }
+                    <div class="form-group">
+                        <label for="query">文字问题</label>
+                        <textarea id="query" name="query" rows="4" placeholder="请输入问题，例如：如何计算净头寸？"></textarea>
+                    </div>
 
-            // 创建两列布局
-            const columnsContainer = document.createElement('div');
-            columnsContainer.style.display = 'flex';
-            columnsContainer.style.gap = '20px';
-            columnsContainer.style.marginTop = '30px';
+                    <div class="form-group">
+                        <label for="files">图片查询（拖拽 / 粘贴）</label>
+                        <input id="files" name="files" type="file" multiple accept="image/*" style="margin-bottom:8px;" />
+                        <div id="dropZone" class="drop" tabindex="0">
+                            将图片拖到这里，或在此区域粘贴截图
+                            <div id="previewList" class="preview-list"></div>
+                        </div>
+                    </div>
 
-            // 文本结果列
-            const textColumn = document.createElement('div');
-            textColumn.style.flex = '1';
-            textColumn.style.minWidth = '300px';
+                    <div class="actions">
+                        <button type="submit" class="btn primary">提交查询</button>
+                        <button type="button" class="btn ghost" id="clearBtn">清空会话</button>
+                    </div>
+                </form>
+            </div>
+        </section>
 
-            if (data.text_results && data.text_results.length > 0) {
-                const textTitle = document.createElement('h3');
-                textTitle.className = 'section-title';
-                textTitle.textContent = '📝 文本结果';
-                textColumn.appendChild(textTitle);
-
-                data.text_results.forEach((result, index) => {
-                    const resultBlock = document.createElement('div');
-                    resultBlock.className = 'result-block';
-
-                    // 结果标题
-                    const titleDiv = document.createElement('div');
-                    titleDiv.innerHTML = `
-                        <h4 style="margin: 0 0 10px 0; color: #333; display: flex; align-items: center;">
-                            <span style="background: #1976d2; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 14px;">${index + 1}</span>
-                            <span>文本结果 #${index + 1}</span>
-                            <span class="score-badge">${result.score}%</span>
-                        </h4>
-                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-                    `;
-                    resultBlock.appendChild(titleDiv);
-
-                    // 添加字段到结果块
-                    const fieldText = document.createElement('p');
-                    fieldText.style.margin = '10px 0';
-                    fieldText.innerHTML = `<span class="field-label">内容:</span> <span class="field-value">${result.field_text || 'N/A'}</span>`;
-                    resultBlock.appendChild(fieldText);
-
-                    const fieldType = document.createElement('p');
-                    fieldType.style.margin = '5px 0';
-                    fieldType.innerHTML = `<span class="field-label">类型:</span> <span class="field-value">${result.field_type || 'N/A'}</span>`;
-                    resultBlock.appendChild(fieldType);
-
-                    // 处理文档 ID（点击可查看详情）
-                    const docIdDiv = document.createElement('p');
-                    docIdDiv.innerHTML = '<span class="field-label" style="font-size: 14px;">📄 文档ID:</span>';
-                    docIdDiv.style.margin = '15px 0 5px 0';
-                    docIdDiv.style.paddingTop = '10px';
-                    docIdDiv.style.borderTop = '1px solid #eee';
-                    resultBlock.appendChild(docIdDiv);
-
-                    const docItem = document.createElement('div');
-                    docItem.className = 'doc-item';
-                    docItem.title = "点击查看文档详情";
-
-                    const iconSpan = document.createElement('span');
-                    iconSpan.className = 'doc-icon';
-                    iconSpan.textContent = '📋';
-
-                    const docIdText = result.doc_id || '未知';
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'doc-name';
-                    nameSpan.textContent = docIdText;
-
-                    docItem.appendChild(iconSpan);
-                    docItem.appendChild(nameSpan);
-
-                    // 点击打开模态框
-                    docItem.onclick = function() {
-                        showDocModal(result);
-                    };
-
-                    resultBlock.appendChild(docItem);
-
-                    textColumn.appendChild(resultBlock);
-                });
-            } else {
-                const noTextResults = document.createElement('div');
-                noTextResults.className = 'result-block';
-                noTextResults.innerHTML = `
-                    <h4 style="color: #666; text-align: center; margin: 30px 0;">📝 未找到文本结果</h4>
-                `;
-                textColumn.appendChild(noTextResults);
-            }
-
-            // 图像结果列
-            const imageColumn = document.createElement('div');
-            imageColumn.style.flex = '1';
-            imageColumn.style.minWidth = '300px';
-
-            if (data.image_results && data.image_results.length > 0) {
-                const imageTitle = document.createElement('h3');
-                imageTitle.className = 'section-title';
-                imageTitle.textContent = '🖼️ 图像结果';
-                imageColumn.appendChild(imageTitle);
-
-                data.image_results.forEach((result, index) => {
-                    const resultBlock = document.createElement('div');
-                    resultBlock.className = 'result-block';
-
-                    // 结果标题
-                    const titleDiv = document.createElement('div');
-                    titleDiv.innerHTML = `
-                        <h4 style="margin: 0 0 10px 0; color: #333; display: flex; align-items: center;">
-                            <span style="background: #ff9800; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 14px;">${index + 1}</span>
-                            <span>图像结果 #${index + 1}</span>
-                            <span class="score-badge">${result.score}%</span>
-                        </h4>
-                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-                    `;
-                    resultBlock.appendChild(titleDiv);
-
-                    // 调试信息：显示结果数据结构
-                    console.log('图像结果数据:', result);
-                    
-                    // 处理图像
-                    if (result.file_url && result.file_url !== 'N/A') {
-                        const imgContainer = document.createElement('div');
-                        imgContainer.style.margin = '15px 0';
-                        imgContainer.style.textAlign = 'center';
-
-                        // 处理不同格式的 file_url
-                        if (Array.isArray(result.file_url)) {
-                            result.file_url.forEach(url => {
-                                if (url && url !== 'N/A') {
-                                    const img = document.createElement('img');
-                                    img.src = url;
-                                    img.alt = `图像结果 ${index + 1}`;
-                                    img.className = 'result-image';
-                                    img.style.maxWidth = '100%';
-                                    img.style.maxHeight = '300px';
-                                    img.style.objectFit = 'contain';
-                                    img.style.border = '1px solid #e0e0e0';
-                                    img.style.borderRadius = '8px';
-                                    img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                                    img.style.transition = 'transform 0.3s ease';
-                                    img.onmouseover = function() {
-                                        this.style.transform = 'scale(1.05)';
-                                    };
-                                    img.onmouseout = function() {
-                                        this.style.transform = 'scale(1)';
-                                    };
-                                    imgContainer.appendChild(img);
-                                }
-                            });
-                        } else if (typeof result.file_url === 'string' && result.file_url !== 'N/A') {
-                            // 如果 file_url 是字符串而不是数组
-                            const img = document.createElement('img');
-                            img.src = result.file_url;
-                            img.alt = `图像结果 ${index + 1}`;
-                            img.className = 'result-image';
-                            img.style.maxWidth = '100%';
-                            img.style.maxHeight = '300px';
-                            img.style.objectFit = 'contain';
-                            img.style.border = '1px solid #e0e0e0';
-                            img.style.borderRadius = '8px';
-                            img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                            img.style.transition = 'transform 0.3s ease';
-                            img.onmouseover = function() {
-                                this.style.transform = 'scale(1.05)';
-                            };
-                            img.onmouseout = function() {
-                                this.style.transform = 'scale(1)';
-                            };
-                            imgContainer.appendChild(img);
-                        } else {
-                            // 其他情况，显示调试信息
-                            const debugInfo = document.createElement('div');
-                            debugInfo.style.padding = '10px';
-                            debugInfo.style.backgroundColor = '#f0f0f0';
-                            debugInfo.style.borderRadius = '4px';
-                            debugInfo.style.fontSize = '12px';
-                            debugInfo.style.margin = '10px 0';
-                            debugInfo.innerHTML = `<strong>调试信息:</strong> file_url 格式: ${typeof result.file_url}<br>值: ${JSON.stringify(result.file_url)}`;
-                            imgContainer.appendChild(debugInfo);
-                        }
-
-                        resultBlock.appendChild(imgContainer);
-                    } else {
-                        // 如果没有 file_url 或为 N/A，显示提示
-                        const noImageInfo = document.createElement('div');
-                        noImageInfo.style.padding = '20px';
-                        noImageInfo.style.textAlign = 'center';
-                        noImageInfo.style.color = '#666';
-                        noImageInfo.innerHTML = '⚠️ 没有图像URL';
-                        resultBlock.appendChild(noImageInfo);
-                    }
-
-                    // 添加字段到结果块
-                    const fieldType = document.createElement('p');
-                    fieldType.style.margin = '10px 0';
-                    fieldType.innerHTML = `<span class="field-label">类型:</span> <span class="field-value">${result.field_type || 'N/A'}</span>`;
-                    resultBlock.appendChild(fieldType);
-
-                    // 处理文档 ID（点击可查看详情）
-                    const docIdDiv = document.createElement('p');
-                    docIdDiv.innerHTML = '<span class="field-label" style="font-size: 14px;">📄 文档ID:</span>';
-                    docIdDiv.style.margin = '15px 0 5px 0';
-                    docIdDiv.style.paddingTop = '10px';
-                    docIdDiv.style.borderTop = '1px solid #eee';
-                    resultBlock.appendChild(docIdDiv);
-
-                    const docItem = document.createElement('div');
-                    docItem.className = 'doc-item';
-                    docItem.title = "点击查看文档详情";
-
-                    const iconSpan = document.createElement('span');
-                    iconSpan.className = 'doc-icon';
-                    iconSpan.textContent = '📋';
-
-                    const docIdText = result.doc_id || '未知';
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'doc-name';
-                    nameSpan.textContent = docIdText;
-
-                    docItem.appendChild(iconSpan);
-                    docItem.appendChild(nameSpan);
-
-                    // 点击打开模态框
-                    docItem.onclick = function() {
-                        showDocModal(result);
-                    };
-
-                    resultBlock.appendChild(docItem);
-
-                    imageColumn.appendChild(resultBlock);
-                });
-            } else {
-                const noImageResults = document.createElement('div');
-                noImageResults.className = 'result-block';
-                noImageResults.innerHTML = `
-                    <h4 style="color: #666; text-align: center; margin: 30px 0;">🖼️ 未找到图像结果</h4>
-                `;
-                imageColumn.appendChild(noImageResults);
-            }
-
-            // 添加两列到容器
-            columnsContainer.appendChild(textColumn);
-            columnsContainer.appendChild(imageColumn);
-            mainDiv.appendChild(columnsContainer);
-
-            resultContainer.appendChild(mainDiv);
-            
-        } catch (error) {
-            resultContainer.innerHTML = `
-                <div class="error">
-                    <h3>❌ 查询错误</h3>
-                    <p>错误信息: ${error.message}</p>
-                    <p>请检查网络连接或联系管理员</p>
+        <section class="panel">
+            <div class="panel-head">检索结果（按 DocID 聚合）</div>
+            <div class="panel-body">
+                <div class="result-head">
+                    <strong>结果面板</strong>
+                    <span id="resultStat" style="color: var(--muted); font-size: 13px;">尚未查询</span>
                 </div>
-            `;
-            console.error("查询失败:", error);
-        }
+                <div id="resultContainer" class="empty">提交查询后，将在此展示聚合结果。</div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+const inputFiles = document.getElementById('files');
+const previewList = document.getElementById('previewList');
+const dropZone = document.getElementById('dropZone');
+const resultContainer = document.getElementById('resultContainer');
+const resultStat = document.getElementById('resultStat');
+
+(function bindWelcome() {
+    const username = localStorage.getItem('authUsername');
+    const role = localStorage.getItem('authRole');
+    if (username) {
+        document.getElementById('welcome').textContent = `智能检索端 · 当前用户 ${username}${role ? ' (' + role + ')' : ''}`;
+    }
+})();
+
+function syncFileInput(files) {
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    inputFiles.files = dt.files;
+}
+
+function getAllFiles() {
+    return Array.from(inputFiles.files || []);
+}
+
+function setFilesByDedupe(incoming) {
+    const existing = getAllFiles();
+    const map = new Map();
+    [...existing, ...incoming].forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        if (!map.has(key)) map.set(key, file);
     });
-    </script>
-    <script>
-    // 【终极稳妥版】任何环境下都能复制结果图片（http / 跨域 / 无交互 全兼容）
-    document.addEventListener('DOMContentLoaded', function () {
-        let toast = null;
+    syncFileInput(Array.from(map.values()));
+    renderPreview();
+}
 
-        function showToast(msg, isError = false) {
-            if (toast) toast.remove();
-            toast = document.createElement('div');
-            toast.textContent = msg;
-            toast.style.cssText = `
-                position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-                padding: 12px 28px; border-radius: 8px; color: #fff; font-size: 14px;
-                background: ${isError ? '#d32f2f' : 'rgba(0,0,0,0.85)'};
-                z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), isError ? 4000 : 2000);
+function removeFileByKey(targetKey) {
+    const files = getAllFiles().filter(file => `${file.name}-${file.size}-${file.lastModified}` !== targetKey);
+    syncFileInput(files);
+    renderPreview();
+}
+
+function renderPreview() {
+    const files = getAllFiles();
+    previewList.innerHTML = '';
+    if (!files.length) return;
+
+    files.forEach(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        const wrap = document.createElement('div');
+        wrap.className = 'preview-item';
+
+        const img = document.createElement('img');
+        img.alt = file.name;
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; };
+        reader.readAsDataURL(file);
+
+        const name = document.createElement('div');
+        name.className = 'preview-name';
+        name.textContent = file.name;
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'remove';
+        remove.textContent = '×';
+        remove.onclick = () => removeFileByKey(key);
+
+        wrap.appendChild(img);
+        wrap.appendChild(name);
+        wrap.appendChild(remove);
+        previewList.appendChild(wrap);
+    });
+}
+
+inputFiles.addEventListener('change', e => setFilesByDedupe(Array.from(e.target.files || [])));
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#0284c7'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#94a3b8'; });
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.style.borderColor = '#94a3b8';
+    setFilesByDedupe(Array.from(e.dataTransfer.files || []));
+});
+dropZone.addEventListener('paste', e => {
+    const items = e.clipboardData?.items || [];
+    const files = [];
+    for (const item of items) {
+        if (item.type.startsWith('image/')) {
+            const file = item.getAsFile();
+            if (file) files.push(file);
         }
+    }
+    if (files.length) setFilesByDedupe(files);
+});
 
-        // 万能复制方案：生成一个隐藏的 <a download> 让用户“右键另存为” + 同时尝试现代剪贴板API
-        function copyImageRobust(img) {
-            // 方案A：现代浏览器 + HTTPS + 同域 → 用 Clipboard API
-            if (navigator.clipboard && navigator.clipboard.write && location.protocol === 'https:') {
-                fetch(img.src)
-                    .then(r => r.blob())
-                    .then(blob => navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]))
-                    .then(() => showToast('已复制图片，可直接粘贴'))
-                    .catch(() => gotoFallback());
-            } else {
-                gotoFallback();
-            }
+function selectedDatabases() {
+    const checks = Array.from(document.querySelectorAll('#dbGrid input[type="checkbox"]:checked'));
+    return checks.map(c => c.value);
+}
 
-            // 方案B：降级方案（99.9% 能用）
-            function gotoFallback() {
-                // 把图片塞进一个隐藏的 canvas 让用户可以右键另存为
-                const a = document.createElement('a');
-                a.href = img.src;
-                a.download = img.src.split('/').pop().split('?')[0] || '图片.jpg';
-                a.style.display = 'none';
-                document.body.appendChild(a);
-
-                // 创建一个临时可选择的图片（让用户能右键复制）
-                const tempImg = document.createElement('img');
-                tempImg.src = img.src;
-                tempImg.style.position = 'fixed';
-                tempImg.style.left = '-9999px';
-                tempImg.style.top = '-9999px';
-                tempImg.style.zIndex = '-1';
-                document.body.appendChild(tempImg);
-
-                // 选中这张图片（这样用户按 Ctrl+C 就能复制了）
-                const range = document.createRange();
-                range.selectNode(tempImg);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-
-                showToast('已选中图片 → 直接按 Ctrl+C 复制，或右键图片 → “复制图片”', false);
-
-                // 3秒后自动清理
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    document.body.removeChild(tempImg);
-                    sel.removeAllRanges();
-                }, 3000);
-            }
+function fallbackGroup(flat) {
+    const map = new Map();
+    (flat || []).forEach(hit => {
+        const doc = hit.doc_id || 'UNKNOWN_DOC';
+        if (!map.has(doc)) {
+            map.set(doc, { doc_id: doc, best_score: hit.score || 0, chunk_count: 0, field_types: [], file_urls: [], chunks: [] });
         }
-
-        // 给所有结果图片加上复制能力
-        function enableCopy() {
-            document.querySelectorAll('.result-image').forEach(img => {
-                if (img.dataset.copyFixed) return;
-                img.dataset.copyFixed = 'true';
-
-                img.style.cursor = 'pointer';
-                img.title = '点击即可复制图片';
-
-                img.onclick = function(e) {
-                    e.preventDefault();
-                    copyImageRobust(this);
-                };
-
-                // 悬停美化
-                img.onmouseenter = () => img.style.transform = 'scale(1.04)';
-                img.onmouseleave = () => img.style.transform = '';
-            });
-        }
-
-        enableCopy(); // 第一次
-        // 动态监听新加的图片
-        new MutationObserver(enableCopy).observe(document.getElementById('result-container'), {
-            childList: true,
-            subtree: true
+        const row = map.get(doc);
+        row.chunk_count += 1;
+        row.best_score = Math.max(row.best_score, hit.score || 0);
+        row.chunks.push(hit);
+        if (hit.field_type && !row.field_types.includes(hit.field_type)) row.field_types.push(hit.field_type);
+        (hit.file_url || []).forEach(url => {
+            if (url && !row.file_urls.includes(url)) row.file_urls.push(url);
         });
     });
-    </script>
+    return Array.from(map.values()).sort((a, b) => b.best_score - a.best_score);
+}
+
+function renderDocGroup(title, grouped) {
+    const block = document.createElement('div');
+    const heading = document.createElement('h3');
+    heading.style.margin = '16px 0 8px';
+    heading.textContent = title;
+    block.appendChild(heading);
+
+    if (!grouped.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = '暂无结果';
+        block.appendChild(empty);
+        return block;
+    }
+
+    grouped.forEach((doc, idx) => {
+        const group = document.createElement('div');
+        group.className = 'doc-group';
+
+        const header = document.createElement('div');
+        header.className = 'doc-header';
+        header.innerHTML = `
+            <div>
+                <div class="doc-title">DocID: ${doc.doc_id || 'UNKNOWN_DOC'}</div>
+                <div class="doc-meta">最佳相似度 ${Number(doc.best_score || 0).toFixed(2)}% · ${doc.chunk_count || 0} 个 chunk</div>
+            </div>
+            <button type="button" class="toggle">展开 chunks</button>
+        `;
+
+        const chunks = document.createElement('div');
+        chunks.className = 'chunk-list';
+        chunks.style.display = idx === 0 ? 'grid' : 'none';
+
+        (doc.chunks || []).forEach(chunk => {
+            const item = document.createElement('div');
+            item.className = 'chunk';
+            const files = (chunk.file_url || []).map(url => {
+                const name = decodeURIComponent(url.split('/').pop() || url);
+                return `<a class="file-link" href="${url}" target="_blank">${name}</a>`;
+            }).join('');
+            item.innerHTML = `
+                <div class="chunk-top">
+                    <span>chunk: ${chunk.chunk_id ?? 'N/A'} · ${chunk.field_type || 'unknown'}</span>
+                    <span>相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
+                </div>
+                <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                ${files ? `<div class="chunk-files">${files}</div>` : ''}
+            `;
+            chunks.appendChild(item);
+        });
+
+        const toggle = header.querySelector('.toggle');
+        toggle.onclick = () => {
+            const open = chunks.style.display !== 'none';
+            chunks.style.display = open ? 'none' : 'grid';
+            toggle.textContent = open ? '展开 chunks' : '收起 chunks';
+        };
+        if (idx === 0) toggle.textContent = '收起 chunks';
+
+        group.appendChild(header);
+        group.appendChild(chunks);
+        block.appendChild(group);
+    });
+
+    return block;
+}
+
+function renderResult(data) {
+    resultContainer.innerHTML = '';
+
+    if (data.answer === '历史上下文已清空') {
+        resultContainer.className = 'ok';
+        resultContainer.textContent = '会话历史已清空';
+        resultStat.textContent = '已清空';
+        return;
+    }
+
+    const textDocs = data.grouped_text_results?.length ? data.grouped_text_results : fallbackGroup(data.text_results);
+    const imageDocs = data.grouped_image_results?.length ? data.grouped_image_results : fallbackGroup(data.image_results);
+
+    const totalDocs = textDocs.length + imageDocs.length;
+    resultStat.textContent = `文本文档 ${textDocs.length} 个 · 图像文档 ${imageDocs.length} 个`;
+
+    const answer = document.createElement('div');
+    answer.className = 'answer';
+    answer.textContent = data.answer || '未找到相关答案';
+    resultContainer.appendChild(answer);
+
+    const meta = document.createElement('div');
+    meta.className = 'query-meta';
+    meta.textContent = `查询串: ${data.query || '-'}${data.extracted_text ? ' ｜ OCR: ' + data.extracted_text : ''}`;
+    resultContainer.appendChild(meta);
+
+    resultContainer.appendChild(renderDocGroup('文本检索结果', textDocs));
+    resultContainer.appendChild(renderDocGroup('图像检索结果', imageDocs));
+
+    if (totalDocs === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = '未命中任何文档，请尝试更换关键词或选择更多数据库';
+        resultContainer.appendChild(empty);
+    }
+
+    resultContainer.className = '';
+}
+
+function setLoading() {
+    resultContainer.className = 'empty';
+    resultContainer.textContent = '正在检索，请稍候...';
+    resultStat.textContent = '查询中';
+}
+
+function setError(message) {
+    resultContainer.className = 'error';
+    resultContainer.textContent = message;
+    resultStat.textContent = '查询失败';
+}
+
+document.getElementById('queryForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    setLoading();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    formData.set('selected_dbs', selectedDatabases().join(','));
+
+    try {
+        const response = await fetch('/query', { method: 'POST', body: formData });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || `请求失败: ${response.status}`);
+        renderResult(data);
+    } catch (error) {
+        setError(error.message || '未知错误');
+    }
+});
+
+document.getElementById('clearBtn').addEventListener('click', async () => {
+    const form = document.getElementById('queryForm');
+    const formData = new FormData(form);
+    formData.set('query', 'clear');
+    formData.set('selected_dbs', selectedDatabases().join(','));
+    try {
+        setLoading();
+        const response = await fetch('/query', { method: 'POST', body: formData });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || `请求失败: ${response.status}`);
+        renderResult(data);
+        document.getElementById('query').value = '';
+    } catch (error) {
+        setError(error.message || '清空失败');
+    }
+});
+</script>
 </body>
 </html>

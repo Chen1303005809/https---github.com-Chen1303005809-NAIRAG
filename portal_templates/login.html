@@ -1,30 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>RAG 系统统一登录</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>统一登录门户</title>
     <style>
-        body{background:linear-gradient(135deg,#667eea,#764ba2);font-family:Arial;margin:0;display:flex;align-items:center;justify-content:center;height:100vh}
-        .box{background:white;padding:60px 50px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.3);width:420px;text-align:center}
-        h1{color:#333;margin-bottom:30px}
-        input{margin:15px 0;padding:15px;border:1px solid #ddd;border-radius:8px;width:100%;box-sizing:border-box;font-size:16px}
-        button{width:100%;padding:16px;background:#1890ff;color:white;border:none;border-radius:8px;cursor:pointer;font-size:18px;margin-top:20px}
-        button:hover{background:#1677e0}
-        .tips{margin-top:25px;color:#666;font-size:14px}
+        :root {
+            --bg1: #0f3443;
+            --bg2: #34e89e;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            --ring: rgba(14, 165, 233, 0.22);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,0.16), transparent 35%),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.16), transparent 40%),
+                linear-gradient(145deg, var(--bg1), var(--bg2));
+        }
+        .card {
+            width: min(92vw, 420px);
+            background: var(--card);
+            border-radius: 20px;
+            padding: 34px 30px 24px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+        }
+        h1 { margin: 0 0 8px; font-size: 26px; }
+        p.subtitle { margin: 0 0 22px; color: var(--muted); font-size: 14px; }
+        .field { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #374151; }
+        input {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 12px 13px;
+            font-size: 15px;
+            transition: .2s border-color, .2s box-shadow;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+        button {
+            width: 100%;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 16px;
+            color: #fff;
+            background: var(--primary);
+            cursor: pointer;
+            transition: .2s background, .2s transform;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .tips {
+            margin-top: 16px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
-<div class="box">
-    <h1> RAG 系统统一登录</h1>
+<div class="card">
+    <h1>RAG 统一登录</h1>
+    <p class="subtitle">登录后将自动同步上传端与管理端认证信息</p>
     <form action="/login" method="post">
-        <input type="text" name="username" placeholder="用户名" required>
-        <input type="password" name="password" placeholder="密码" required>
-        <button type="submit">立即登录</button>
+        <div class="field">
+            <label for="username">用户名</label>
+            <input id="username" type="text" name="username" placeholder="请输入用户名" required />
+        </div>
+        <div class="field">
+            <label for="password">密码</label>
+            <input id="password" type="password" name="password" placeholder="请输入密码" required />
+        </div>
+        <button type="submit">登录系统</button>
     </form>
     <div class="tips">
-        默认账号：<br>
-        admin / admin123<br>
-        user1 / user123
+        默认账号: `admin / admin123`  
+        普通账号: `user1 / user123`
     </div>
 </div>
 </body>

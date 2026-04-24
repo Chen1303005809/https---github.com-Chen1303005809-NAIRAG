@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>用户管理</title>
+    <style>
+        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f1f5f9; color: #0f172a; }
+        .wrap { max-width: 980px; margin: 16px auto; padding: 0 12px; }
+        .panel { background: #fff; border: 1px solid #d6dee9; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .head { padding: 12px; border-bottom: 1px solid #d6dee9; font-weight: 700; }
+        .body { padding: 12px; }
+        .grid { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
+        input, select { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; }
+        .btn { border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+        .btn.primary { background: #1d4ed8; color: #fff; }
+        .btn.danger { background: #b91c1c; color: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #e2e8f0; padding: 8px; font-size: 13px; text-align: left; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="panel">
+        <div class="head">创建用户</div>
+        <div class="body">
+            <div class="grid">
+                <input id="newUsername" placeholder="用户名" />
+                <input id="newPassword" placeholder="密码" type="password" />
+                <select id="newRole">
+                    <option value="user">user</option>
+                    <option value="editor">editor</option>
+                    <option value="admin">admin</option>
+                </select>
+            </div>
+            <div style="margin-top:10px;">
+                <button class="btn primary" onclick="createUser()">创建</button>
+                <button class="btn" onclick="loadUsers()">刷新</button>
+                <span id="msg" style="margin-left:8px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="head">用户列表</div>
+        <div class="body">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>用户名</th><th>角色</th><th>创建时间</th><th>操作</th></tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const token = localStorage.getItem('authToken') || '';
+
+function headers(extra = {}) {
+    return token ? { ...extra, Authorization: 'Bearer ' + token } : extra;
+}
+
+function show(msg, ok=true) {
+    const el = document.getElementById('msg');
+    el.textContent = msg;
+    el.style.color = ok ? '#047857' : '#b91c1c';
+}
+
+async function loadUsers() {
+    const res = await fetch('/admin/users', { headers: headers() });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+        show(data.error || '加载失败', false);
+        return;
+    }
+    const rows = document.getElementById('rows');
+    rows.innerHTML = data.users.map(u => `
+        <tr>
+            <td>${u.id}</td>
+            <td><input value="${u.username}" data-f="username" data-id="${u.id}" /></td>
+            <td>
+                <select data-f="role" data-id="${u.id}">
+                    <option value="user" ${u.role === 'user' ? 'selected' : ''}>user</option>
+                    <option value="editor" ${u.role === 'editor' ? 'selected' : ''}>editor</option>
+                    <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin</option>
+                </select>
+            </td>
+            <td>${u.created_at || ''}</td>
+            <td>
+                <button class="btn primary" onclick="updateUser(${u.id})">保存</button>
+                <button class="btn danger" onclick="deleteUser(${u.id})">删除</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function rowValue(id, field) {
+    const el = document.querySelector(`[data-id="${id}"][data-f="${field}"]`);
+    return el ? el.value : '';
+}
+
+async function createUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const password = document.getElementById('newPassword').value.trim();
+    const role = document.getElementById('newRole').value;
+    const res = await fetch('/admin/users/create', {
+        method: 'POST',
+        headers: headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ username, password, role })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return show(data.error || '创建失败', false);
+    show('创建成功');
+    loadUsers();
+}
+
+async function updateUser(id) {
+    const username = rowValue(id, 'username');
+    const role = rowValue(id, 'role');
+    const password = prompt('如需重置密码请输入，不修改请留空', '');
+    if (password === null) return;
+    const res = await fetch('/admin/users/update', {
+        method: 'POST',
+        headers: headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ id, username, role, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return show(data.error || '更新失败', false);
+    show('更新成功');
+    loadUsers();
+}
+
+async function deleteUser(id) {
+    if (!confirm('确认删除该用户？')) return;
+    const res = await fetch('/admin/users/delete', {
+        method: 'POST',
+        headers: headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return show(data.error || '删除失败', false);
+    show('删除成功');
+    loadUsers();
+}
+
+loadUsers();
+</script>
+</body>
+</html>

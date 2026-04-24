@@ -1,1799 +1,794 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>RAG 数据上传 v5</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数据采集端</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .form-group { margin-bottom: 15px; }
-        input[type="text"], input[type="file"], select, textarea { width: 100%; padding: 8px; margin-bottom: 10px; }
-        .section { margin-bottom: 30px; border: 1px solid #eee; padding: 15px; border-radius: 6px; background-color: #fafafa; }
-        .file-list { margin-top: 10px; }
-        .file-item { margin: 5px 0; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
-        #results { margin-top: 20px; }
-        .preview-container {
-            border: 1px dashed #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            min-height: 50px;
-            background-color: #fcfcfc;
+        :root {
+            --bg: #f1f5f9;
+            --panel: #ffffff;
+            --line: #d6dee9;
+            --text: #0f172a;
+            --muted: #475569;
+            --primary: #0369a1;
+            --primary-hover: #075985;
+            --danger: #b91c1c;
+            --success: #047857;
         }
-        .preview-image {
-            max-width: 200px;
-            max-height: 200px;
-            margin-right: 10px;
-            vertical-align: middle;
-            border: 1px solid #eee;
-            cursor: pointer;
-        }
-        .remove-btn {
-            background-color: #ff4444;
-            color: white;
-            border: none;
-            padding: 2px 6px;
-            cursor: pointer;
-            margin-left: 5px;
-            font-size: 12px;
-        }
-        .remove-btn:hover { background-color: #cc0000; }
-        .result-container {
-            width: 100%;
-            min-height: 200px;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
-            overflow: auto;
-        }
-        .result-image {
-            max-width: 400px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        #preview-images, #doc-preview-list {
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255,255,255,.9);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        #preview-images > div, #doc-preview-list > div {
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            border: 1px solid #eee;
-            padding: 5px;
-            border-radius: 4px;
+            padding: 12px 16px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .header h1 { margin: 0; font-size: 20px; }
+        .container { max-width: 1180px; margin: 16px auto 40px; padding: 0 12px; }
+        .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+        .panel-head { padding: 12px; border-bottom: 1px solid var(--line); font-weight: 700; }
+        .panel-body { padding: 12px; }
+        .grid2 { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+        .grid4 { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
+        .field { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #334155; font-weight: 600; }
+        input[type="text"], input[type="password"], select, textarea, input[type="file"] {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 14px;
+            background: #fff;
+        }
+        textarea { resize: vertical; min-height: 70px; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(3,105,161,.12);
+        }
+        .btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .btn.primary { background: var(--primary); color: #fff; }
+        .btn.primary:hover { background: var(--primary-hover); }
+        .btn.success { background: var(--success); color: #fff; }
+        .btn.danger { background: var(--danger); color: #fff; }
+        .db-grid {
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 10px;
+            display: grid;
+            gap: 6px;
+            background: #f8fbff;
+        }
+        .db-grid label { margin: 0; font-weight: 500; color: #334155; cursor: pointer; }
+        .drop {
+            border: 1px dashed #94a3b8;
+            border-radius: 10px;
+            background: #f8fafc;
+            min-height: 84px;
+            padding: 10px;
+        }
+        .preview-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-top: 8px; }
+        .preview-card { border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 6px; position: relative; }
+        .preview-card img { width: 100%; height: 96px; object-fit: cover; border-radius: 8px; }
+        .preview-name { margin-top: 4px; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            border: 0;
+            background: rgba(0,0,0,.65);
+            color: #fff;
+            cursor: pointer;
+        }
+        .doc-list { display: grid; gap: 6px; margin-top: 8px; }
+        .doc-item { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+        .status { font-size: 13px; color: var(--muted); }
+        .error { color: var(--danger); }
+        .ok { color: var(--success); }
+        .badge {
+            display: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: #fff;
+            border: 0;
+            font-weight: 700;
+            cursor: pointer;
         }
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
+            inset: 0;
+            z-index: 60;
+            background: rgba(2, 6, 23, .55);
         }
-        .modal-content {
-            margin: 10% auto;
-            display: block;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            object-fit: contain;
+        .modal-card {
+            width: min(980px, 95vw);
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            margin: 30px auto;
+            overflow: hidden;
         }
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
+        .modal-head { padding: 12px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 12px; max-height: 72vh; overflow: auto; }
+        .hint { color: var(--muted); font-size: 12px; }
+        @media (max-width: 980px) {
+            .grid4 { grid-template-columns: repeat(2, 1fr); }
+            .grid2 { grid-template-columns: 1fr; }
+            .preview-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
         }
-        .close:hover {
-            color: #bbb;
-        }
-        .docx-upload-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px dashed #4CAF50;
-            border-radius: 6px;
-            background-color: #f0fff0;
-        }
-        h4 {
-            margin: 0 0 10px 0;
-            display: flex;
-            align-items: center;
-        }
-        hr {
-            margin: 20px 0;
-            border: 0;
-            border-top: 1px dashed #ccc;
-        }
-        .admin-btn {
-            margin-left: 10px;
-            padding: 4px 8px;
-            font-size: 12px;
-            background-color: #2196F3;
-        }
-        #login-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-        }
-        /* 登出按钮样式 */
-        #logout-btn {
-            margin-left: 10px;
-            padding: 5px 10px;
-            background-color: #ff9800;
-        }
-        #logout-btn:hover {
-            background-color: #e68a00;
+        @media (max-width: 640px) {
+            .preview-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
         }
     </style>
 </head>
 <body>
-    <h1>📌 RAG 数据上传 v5（支持5库 + 文档 + 四段式回复 + 权限管理）</h1>
-    <span id="rejectedAlert" style="display:none; position:fixed; top:20px; right:20px; background:red; color:white; width:30px; height:30px; border-radius:50%; text-align:center; line-height:30px; cursor:pointer; font-weight:bold; z-index:10000;" title="您有被拒数据">!</span>
-    
-    <!-- 🔐 登录区域 -->
-    <div id="login-section">
-        <h3>🔒 用户登录</h3>
-        <input type="text" id="username" placeholder="用户名" />
-        <input type="password" id="password" placeholder="密码" />
-        <button type="button" onclick="login()">登录</button>
-        <span id="login-status" style="margin-left: 10px;"></span>
+<div class="header">
+    <h1>数据采集端</h1>
+    <div class="toolbar">
+        <span id="userInfo" class="status">未登录</span>
+        <button id="rejectedBadge" class="badge" title="查看被拒记录">!</button>
+        <button class="btn" id="logoutBtn" onclick="logout()" style="display:none;">退出</button>
     </div>
+</div>
 
-    <!-- ✅ 主表单区域（默认隐藏） -->
-    <div id="main-form" style="display: none;">
-        <!-- 添加用户信息显示区域 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-radius: 6px;">
-            <div>
-                <span style="font-weight: bold; color: #333;">当前用户：</span>
-                <span id="current-user-display" style="color: #1976d2;"></span>
-                <span id="current-user-role" style="color: #666; margin-left: 10px;"></span>
+<div class="container">
+    <section class="panel" id="loginPanel">
+        <div class="panel-head">登录</div>
+        <div class="panel-body">
+            <div class="grid2">
+                <div class="field">
+                    <label for="username">用户名</label>
+                    <input id="username" type="text" placeholder="请输入用户名" />
+                </div>
+                <div class="field">
+                    <label for="password">密码</label>
+                    <input id="password" type="password" placeholder="请输入密码" />
+                </div>
             </div>
-            <button id="logout-btn" style="padding: 6px 12px; background-color: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="logout()">
-                登出
-            </button>
+            <div class="toolbar">
+                <button class="btn primary" onclick="login()">登录</button>
+                <span id="loginStatus" class="status"></span>
+            </div>
         </div>
-        
-        <h2>结构化数据录入（单条）</h2>
-        <form id="queryFrom" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>选择目标数据库（可多选）</label><br>
-                <input type="checkbox" name="selected_dbs" value="rag_bge_m3_structured_v4_1"> 融航期货交易平台<br>
-                <input type="checkbox" name="selected_dbs" value="rag_bge_m3_structured_v4_2"> 融航AMS资管平台<br>
-                <input type="checkbox" name="selected_dbs" value="rag_bge_m3_structured_v4_3"> 融航HMS资产管理平台<br>
-                <input type="checkbox" name="selected_dbs" value="rag_bge_m3_structured_v4_4"> 核算模块<br>
-                <input type="checkbox" name="selected_dbs" value="rag_bge_m3_structured_v4_5"> 随心易终端<br>
-                <input type="checkbox" name="selected_dbs" value="TEST"> 多模态混合测试<br>
-            </div>
+    </section>
 
-            <div class="form-group">
-                <h3>📝 数据记录</h3>
-                <div id="single-record-form" class="section">
-                    <div class="form-group">
+    <section class="panel" id="formPanel" style="display:none;">
+        <div class="panel-head">结构化数据录入</div>
+        <div class="panel-body">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="field">
+                    <label>目标数据库（可多选）</label>
+                    <div id="dbChecks" class="db-grid">
+                        <label><input type="checkbox" value="rag_bge_m3_structured_v4_1" name="selected_dbs" /> 融航期货交易平台</label>
+                        <label><input type="checkbox" value="rag_bge_m3_structured_v4_2" name="selected_dbs" /> 融航AMS资管平台</label>
+                        <label><input type="checkbox" value="rag_bge_m3_structured_v4_3" name="selected_dbs" /> 融航HMS资产管理平台</label>
+                        <label><input type="checkbox" value="rag_bge_m3_structured_v4_4" name="selected_dbs" /> 核算模块</label>
+                        <label><input type="checkbox" value="rag_bge_m3_structured_v4_5" name="selected_dbs" /> 随心易终端</label>
+                        <label><input type="checkbox" value="TEST" name="selected_dbs" /> 多模态混合测试</label>
+                    </div>
+                </div>
+
+                <div class="grid4">
+                    <div class="field">
                         <label for="type">问题类型</label>
-                        <select name="type" id="type" required>
-                            <option value="">--请选择--</option>
-                        </select>
+                        <select id="type"></select>
                     </div>
-                    <div class="form-group">
-                        <label for="object">具体功能&相关模块</label>
-                        <select name="object" id="object" required>
-                            <option value="">--请选择--</option>
-                        </select>
+                    <div class="field">
+                        <label for="object">具体功能与模块</label>
+                        <select id="object"></select>
                     </div>
-                    <div class="form-group">
+                    <div class="field">
                         <label for="purpose">应用场景</label>
-                        <select name="purpose" id="purpose" required>
-                            <option value="">--请选择--</option>
-                        </select>
+                        <select id="purpose"></select>
                     </div>
-                    <div class="form-group">
+                    <div class="field">
                         <label for="customer_type">客户类型</label>
-                        <select name="customer_type" id="customer_type" required>
-                            <option value="">--请选择--</option>
-                        </select>
-                    </div>
-
-                    <!-- ✅ 四段式回复内容 -->
-                    <div class="form-group">
-                        <label>回复逻辑框架（必填）</label>
-                        <textarea name="reply_logic" id="reply_logic" rows="3" placeholder="如：首先确认用户权限，然后检查配置..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>说明功能（必填）</label>
-                        <textarea name="feature_explanation" id="feature_explanation" rows="3" placeholder="如：该功能用于计算账户净头寸..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>举例说明/视频链接（选填）</label>
-                        <textarea name="example" id="example" rows="2" placeholder="如：用户A在XX场景下..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>注意事项（选填）</label>
-                        <textarea name="notes" id="notes" rows="2" placeholder="如：仅支持机构客户使用..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>关键词（逗号分隔）</label>
-                        <input type="text" name="keyword" id="keyword" placeholder="如：净头寸,计算,公式" />
-                    </div>
-                    <div class="form-group">
-                        <label>类似问法（每行一个问题）</label>
-                        <textarea name="problem" id="problem" rows="3" placeholder="什么是净头寸？&#10;如何计算净头寸？"></textarea>
+                        <select id="customer_type"></select>
                     </div>
                 </div>
-            </div>
 
-            <!-- 图片上传 -->
-            <div class="form-group">
-                <label for="files">🖼️ 图片上传（支持拖拽或粘贴截图）</label>
-                <input type="file" id="files" name="files" multiple accept="image/*" onchange="handleImageUpload(event)">
-                <div id="preview-container" class="preview-container" ondrop="handleImageDrop(event)" ondragover="allowDrop(event)">
-                    <p>拖放图片或粘贴截图</p>
-                    <div id="preview-images" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;"></div>
+                <div class="grid2">
+                    <div class="field">
+                        <label for="reply_logic">回复逻辑框架（必填）</label>
+                        <textarea id="reply_logic" required></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="feature_explanation">功能说明（必填）</label>
+                        <textarea id="feature_explanation" required></textarea>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 文档上传 -->
-            <div class="form-group">
-                <label for="docFiles">📄 文档上传（.docx / .pdf / .zip，支持拖拽或上传）</label>
-                <input type="file" id="docFiles" name="docFiles" multiple accept=".docx,.pdf,.zip" onchange="handleDocUpload(event)">
-                <div id="doc-preview-container" class="preview-container" ondrop="handleDocDrop(event)" ondragover="allowDrop(event)">
-                    <p>拖放文档或上传文档</p>
-                    <div id="doc-preview-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
+                <div class="grid2">
+                    <div class="field">
+                        <label for="example">举例说明（选填）</label>
+                        <textarea id="example"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="notes">注意事项（选填）</label>
+                        <textarea id="notes"></textarea>
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit">📤 上传数据</button>
-        </form>
+                <div class="grid2">
+                    <div class="field">
+                        <label for="keyword">关键词（逗号分隔）</label>
+                        <input id="keyword" type="text" />
+                    </div>
+                    <div class="field">
+                        <label for="problem">类似问法（每行一条）</label>
+                        <textarea id="problem"></textarea>
+                    </div>
+                </div>
+
+                <div class="grid2">
+                    <div class="field">
+                        <label for="imgInput">图片附件（拖拽/粘贴）</label>
+                        <input id="imgInput" type="file" multiple accept="image/*" />
+                        <div id="imgDrop" class="drop" tabindex="0">
+                            将图片拖到此区域，或粘贴截图
+                            <div id="imgPreview" class="preview-grid"></div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="docInput">文档附件（PDF/DOCX/DOC/ZIP）</label>
+                        <input id="docInput" type="file" multiple accept=".pdf,.docx,.doc,.zip" />
+                        <div id="docDrop" class="drop">
+                            将文档拖到此区域
+                            <div id="docPreview" class="doc-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar" style="margin-top:10px;">
+                    <button class="btn primary" type="submit">提交审核</button>
+                    <button class="btn" type="button" onclick="resetForm()">重置</button>
+                    <span id="submitStatus" class="status"></span>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+
+<div id="rejectedModal" class="modal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <strong>被拒记录</strong>
+            <button class="btn" onclick="closeModal('rejectedModal')">关闭</button>
+        </div>
+        <div class="modal-body" id="rejectedBody"></div>
     </div>
+</div>
 
-    <!-- 大图预览模态框 -->
-    <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img id="modalImage" class="modal-content">
+<div id="editModal" class="modal">
+    <div class="modal-card">
+        <div class="modal-head">
+            <strong id="editTitle">修改被拒记录并重提</strong>
+            <button class="btn" onclick="closeModal('editModal')">关闭</button>
+        </div>
+        <div class="modal-body">
+            <input id="editRecordId" type="hidden" />
+            <input id="editUploader" type="hidden" />
+
+            <div class="field">
+                <label>目标数据库（可多选）</label>
+                <div id="editDbChecks" class="db-grid"></div>
+            </div>
+
+            <div class="grid4">
+                <div class="field"><label>问题类型</label><select id="edit_type"></select></div>
+                <div class="field"><label>功能模块</label><select id="edit_object"></select></div>
+                <div class="field"><label>应用场景</label><select id="edit_purpose"></select></div>
+                <div class="field"><label>客户类型</label><select id="edit_customer_type"></select></div>
+            </div>
+
+            <div class="grid2">
+                <div class="field"><label>回复逻辑框架</label><textarea id="edit_reply_logic"></textarea></div>
+                <div class="field"><label>功能说明</label><textarea id="edit_feature_explanation"></textarea></div>
+            </div>
+
+            <div class="grid2">
+                <div class="field"><label>举例说明</label><textarea id="edit_example"></textarea></div>
+                <div class="field"><label>注意事项</label><textarea id="edit_notes"></textarea></div>
+            </div>
+
+            <div class="grid2">
+                <div class="field"><label>关键词</label><input id="edit_keyword" type="text" /></div>
+                <div class="field"><label>类似问法（每行一条）</label><textarea id="edit_problem"></textarea></div>
+            </div>
+
+            <div class="field">
+                <label>保留附件（取消勾选即移除）</label>
+                <div id="editKeepFiles" class="hint"></div>
+            </div>
+
+            <div class="grid2">
+                <div class="field"><label>新增图片</label><input id="editNewImages" type="file" multiple accept="image/*" /></div>
+                <div class="field"><label>新增文档</label><input id="editNewDocs" type="file" multiple accept=".pdf,.docx,.doc,.zip" /></div>
+            </div>
+
+            <div class="toolbar">
+                <button class="btn success" onclick="submitResubmission()">确认重提</button>
+                <span id="editStatus" class="status"></span>
+            </div>
+        </div>
     </div>
+</div>
 
-    <script>
-        let currentUser = null;
-        let authToken = localStorage.getItem('authToken') || null;
-        let authUsername = localStorage.getItem('authUsername') || null;
+<script>
+let authToken = localStorage.getItem('authToken') || '';
+let authUsername = localStorage.getItem('authUsername') || '';
+let authRole = localStorage.getItem('authRole') || '';
+let rejectedCache = [];
+let optionCache = {};
 
-        // 页面加载时尝试自动登录
-        document.addEventListener('DOMContentLoaded', function() {
-            // 如果有存储的token和用户名，尝试自动登录
-            if (authToken && authUsername) {
-                currentUser = {
-                    name: authUsername,
-                    token: authToken,
-                    role: localStorage.getItem('authRole') || 'user'
-                };
-                
-                // 验证token是否有效
-                fetch('/options', {
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                })
-                .then(res => {
-                    if (res.ok) {
-                        // Token有效，显示主表单
-                        document.getElementById('main-form').style.display = 'block';
-                        document.getElementById('login-section').style.display = 'none';
-                        document.getElementById('login-status').textContent = `✅ 已登录 (${currentUser.role})`;
-                        
-                        // 更新用户信息显示
-                        document.getElementById('current-user-display').textContent = currentUser.name;
-                        document.getElementById('current-user-role').textContent = `(${currentUser.role})`;
-                        
-                        // 加载选项和检查被拒数据
-                        loadOptions();
-                        checkRejectedRecords();
-                        setInterval(checkRejectedRecords, 30000);
-                    } else {
-                        // Token无效，清除本地存储
-                        clearAuthStorage();
-                        currentUser = null;
-                    }
-                })
-                .catch(() => {
-                    // 请求失败，清除本地存储
-                    clearAuthStorage();
-                    currentUser = null;
-                });
-            }
-        });
+const DBS = [
+    { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
+    { v: 'rag_bge_m3_structured_v4_2', t: '融航AMS资管平台' },
+    { v: 'rag_bge_m3_structured_v4_3', t: '融航HMS资产管理平台' },
+    { v: 'rag_bge_m3_structured_v4_4', t: '核算模块' },
+    { v: 'rag_bge_m3_structured_v4_5', t: '随心易终端' },
+    { v: 'TEST', t: '多模态混合测试' }
+];
 
-        // 清除认证存储的函数
-        function clearAuthStorage() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('authUsername');
-            localStorage.removeItem('authRole');
-            authToken = null;
-            authUsername = null;
-        }
-        // 防止拖拽默认行为
-        function allowDrop(event) {
-            event.preventDefault();
-        }
+function authHeaders(extra = {}) {
+    return authToken ? { ...extra, Authorization: `Bearer ${authToken}` } : extra;
+}
 
-        // 修改后的图片上传处理函数
-        function handleImageUpload(event) {
-            const newFiles = event.target.files;
-            if (newFiles.length === 0) return;
-            
-            // 获取当前input元素
-            const input = document.getElementById('files');
-            
-            // 创建DataTransfer对象来合并文件
-            const dt = new DataTransfer();
-            
-            // 先添加已有的文件
-            Array.from(input.files).forEach(file => {
-                dt.items.add(file);
-            });
-            
-            // 再添加新文件
-            Array.from(newFiles).forEach(file => {
-                // 检查是否重复
-                const isDuplicate = Array.from(input.files).some(existingFile => 
-                    existingFile.name === file.name && 
-                    existingFile.size === file.size && 
-                    existingFile.lastModified === file.lastModified
-                );
-                
-                if (!isDuplicate) {
-                    dt.items.add(file);
-                }
-            });
-            
-            // 更新input的文件列表
-            input.files = dt.files;
-            
-            // 更新预览
-            updateFilePreview('files', 'preview-images', [], 'image');
-        }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // 修改后的文档上传处理函数
-        function handleDocUpload(event) {
-            const newFiles = event.target.files;
-            if (newFiles.length === 0) return;
-            
-            // 获取当前input元素
-            const input = document.getElementById('docFiles');
-            
-            // 创建DataTransfer对象来合并文件
-            const dt = new DataTransfer();
-            
-            // 先添加已有的文件
-            Array.from(input.files).forEach(file => {
-                dt.items.add(file);
-            });
-            
-            // 再添加新文件
-            Array.from(newFiles).forEach(file => {
-                // 检查是否重复
-                const isDuplicate = Array.from(input.files).some(existingFile => 
-                    existingFile.name === file.name && 
-                    existingFile.size === file.size && 
-                    existingFile.lastModified === file.lastModified
-                );
-                
-                if (!isDuplicate) {
-                    dt.items.add(file);
-                }
-            });
-            
-            // 更新input的文件列表
-            input.files = dt.files;
-            
-            // 更新预览
-            updateFilePreview('docFiles', 'doc-preview-list', [], 'doc');
-        }
+function setUserInfo() {
+    const text = authUsername ? `当前用户: ${authUsername}${authRole ? ' (' + authRole + ')' : ''}` : '未登录';
+    document.getElementById('userInfo').textContent = text;
+    document.getElementById('logoutBtn').style.display = authToken ? 'inline-block' : 'none';
+}
 
-        // 修改后的预览更新函数
-        function updateFilePreview(inputId, previewListId, newFiles, type) {
-            const input = document.getElementById(inputId);
-            const previewList = document.getElementById(previewListId);
-            
-            // 清空预览区
-            previewList.innerHTML = '';
-            
-            // 如果没有文件，显示提示文字
-            if (input.files.length === 0) {
-                const placeholder = document.createElement('p');
-                placeholder.textContent = type === 'image' ? '拖放图片或粘贴截图' : '拖放文档或上传文档';
-                previewList.parentElement.insertBefore(placeholder, previewList);
-                placeholder.style.display = 'block';
-                return;
-            }
-            
-            // 隐藏提示文字
-            const placeholder = previewList.parentElement.querySelector('p');
-            if (placeholder) {
-                placeholder.style.display = 'none';
-            }
-            
-            // 为每个文件创建预览
-            Array.from(input.files).forEach(file => {
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = type === 'image' 
-                    ? 'position:relative; display:inline-block; margin:8px;'
-                    : 'display:flex; align-items:center; gap:12px; padding:12px; background:#f8fff8; border:1px solid #d0e8d0; border-radius:8px; margin:8px 0;';
-                
-                if (type === 'image') {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        wrapper.innerHTML = `
-                            <img src="${e.target.result}" style="width:130px; height:130px; object-fit:cover; border-radius:8px;">
-                            <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:white; padding:4px; font-size:12px; text-align:center; border-radius:0 0 8px 8px;">
-                                ${file.name}
-                            </div>
-                        `;
-                        addDeleteButton(wrapper, file, inputId, previewListId, type);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    wrapper.innerHTML = `
-                        <span style="font-size:36px;">📄</span>
-                        <span style="flex:1; font-weight:500;">${file.name}</span>
-                    `;
-                    addDeleteButton(wrapper, file, inputId, previewListId, type);
-                }
-                
-                previewList.appendChild(wrapper);
-            });
-        }
+function showLoggedIn(show) {
+    document.getElementById('loginPanel').style.display = show ? 'none' : 'block';
+    document.getElementById('formPanel').style.display = show ? 'block' : 'none';
+    setUserInfo();
+}
 
-        // 美化版删除按钮（替换原来的 addDeleteButton 函数）
-        function addDeleteButton(wrapper, fileToDelete, inputId, previewListId, type) {
-            const delBtn = document.createElement('button');
-            delBtn.textContent = '×';
-            delBtn.type = 'button';
-            
-            // 统一的现代美观样式
-            delBtn.style.cssText = `
-                position: absolute;
-                top: 8px;
-                right: 8px;
-                width: 28px;
-                height: 28px;
-                border: none;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.8);
-                color: #999;
-                font-size: 18px;
-                font-weight: bold;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-                transition: all 0.2s ease;
-                z-index: 10;
-                backdrop-filter: blur(4px);
-            `;
+function parseProblems(text) {
+    return text.split('\n').map(v => v.trim()).filter(Boolean);
+}
 
-            // 文档类型时位置调整（原来是 static）
-            if (type === 'doc') {
-                delBtn.style.position = 'static';
-                delBtn.style.marginLeft = 'auto';
-            }
+function selectedDbs(selector = '#dbChecks input:checked') {
+    return Array.from(document.querySelectorAll(selector)).map(cb => cb.value);
+}
 
-            // 悬停效果：背景变浅红，文字变红，略微放大
-            delBtn.onmouseover = () => {
-                delBtn.style.background = 'rgba(255, 77, 77, 0.9)';
-                delBtn.style.color = 'white';
-                delBtn.style.transform = 'scale(1.1)';
-                delBtn.style.boxShadow = '0 4px 12px rgba(255,77,77,0.3)';
-            };
+function selectOptions(id, values) {
+    const el = document.getElementById(id);
+    el.innerHTML = '<option value="">--请选择--</option>' + (values || []).map(v => `<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('');
+}
 
-            delBtn.onmouseout = () => {
-                delBtn.style.background = 'rgba(255, 255, 255, 0.8)';
-                delBtn.style.color = '#999';
-                delBtn.style.transform = 'scale(1)';
-                delBtn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
-            };
+async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    if (!username || !password) {
+        document.getElementById('loginStatus').textContent = '请输入用户名和密码';
+        document.getElementById('loginStatus').className = 'status error';
+        return;
+    }
 
-            // 点击删除逻辑（保持原功能）
-            delBtn.onclick = () => {
-                const input = document.getElementById(inputId);
-                const dt = new DataTransfer();
-                
-                Array.from(input.files).forEach(file => {
-                    if (file !== fileToDelete) {
-                        dt.items.add(file);
-                    }
-                });
-                
-                input.files = dt.files;
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        document.getElementById('loginStatus').textContent = data.detail || '登录失败';
+        document.getElementById('loginStatus').className = 'status error';
+        return;
+    }
 
-                // 重新更新预览
-                if (inputId.startsWith('edit-new')) {
-                    // 编辑弹窗中的新增文件
-                    if (type === 'image') {
-                        updateEditImagePreview();
-                    } else {
-                        updateEditDocPreview();
-                    }
-                } else {
-                    // 主页面上传
-                    updateFilePreview(inputId, previewListId, [], type);
-                }
-            };
+    authToken = data.access_token;
+    authUsername = data.username;
+    authRole = data.role;
+    localStorage.setItem('authToken', authToken);
+    localStorage.setItem('authUsername', authUsername);
+    localStorage.setItem('authRole', authRole);
 
-            wrapper.appendChild(delBtn);
-        }
-        // ============ 图片拖放 ============
-        function handleImageDrop(event) {
-            event.preventDefault();
-            const newFiles = event.dataTransfer.files;
-            if (newFiles.length === 0) return;
-            
-            // 获取当前input元素
-            const input = document.getElementById('files');
-            
-            // 创建DataTransfer对象来合并文件
-            const dt = new DataTransfer();
-            
-            // 先添加已有的文件
-            Array.from(input.files).forEach(file => {
-                dt.items.add(file);
-            });
-            
-            // 再添加新文件
-            Array.from(newFiles).forEach(file => {
-                // 检查是否是图片
-                if (!file.type.startsWith('image/')) return;
-                
-                // 检查是否重复
-                const isDuplicate = Array.from(input.files).some(existingFile => 
-                    existingFile.name === file.name && 
-                    existingFile.size === file.size && 
-                    existingFile.lastModified === file.lastModified
-                );
-                
-                if (!isDuplicate) {
-                    dt.items.add(file);
-                }
-            });
-            
-            // 更新input的文件列表
-            input.files = dt.files;
-            
-            // 更新预览
-            updateFilePreview('files', 'preview-images', [], 'image');
-        }
+    document.getElementById('loginStatus').textContent = `登录成功 (${authRole})`;
+    document.getElementById('loginStatus').className = 'status ok';
+    showLoggedIn(true);
+    await loadOptions();
+    await checkRejectedRecords();
+}
 
-        // ============ 文档拖放 ============
-        function handleDocDrop(event) {
-            event.preventDefault();
-            const newFiles = event.dataTransfer.files;
-            if (newFiles.length === 0) return;
-            
-            // 获取当前input元素
-            const input = document.getElementById('docFiles');
-            
-            // 创建DataTransfer对象来合并文件
-            const dt = new DataTransfer();
-            
-            // 先添加已有的文件
-            Array.from(input.files).forEach(file => {
-                dt.items.add(file);
-            });
-            
-            // 再添加新文件
-            Array.from(newFiles).forEach(file => {
-                // 检查是否是支持的文档类型
-                const ext = file.name.toLowerCase();
-                if (!['.pdf', '.docx', '.doc', '.zip'].some(e => ext.endsWith(e))) return;
-                
-                // 检查是否重复
-                const isDuplicate = Array.from(input.files).some(existingFile => 
-                    existingFile.name === file.name && 
-                    existingFile.size === file.size && 
-                    existingFile.lastModified === file.lastModified
-                );
-                
-                if (!isDuplicate) {
-                    dt.items.add(file);
-                }
-            });
-            
-            // 更新input的文件列表
-            input.files = dt.files;
-            
-            // 更新预览
-            updateFilePreview('docFiles', 'doc-preview-list', [], 'doc');
-        }
+function logout() {
+    authToken = '';
+    authUsername = '';
+    authRole = '';
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authUsername');
+    localStorage.removeItem('authRole');
+    showLoggedIn(false);
+    document.getElementById('rejectedBadge').style.display = 'none';
+}
 
-        // 页面加载时确保提示文字显示
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.preview-container p').forEach(p => p.style.display = 'block');
-        });
+async function ensureLoginByToken() {
+    if (!authToken) {
+        showLoggedIn(false);
+        return;
+    }
+    try {
+        const res = await fetch('/rejected_records', { headers: authHeaders() });
+        if (res.status === 401) return logout();
+        showLoggedIn(true);
+        await loadOptions();
+        await checkRejectedRecords();
+    } catch (_) {
+        logout();
+    }
+}
 
-        // 关闭大图模态框（你已有）
-        document.querySelector('.close').addEventListener('click', () => {
-            document.getElementById('imageModal').style.display = 'none';
-        });
-        window.onclick = event => {
-            if (event.target === document.getElementById('imageModal')) {
-                document.getElementById('imageModal').style.display = 'none';
-            }
-        };
-        // ========== 登录 ==========
-        async function login() {
-            const user = document.getElementById('username').value;
-            const pwd = document.getElementById('password').value;
-            if (!user || !pwd) {
-                alert('请输入用户名和密码');
-                return;
-            }
-            try {
-                const res = await fetch('/login', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({username: user, password: pwd})
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    // 保存认证信息到本地存储
-                    authToken = data.access_token;
-                    authUsername = user;
-                    localStorage.setItem('authToken', authToken);
-                    localStorage.setItem('authUsername', authUsername);
-                    localStorage.setItem('authRole', data.role);
-                    
-                    currentUser = {name: user, role: data.role, token: data.access_token};
-                    document.getElementById('login-status').textContent = `✅ 已登录 (${data.role})`;
-                    
-                    // 更新用户信息显示
-                    document.getElementById('current-user-display').textContent = user;
-                    document.getElementById('current-user-role').textContent = `(${data.role})`;
-                    
-                    // 登录成功后显示主表单，隐藏登录区
-                    document.getElementById('main-form').style.display = 'block';
-                    document.getElementById('login-section').style.display = 'none';
-                    
-                    loadOptions();
-                    checkRejectedRecords();
+async function loadOptions() {
+    const res = await fetch('/options');
+    optionCache = await res.json();
+    selectOptions('type', optionCache.type);
+    selectOptions('object', optionCache.object);
+    selectOptions('purpose', optionCache.purpose);
+    selectOptions('customer_type', optionCache.customer_type);
 
-                    setInterval(checkRejectedRecords, 30000);
-                } else {
-                    alert('登录失败: ' + (data.detail || '未知错误'));
-                }
-            } catch (err) {
-                alert('网络错误: ' + err.message);
-            }
-        }
+    selectOptions('edit_type', optionCache.type);
+    selectOptions('edit_object', optionCache.object);
+    selectOptions('edit_purpose', optionCache.purpose);
+    selectOptions('edit_customer_type', optionCache.customer_type);
 
-        // ========== 登出 ==========
-        function logout() {
-            // 清除本地存储
-            clearAuthStorage();
-            
-            currentUser = null;
-            document.getElementById('main-form').style.display = 'none';
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('login-status').textContent = '';
-            document.getElementById('queryFrom').reset();
-            document.getElementById('preview-images').innerHTML = '';
-            document.getElementById('doc-preview-list').innerHTML = '';
-            // 隐藏被拒数据提示
-            document.getElementById('rejectedAlert').style.display = 'none';
-        }
+    if (authRole === 'admin') addOptionButtons();
+}
 
-        // ========== 加载选项 ==========
-        async function loadOptions() {
-            try {
-                const res = await fetch('/options');
-                const opts = await res.json();
-                populateSelect('type', opts.type);
-                populateSelect('object', opts.object);
-                populateSelect('purpose', opts.purpose);
-                populateSelect('customer_type', opts.customer_type);
-                if (currentUser && currentUser.role === 'admin') {
-                    showAdminButtons(opts);
-                }
-            } catch (err) {
-                console.error('加载选项失败:', err);
-            }
-        }
+function addOptionButtons() {
+    ['type', 'object', 'purpose', 'customer_type'].forEach(id => {
+        if (document.getElementById(id + '_btn')) return;
+        const btn = document.createElement('button');
+        btn.id = id + '_btn';
+        btn.type = 'button';
+        btn.className = 'btn';
+        btn.textContent = '管理选项';
+        btn.onclick = () => editOptions(id);
+        document.querySelector(`label[for="${id}"]`)?.appendChild(btn);
+    });
+}
 
-        function populateSelect(id, items) {
-            const sel = document.getElementById(id);
-            sel.innerHTML = '<option value="">--请选择--</option>';
-            items.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item;
-                opt.textContent = item;
-                sel.appendChild(opt);
-            });
-        }
+async function editOptions(category) {
+    const current = optionCache[category] || [];
+    const text = prompt(`编辑 ${category} 选项（每行一个）`, current.join('\n'));
+    if (text === null) return;
+    const items = text.split('\n').map(v => v.trim()).filter(Boolean);
+    if (!items.length) return alert('至少保留一个选项');
 
-        function showAdminButtons(opts) {
-            const categories = ['type', 'object', 'purpose', 'customer_type'];
-            categories.forEach(cat => {
-                let btn = document.getElementById(`${cat}-admin-btn`);
-                if (!btn) {
-                    btn = document.createElement('button');
-                    btn.id = `${cat}-admin-btn`;
-                    btn.className = 'admin-btn';
-                    btn.textContent = '⚙️ 管理';
-                    btn.onclick = () => openOptionEditor(cat, opts[cat]);
-                    const label = document.querySelector(`label[for="${cat}"]`);
-                    if (label) {
-                        // 在 label 后插入按钮
-                        label.parentNode.insertBefore(btn, label.nextSibling);
-                    }
-                }
-            });
-        }
+    const res = await fetch(`/options/${category}`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(items)
+    });
+    const data = await res.json();
+    if (!res.ok) return alert(data.detail || '更新失败');
+    await loadOptions();
+}
 
-        function openOptionEditor(category, currentItems) {
-            // 创建一个模态框替代prompt
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 500px;
-                max-width: 90%;
-                background: white;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                z-index: 10000;
-            `;
-            
-            const title = document.createElement('h3');
-            title.textContent = `编辑 "${category}" 选项`;
-            title.style.marginTop = '0';
-            title.style.marginBottom = '15px';
-            title.style.color = '#333';
-            
-            const textarea = document.createElement('textarea');
-            textarea.style.cssText = `
-                width: 100%;
-                height: 200px;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-family: monospace;
-                font-size: 14px;
-                resize: vertical;
-                margin-bottom: 15px;
-            `;
-            textarea.value = currentItems.join('\n');
-            
-            const helpText = document.createElement('div');
-            helpText.textContent = '每行输入一个选项，可以添加或删除选项';
-            helpText.style.fontSize = '12px';
-            helpText.style.color = '#666';
-            helpText.style.marginBottom = '15px';
-            
-            const buttons = document.createElement('div');
-            buttons.style.textAlign = 'right';
-            
-            const saveBtn = document.createElement('button');
-            saveBtn.textContent = '保存';
-            saveBtn.style.cssText = `
-                padding: 8px 16px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-right: 10px;
-            `;
-            
-            const cancelBtn = document.createElement('button');
-            cancelBtn.textContent = '取消';
-            cancelBtn.style.cssText = `
-                padding: 8px 16px;
-                background-color: #f44336;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            `;
-            
-            buttons.appendChild(saveBtn);
-            buttons.appendChild(cancelBtn);
-            
-            modal.appendChild(title);
-            modal.appendChild(textarea);
-            modal.appendChild(helpText);
-            modal.appendChild(buttons);
-            document.body.appendChild(modal);
-            
-            // 保存按钮点击事件
-            saveBtn.onclick = function() {
-                const newItemsStr = textarea.value;
-                const items = newItemsStr.split('\n')
-                    .map(x => x.trim())
-                    .filter(x => x);
-                    
-                if (items.length === 0) {
-                    alert('至少保留一个选项');
-                    return;
-                }
-                
-                // 发送更新请求
-                fetch(`/options/${category}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}`
-                    },
-                    body: JSON.stringify(items)
-                })
-                .then(r => r.json())
-                .then(() => {
-                    // 关闭模态框
-                    document.body.removeChild(modal);
-                    
-                    // 重新加载选项
-                    loadOptions();
-                    
-                    // 显示成功提示
-                    const successMsg = document.createElement('div');
-                    successMsg.textContent = '✅ 选项更新成功';
-                    successMsg.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background-color: #4CAF50;
-                        color: white;
-                        padding: 10px 20px;
-                        border-radius: 4px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                        z-index: 10001;
-                    `;
-                    document.body.appendChild(successMsg);
-                    
-                    // 3秒后自动消失
-                    setTimeout(() => {
-                        location.reload();
-                    }, 100);
-                })
-                .catch(err => {
-                    alert('❌ 更新失败: ' + err.message);
-                });
-            };
-            
-            // 取消按钮点击事件
-            cancelBtn.onclick = function() {
-                document.body.removeChild(modal);
-            };
-            
-            // 点击模态框外部关闭
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
-                }
-            });
-            
-            // ESC键关闭
-            document.addEventListener('keydown', function escHandler(e) {
-                if (e.key === 'Escape') {
-                    document.body.removeChild(modal);
-                    document.removeEventListener('keydown', escHandler);
-                }
-            });
-            
-            // 自动聚焦到文本框
-            textarea.focus();
-            textarea.select();
-        }
+function syncInputFiles(input, files) {
+    const dt = new DataTransfer();
+    files.forEach(f => dt.items.add(f));
+    input.files = dt.files;
+}
 
-        // ========== 粘贴截图支持 ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('preview-container');
-            const inputElement = document.getElementById('files');
-            const previewImages = document.getElementById('preview-images');
+function dedupeFiles(input, incoming, acceptDoc = false) {
+    const existing = Array.from(input.files || []);
+    const map = new Map();
+    [...existing, ...incoming].forEach(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        const docOk = acceptDoc && /\.(pdf|docx|doc|zip)$/i.test(file.name);
+        const imgOk = file.type.startsWith('image/');
+        if ((acceptDoc ? docOk : imgOk) && !map.has(key)) map.set(key, file);
+    });
+    syncInputFiles(input, Array.from(map.values()));
+}
 
-            container.addEventListener('paste', function(event) {
-                const clipboardData = event.clipboardData || window.clipboardData;
-                if (!clipboardData) return;
+function renderImagePreview() {
+    const input = document.getElementById('imgInput');
+    const box = document.getElementById('imgPreview');
+    box.innerHTML = '';
 
-                const items = clipboardData.items;
-                if (!items) return;
+    Array.from(input.files || []).forEach(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        const wrap = document.createElement('div');
+        wrap.className = 'preview-card';
 
-                let imageFile = null;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') === 0) {
-                        imageFile = items[i].getAsFile();
-                        break;
-                    }
-                }
+        const img = document.createElement('img');
+        const reader = new FileReader();
+        reader.onload = e => img.src = e.target.result;
+        reader.readAsDataURL(file);
 
-                if (!imageFile) return;
+        const name = document.createElement('div');
+        name.className = 'preview-name';
+        name.textContent = file.name;
 
-                const fingerprint = `${imageFile.name}-${imageFile.size}-${imageFile.lastModified}`;
-                const existingFiles = Array.from(inputElement.files || []);
-                const seenFiles = new Map();
-
-                existingFiles.forEach(f => {
-                    const fp = `${f.name}-${f.size}-${f.lastModified}`;
-                    seenFiles.set(fp, f);
-                });
-
-                if (seenFiles.has(fingerprint)) {
-                    console.log("粘贴的图片已被添加，跳过");
-                    return;
-                }
-
-                const dt = new DataTransfer();
-                existingFiles.forEach(f => dt.items.add(f));
-                dt.items.add(imageFile);
-                inputElement.files = dt.files;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const placeholder = document.querySelector('#preview-container > p');
-                    if (placeholder && previewImages.children.length === 0) {
-                        placeholder.remove();
-                    }
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'preview-image';
-                    img.title = imageFile.name;
-                    img.onclick = function() {
-                        const modal = document.getElementById('imageModal');
-                        const modalImg = document.getElementById('modalImage');
-                        modalImg.src = e.target.result;
-                        modal.style.display = 'block';
-                    };
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.textContent = 'X';
-                    removeBtn.className = 'remove-btn';
-                    removeBtn.onclick = function() {
-                        const newDt = new DataTransfer();
-                        const currentFiles = Array.from(inputElement.files);
-                        currentFiles.forEach(f => {
-                            const fp = `${f.name}-${f.size}-${f.lastModified}`;
-                            if (fp !== fingerprint) {
-                                newDt.items.add(f);
-                            }
-                        });
-                        inputElement.files = newDt.files;
-                        const container = img.parentElement;
-                        if (container) container.remove();
-
-                        if (previewImages.children.length === 0) {
-                            const containerDiv = document.getElementById('preview-container');
-                            if (!containerDiv.querySelector('p')) {
-                                const p = document.createElement('p');
-                                p.textContent = '拖放图片或粘贴截图';
-                                containerDiv.insertBefore(p, previewImages);
-                            }
-                        }
-                    };
-
-                    const container = document.createElement('div');
-                    container.style.display = 'flex';
-                    container.style.alignItems = 'center';
-                    container.appendChild(img);
-                    container.appendChild(removeBtn);
-                    previewImages.appendChild(container);
-                };
-                reader.readAsDataURL(imageFile);
-            });
-        });
-
-        // ========== 表单提交 ==========
-        document.getElementById('queryFrom').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            // ✅ 强制检查登录状态
-            if (!currentUser || !currentUser.token) {
-                alert('请先登录后再上传数据！');
-                // 显示登录区域
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('main-form').style.display = 'none';
-                return;
-            }
-            
-            try {
-                const type = document.getElementById('type').value;
-                const object = document.getElementById('object').value;
-                const purpose = document.getElementById('purpose').value;
-                const customerType = document.getElementById('customer_type').value;
-                const replyLogic = document.getElementById('reply_logic').value.trim();
-                const featureExplanation = document.getElementById('feature_explanation').value.trim();
-                const example = document.getElementById('example').value.trim();
-                const notes = document.getElementById('notes').value.trim();
-                const keyword = document.getElementById('keyword').value;
-                const problemText = document.getElementById('problem').value;
-
-                if (!type || !object || !purpose || !customerType) {
-                    throw new Error('请填写完整必填字段');
-                }
-                if (!replyLogic || !featureExplanation) {
-                    throw new Error('"回复逻辑框架"和"说明功能"为必填项');
-                }
-
-                const problem = problemText.split('\n').filter(p => p.trim() !== '');
-
-                const record = {
-                    type,
-                    object,
-                    purpose,
-                    customer_type: customerType,
-                    reply_logic: replyLogic,
-                    feature_explanation: featureExplanation,
-                    example,
-                    notes,
-                    keyword: keyword || '',
-                    problem
-                };
-
-                let imageUrlList = ["N/A"];
-                let fileUrlList = ["N/A"];
-
-                // 上传图片
-                const filesInput = document.getElementById('files');
-                const imageFiles = filesInput.files;
-                if (imageFiles.length > 0) {
-                    const imageFormData = new FormData();
-                    Array.from(imageFiles).forEach(file => imageFormData.append('files', file));
-                    const imageResponse = await fetch('/upload_images', {
-                        method: 'POST',
-                        body: imageFormData
-                    });
-                    const imageResult = await imageResponse.json();
-                    if (!imageResponse.ok) throw new Error(imageResult.detail || '图片上传失败');
-                    imageUrlList = imageResult.image_paths;
-                }
-
-                // 上传文档
-                const docInput = document.getElementById('docFiles');
-                const docFiles = docInput.files;
-                if (docFiles.length > 0) {
-                    const docFormData = new FormData();
-                    Array.from(docFiles).forEach(file => docFormData.append('files', file));
-                    const docResponse = await fetch('/upload_documents', {
-                        method: 'POST',
-                        body: docFormData
-                    });
-                    const docResult = await docResponse.json();
-                    if (!docResponse.ok) throw new Error(docResult.detail || '文档上传失败');
-                    fileUrlList = docResult.document_paths;
-                }
-
-                record.image_url = imageUrlList;
-                record.file_url = fileUrlList;
-
-                const formData = new FormData();
-                formData.append('records_json', JSON.stringify([record]));
-                const dbs = document.querySelectorAll('input[name="selected_dbs"]:checked');
-                dbs.forEach(db => formData.append('selected_dbs', db.value));
-
-                // 附加文件（虽冗余，但保留以兼容后端）
-                Array.from(imageFiles).forEach(f => formData.append('files', f));
-                Array.from(docFiles).forEach(f => formData.append('doc_files', f));
-
-                // 发送请求时强制包含认证头
-                const response = await fetch('/upload_json', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${currentUser.token}`
-                    },
-                    body: formData
-                });
-
-                // 处理401未授权错误
-                if (response.status === 401) {
-                    alert('登录已过期，请重新登录');
-                    logout();
-                    return;
-                }
-
-                const result = await response.json();
-                if (response.ok) {
-                    alert(`🎉 成功提交审核，等待管理员处理`);
-                    // 重置表单
-                    document.getElementById('queryFrom').reset();
-                    document.getElementById('preview-images').innerHTML = '';
-                    document.getElementById('doc-preview-list').innerHTML = '';
-                } else {
-                    throw new Error(result.detail || '上传失败');
-                }
-            } catch (error) {
-                console.error("Submit error:", error);
-                alert(`❌ 错误: ${error.message}`);
-            }
-        });
-
-        // ========== 模态框 ==========
-        const modal = document.getElementById('imageModal');
-        const closeBtn = document.querySelector('.close');
-        closeBtn.onclick = function() {
-            modal.style.display = 'none';
-        };
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove';
+        btn.textContent = '×';
+        btn.onclick = () => {
+            const files = Array.from(input.files).filter(f => `${f.name}-${f.size}-${f.lastModified}` !== key);
+            syncInputFiles(input, files);
+            renderImagePreview();
         };
 
-        // ========== 被拒数据处理 ==========
-        async function checkRejectedRecords() {
-            try {
-                const res = await fetch('/rejected_records', {
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
-                });
-                
-                // 如果返回401，说明token过期
-                if (res.status === 401) {
-                    // 清除本地存储并登出
-                    clearAuthStorage();
-                    logout();
-                    alert('登录已过期，请重新登录');
-                    return;
-                }
-                
-                const data = await res.json();
-                const alertBtn = document.getElementById('rejectedAlert');
-                if (data.rejected && Array.isArray(data.rejected) && data.rejected.length > 0) {
-                    alertBtn.style.display = 'block';
-                    window.rejectedData = data.rejected; // 临时存储供弹窗使用
-                } else {
-                    alertBtn.style.display = 'none';
-                }
-            } catch (err) {
-                console.log('检查被拒数据失败:', err);
-            }
-        }
+        wrap.appendChild(img);
+        wrap.appendChild(name);
+        wrap.appendChild(btn);
+        box.appendChild(wrap);
+    });
+}
 
-        // 点击感叹号弹窗
-        document.getElementById('rejectedAlert')?.addEventListener('click', function() {
-            if (!window.rejectedData || window.rejectedData.length === 0) return;
-            
-            let html = `
-                <div style="max-width: 900px; margin: 0 auto;">
-                    <h5 style="color: #d32f2f; margin-bottom: 20px;">您有 ${window.rejectedData.length} 条被拒数据：</h5>
-                    <div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">
-            `;
-            
-            window.rejectedData.forEach((item, idx) => {
-                // 新增：获取拒绝原因（兼容旧数据）
-                const rejectReason = item.reject_reason || item.reason || "管理员未填写拒绝原因";
-                const rejectedBy = item.rejected_by || item.admin || "未知管理员";
-                const rejectedAt = item.rejected_at ? new Date(item.rejected_at).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }) : "未知时间";
-                html += `
-                    <div style="margin-bottom: 30px; padding: 20px; border: 2px solid #ffcdd2; border-radius: 12px; background-color: #fff5f5; box-shadow: 0 4px 12px rgba(211,47,47,0.1); position: relative;">
-            
-                        <!-- 新增：拒绝原因大红条 -->
-                        <div style="background: linear-gradient(90deg, #d32f2f, #f44336); color: white; padding: 12px 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 8px rgba(211,47,47,0.3);">
-                            拒绝原因：${rejectReason}>>
-                            <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
-                                由 ${rejectedBy} 于 ${rejectedAt} 拒绝
-                            </div>
-                        </div>
-                        <button onclick="editRejectedRecord('${item.uploader}', '${item.id}', ${idx})" 
-                                style="background: white; color: #d32f2f; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                            修改
-                        </button>
-                    <div style="margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff9f9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <h4 style="color: #d32f2f; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #ffcdd2; padding-bottom: 8px;">
-                            功能: ${item.data.object || 'N/A'}
-                        </h4>
-                        
-                        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; margin-bottom: 12px;">
-                            <div style="font-weight: bold; color: #555;">类型:</div>
-                            <div>${item.data.type || 'N/A'}</div>
-                            
-                            <div style="font-weight: bold; color: #555;">应用场景:</div>
-                            <div>${item.data.purpose || 'N/A'}</div>
-                            
-                            <div style="font-weight: bold; color: #555;">客户类型:</div>
-                            <div>${item.data.customer_type || 'N/A'}</div>
-                            
-                            <div style="font-weight: bold; color: #555;">关键词:</div>
-                            <div>${item.data.keyword || 'N/A'}</div>
-                            
-                            <div style="font-weight: bold; color: #555;">上传时间:</div>
-                            <div>${new Date(item.timestamp).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</div>
-                        </div>
-                        
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-weight: bold; color: #555; margin-bottom: 5px;">类似问题:</div>
-                            <div style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">
-                                ${item.data.problem ? item.data.problem.map(p => `• ${p}`).join('<br>') : 'N/A'}
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-weight: bold; color: #555; margin-bottom: 5px;">回复内容:</div>
-                            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 4px; white-space: pre-wrap; line-height: 1.5;">
-                                ${item.data.text || 'N/A'}
-                            </div>
-                        </div>
-                        
-                        <!-- 图片显示区域 -->
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-weight: bold; color: #555; margin-bottom: 8px;">图片:</div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                ${item.data.image_url && item.data.image_url.length > 0 && item.data.image_url[0] !== "N/A" ? 
-                                    item.data.image_url.map(url => {
-                                        const fileName = url.split('/').pop();
-                                        return `
-                                            <div style="position: relative; width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; cursor: pointer;">
-                                                <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" 
-                                                     onclick="showRejectedImageModal('${url}', '${fileName}')">
-                                                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; font-size: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                    ${fileName}
-                                                </div>
-                                            </div>
-                                        `;
-                                    }).join('') : 
-                                    '<span style="color: #999;">无图片</span>'
-                                }
-                            </div>
-                        </div>
-                        
-                        <!-- 文档显示区域 -->
-                        <div>
-                            <div style="font-weight: bold; color: #555; margin-bottom: 8px;">文档:</div>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                ${item.data.file_url && item.data.file_url.length > 0 && item.data.file_url[0] !== "N/A" ? 
-                                    item.data.file_url.map(url => {
-                                        const fileName = url.split('/').pop();
-                                        return `
-                                            <a href="${url}" target="_blank" style="color: #1976d2; text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 5px 10px; background: #f5f5f5; border-radius: 4px;">
-                                                📄 ${fileName}
-                                            </a>
-                                        `;
-                                    }).join('') : 
-                                    '<span style="color: #999;">无文档</span>'
-                                }
-                            </div>
-                        </div>
+function renderDocPreview() {
+    const input = document.getElementById('docInput');
+    const box = document.getElementById('docPreview');
+    box.innerHTML = '';
+    Array.from(input.files || []).forEach(file => {
+        const key = `${file.name}-${file.size}-${file.lastModified}`;
+        const item = document.createElement('div');
+        item.className = 'doc-item';
+        item.innerHTML = `<span>${escapeHtml(file.name)}</span>`;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn danger';
+        btn.textContent = '删除';
+        btn.onclick = () => {
+            const files = Array.from(input.files).filter(f => `${f.name}-${f.size}-${f.lastModified}` !== key);
+            syncInputFiles(input, files);
+            renderDocPreview();
+        };
+        item.appendChild(btn);
+        box.appendChild(item);
+    });
+}
+
+async function submitUpload(event) {
+    event.preventDefault();
+    if (!authToken) return alert('请先登录');
+
+    const dbs = selectedDbs('#dbChecks input:checked');
+    if (!dbs.length) return alert('请至少选择一个目标数据库');
+
+    const record = {
+        type: document.getElementById('type').value,
+        object: document.getElementById('object').value,
+        purpose: document.getElementById('purpose').value,
+        customer_type: document.getElementById('customer_type').value,
+        reply_logic: document.getElementById('reply_logic').value.trim(),
+        feature_explanation: document.getElementById('feature_explanation').value.trim(),
+        example: document.getElementById('example').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+        keyword: document.getElementById('keyword').value.trim(),
+        problem: parseProblems(document.getElementById('problem').value)
+    };
+
+    if (!record.reply_logic || !record.feature_explanation) {
+        return alert('回复逻辑框架和功能说明为必填项');
+    }
+
+    const formData = new FormData();
+    formData.append('records_json', JSON.stringify([record]));
+    dbs.forEach(db => formData.append('selected_dbs', db));
+    Array.from(document.getElementById('imgInput').files || []).forEach(f => formData.append('files', f));
+    Array.from(document.getElementById('docInput').files || []).forEach(f => formData.append('doc_files', f));
+
+    const res = await fetch('/upload_json', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        document.getElementById('submitStatus').textContent = data.detail || '提交失败';
+        document.getElementById('submitStatus').className = 'status error';
+        return;
+    }
+
+    document.getElementById('submitStatus').textContent = '已提交审核';
+    document.getElementById('submitStatus').className = 'status ok';
+    resetForm();
+    await checkRejectedRecords();
+}
+
+function resetForm() {
+    document.getElementById('uploadForm').reset();
+    renderImagePreview();
+    renderDocPreview();
+}
+
+async function checkRejectedRecords() {
+    if (!authToken) return;
+    const res = await fetch('/rejected_records', { headers: authHeaders() });
+    if (res.status === 401) return logout();
+    const data = await res.json();
+    rejectedCache = data.rejected || [];
+    document.getElementById('rejectedBadge').style.display = rejectedCache.length ? 'inline-block' : 'none';
+}
+
+function renderRejectedModal() {
+    const body = document.getElementById('rejectedBody');
+    if (!rejectedCache.length) {
+        body.innerHTML = '<div class="hint">暂无被拒记录</div>';
+        return;
+    }
+
+    body.innerHTML = rejectedCache.map((item, idx) => {
+        const files = [...(item.data?.image_url || []), ...(item.data?.file_url || [])]
+            .filter(u => u && u !== 'N/A')
+            .map(u => `<a class="file-link" href="${u}" target="_blank">${escapeHtml((u || '').split('/').pop())}</a>`)
+            .join('');
+        return `
+            <article class="panel" style="margin-bottom:8px;">
+                <div class="panel-body">
+                    <div style="display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <strong>#${idx + 1} · ${escapeHtml(item.data?.object || '')}</strong>
+                        <button class="btn primary" onclick="openRejectedEdit('${escapeAttr(item.id)}')">修改后重提</button>
                     </div>
-                `;
-            });
-            
-            html += `
-                    </div>
-                    <div style="text-align: center; margin-top: 20px; color: #d32f2f; font-weight: bold;">
-                        ⚠️ 被拒记录仅管理员可清除，请根据拒绝原因修改后重新上传
-                    </div>
+                    <div class="hint" style="margin-top:6px; color:#b91c1c;">拒绝原因: ${escapeHtml(item.reject_reason || '管理员未填写')}</div>
+                    <div style="margin-top:6px; font-size:13px;">类型: ${escapeHtml(item.data?.type || '')} ｜ 场景: ${escapeHtml(item.data?.purpose || '')}</div>
+                    <div style="margin-top:6px; font-size:13px; white-space:pre-wrap;">回复逻辑: ${escapeHtml(item.data?.reply_logic || '')}</div>
+                    ${files ? `<div class="toolbar" style="margin-top:8px;">${files}</div>` : ''}
                 </div>
-            `;
+            </article>
+        `;
+    }).join('');
+}
 
-            // 创建弹窗
-            let modal = document.getElementById('rejectedModal');
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = 'rejectedModal';
-                modal.style.cssText = `
-                    position: fixed; 
-                    top: 50%; 
-                    left: 50%; 
-                    transform: translate(-50%, -50%); 
-                    width: 90%; 
-                    max-width: 1000px; 
-                    background: white; 
-                    padding: 30px; 
-                    border: 1px solid #ddd; 
-                    border-radius: 10px; 
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
-                    z-index: 10001; 
-                    max-height: 90vh; 
-                    overflow: auto;
-                `;
-                document.body.appendChild(modal);
-            }
-            
-            modal.innerHTML = html + `
-                <span style="
-                    position: absolute; 
-                    top: 15px; 
-                    right: 20px; 
-                    font-size: 28px; 
-                    cursor: pointer; 
-                    color: #999;
-                    transition: color 0.2s;
-                " 
-                onmouseover="this.style.color='#333'" 
-                onmouseout="this.style.color='#999'"
-                onclick="this.parentElement.style.display='none'"
-                >×</span>
-            `;
-            
-            modal.style.display = 'block';
-            
-            // 点击背景关闭弹窗
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
+function openRejectedEdit(recordId) {
+    const rec = rejectedCache.find(r => String(r.id) === String(recordId));
+    if (!rec) return;
 
-        // 显示被拒数据图片的模态框
-        function showRejectedImageModal(url, fileName) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.9);
-                z-index: 10002;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            `;
-            
-            const title = document.createElement('div');
-            title.textContent = fileName;
-            title.style.cssText = `
-                color: white;
-                font-size: 18px;
-                margin-bottom: 20px;
-                text-align: center;
-                max-width: 80%;
-                word-wrap: break-word;
-            `;
-            
-            const img = document.createElement('img');
-            img.src = url;
-            img.style.cssText = `
-                max-width: 90%;
-                max-height: 80%;
-                object-fit: contain;
-                border: 2px solid white;
-                box-shadow: 0 0 20px rgba(255,255,255,0.3);
-            `;
-            
-            modal.appendChild(title);
-            modal.appendChild(img);
-            document.body.appendChild(modal);
-            
-            modal.onclick = function() {
-                document.body.removeChild(modal);
-            };
-            
-            // ESC键关闭
-            document.addEventListener('keydown', function escHandler(e) {
-                if (e.key === 'Escape') {
-                    document.body.removeChild(modal);
-                    document.removeEventListener('keydown', escHandler);
-                }
-            });
+    document.getElementById('editRecordId').value = rec.id;
+    document.getElementById('editUploader').value = rec.uploader || authUsername;
+    document.getElementById('edit_type').value = rec.data?.type || '';
+    document.getElementById('edit_object').value = rec.data?.object || '';
+    document.getElementById('edit_purpose').value = rec.data?.purpose || '';
+    document.getElementById('edit_customer_type').value = rec.data?.customer_type || '';
+    document.getElementById('edit_reply_logic').value = rec.data?.reply_logic || '';
+    document.getElementById('edit_feature_explanation').value = rec.data?.feature_explanation || '';
+    document.getElementById('edit_example').value = rec.data?.example || '';
+    document.getElementById('edit_notes').value = rec.data?.notes || '';
+    document.getElementById('edit_keyword').value = rec.data?.keyword || '';
+    document.getElementById('edit_problem').value = (rec.data?.problem || []).join('\n');
+    document.getElementById('editNewImages').value = '';
+    document.getElementById('editNewDocs').value = '';
+    document.getElementById('editStatus').textContent = '';
+
+    const selected = rec.selected_dbs || [];
+    document.getElementById('editDbChecks').innerHTML = DBS.map(db => {
+        const checked = selected.includes(db.v) ? 'checked' : '';
+        return `<label><input type="checkbox" value="${db.v}" ${checked} /> ${db.t}</label>`;
+    }).join('');
+
+    const keepUrls = [...(rec.data?.image_url || []), ...(rec.data?.file_url || [])]
+        .filter(u => u && u !== 'N/A');
+    document.getElementById('editKeepFiles').innerHTML = keepUrls.length
+        ? keepUrls.map(url => `<label style="display:block; margin-bottom:5px;"><input type="checkbox" checked data-url="${escapeAttr(url)}" /> ${escapeHtml((url || '').split('/').pop() || url)}</label>`).join('')
+        : '<span class="hint">无可保留附件</span>';
+
+    closeModal('rejectedModal');
+    document.getElementById('editModal').style.display = 'block';
+}
+
+async function submitResubmission() {
+    const oldId = document.getElementById('editRecordId').value;
+    const uploader = document.getElementById('editUploader').value;
+    const dbs = selectedDbs('#editDbChecks input:checked');
+    if (!dbs.length) return alert('请至少选择一个目标数据库');
+
+    const recordData = {
+        type: document.getElementById('edit_type').value,
+        object: document.getElementById('edit_object').value,
+        purpose: document.getElementById('edit_purpose').value,
+        customer_type: document.getElementById('edit_customer_type').value,
+        reply_logic: document.getElementById('edit_reply_logic').value.trim(),
+        feature_explanation: document.getElementById('edit_feature_explanation').value.trim(),
+        example: document.getElementById('edit_example').value.trim(),
+        notes: document.getElementById('edit_notes').value.trim(),
+        keyword: document.getElementById('edit_keyword').value.trim(),
+        problem: parseProblems(document.getElementById('edit_problem').value)
+    };
+
+    const formData = new FormData();
+    formData.append('old_record_id', oldId);
+    formData.append('uploader', uploader);
+    dbs.forEach(v => formData.append('selected_dbs', v));
+    formData.append('record_data', JSON.stringify(recordData));
+
+    Array.from(document.querySelectorAll('#editKeepFiles input:checked')).forEach(cb => {
+        const url = cb.dataset.url;
+        if (/\.(png|jpg|jpeg|gif|bmp|webp|svg)$/i.test(url)) {
+            formData.append('keep_image_urls', url);
+        } else {
+            formData.append('keep_file_urls', url);
         }
+    });
 
-        async function clearRejectedData() {
-            alert('普通用户无法清除被拒记录，请联系管理员或根据拒绝原因修改后重新上传');
-            return;
+    Array.from(document.getElementById('editNewImages').files || []).forEach(f => formData.append('new_images', f));
+    Array.from(document.getElementById('editNewDocs').files || []).forEach(f => formData.append('new_docs', f));
+
+    const res = await fetch('/resubmit_rejected', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        document.getElementById('editStatus').textContent = data.detail || data.message || '重提失败';
+        document.getElementById('editStatus').className = 'status error';
+        return;
+    }
+
+    document.getElementById('editStatus').textContent = '重提成功';
+    document.getElementById('editStatus').className = 'status ok';
+    closeModal('editModal');
+    await checkRejectedRecords();
+}
+
+function escapeHtml(text) {
+    return String(text || '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+}
+function escapeAttr(text) { return escapeHtml(text).replace(/"/g, '&quot;'); }
+
+const imgInput = document.getElementById('imgInput');
+const docInput = document.getElementById('docInput');
+
+imgInput.addEventListener('change', e => { dedupeFiles(imgInput, Array.from(e.target.files || []), false); renderImagePreview(); });
+docInput.addEventListener('change', e => { dedupeFiles(docInput, Array.from(e.target.files || []), true); renderDocPreview(); });
+
+document.getElementById('imgDrop').addEventListener('dragover', e => { e.preventDefault(); });
+document.getElementById('imgDrop').addEventListener('drop', e => { e.preventDefault(); dedupeFiles(imgInput, Array.from(e.dataTransfer.files || []), false); renderImagePreview(); });
+document.getElementById('imgDrop').addEventListener('paste', e => {
+    const files = [];
+    Array.from(e.clipboardData?.items || []).forEach(item => {
+        if (item.type.startsWith('image/')) {
+            const f = item.getAsFile();
+            if (f) files.push(f);
         }
-        
-        
-        
-        // 编辑弹窗 - 新增图片拖放
-        function handleEditImageDrop(event) {
-            event.preventDefault();
-            const dt = event.dataTransfer;
-            if (dt.files.length > 0) {
-                const input = document.getElementById('edit-new-images-input');
-                const newDt = new DataTransfer();
-                Array.from(input.files).forEach(f => newDt.items.add(f));
-                Array.from(dt.files).forEach(file => {
-                    if (file.type.startsWith('image/')) {
-                        const duplicate = Array.from(input.files).some(f => 
-                            f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
-                        );
-                        if (!duplicate) newDt.items.add(file);
-                    }
-                });
-                input.files = newDt.files;
-                updateEditImagePreview();
-            }
-        }
+    });
+    if (files.length) {
+        dedupeFiles(imgInput, files, false);
+        renderImagePreview();
+    }
+});
 
-        // 编辑弹窗 - 新增文档拖放
-        function handleEditDocDrop(event) {
-            event.preventDefault();
-            const dt = event.dataTransfer;
-            if (dt.files.length > 0) {
-                const input = document.getElementById('edit-new-docs-input');
-                const newDt = new DataTransfer();
-                Array.from(input.files).forEach(f => newDt.items.add(f));
-                Array.from(dt.files).forEach(file => {
-                    const ext = file.name.toLowerCase();
-                    if (['.pdf', '.docx', '.zip'].some(e => ext.endsWith(e))) {
-                        const duplicate = Array.from(input.files).some(f => 
-                            f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
-                        );
-                        if (!duplicate) newDt.items.add(file);
-                    }
-                });
-                input.files = newDt.files;
-                updateEditDocPreview();
-            }
-        }
+document.getElementById('docDrop').addEventListener('dragover', e => { e.preventDefault(); });
+document.getElementById('docDrop').addEventListener('drop', e => { e.preventDefault(); dedupeFiles(docInput, Array.from(e.dataTransfer.files || []), true); renderDocPreview(); });
 
-        // 更新新增图片预览
-        function updateEditImagePreview() {
-            const input = document.getElementById('edit-new-images-input');
-            const preview = document.getElementById('edit-new-images-preview');
-            preview.innerHTML = '';
-            if (input.files.length === 0) {
-                preview.parentElement.querySelector('p').style.display = 'block';
-                return;
-            }
-            preview.parentElement.querySelector('p').style.display = 'none';
+document.getElementById('uploadForm').addEventListener('submit', submitUpload);
+document.getElementById('rejectedBadge').addEventListener('click', () => { renderRejectedModal(); document.getElementById('rejectedModal').style.display = 'block'; });
+window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
-            Array.from(input.files).forEach(file => {
-                const wrapper = document.createElement('div');
-                const reader = new FileReader();
-                reader.onload = e => {
-                    wrapper.innerHTML = `
-                        <img src="${e.target.result}" style="width:130px; height:130px; object-fit:cover; border-radius:8px;">
-                        <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:white; padding:4px; font-size:12px; text-align:center; border-radius:0 0 8px 8px;">
-                            ${file.name}
-                        </div>
-                    `;
-                    addDeleteButton(wrapper, file, 'edit-new-images-input', 'edit-new-images-preview', 'image');
-                    wrapper.style.position = 'relative';
-                };
-                reader.readAsDataURL(file);
-                preview.appendChild(wrapper);
-            });
-        }
-
-        // 更新新增文档预览
-        function updateEditDocPreview() {
-            const input = document.getElementById('edit-new-docs-input');
-            const preview = document.getElementById('edit-new-docs-preview');
-            preview.innerHTML = '';
-            if (input.files.length === 0) {
-                preview.parentElement.querySelector('p').style.display = 'block';
-                return;
-            }
-            preview.parentElement.querySelector('p').style.display = 'none';
-
-            Array.from(input.files).forEach(file => {
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = 'display:flex; align-items:center; gap:12px; padding:12px; background:#f8fff8; border:1px solid #d0e8d0; border-radius:8px;';
-                wrapper.innerHTML = `
-                    <span style="font-size:36px;">📄</span>
-                    <span style="flex:1; font-weight:500;">${file.name}</span>
-                `;
-                addDeleteButton(wrapper, file, 'edit-new-docs-input', 'edit-new-docs-preview', 'doc');
-                preview.appendChild(wrapper);
-            });
-        }
-        // ============== 被拒数据编辑弹窗（复用管理后台弹窗）==============
-        async function editRejectedRecord(uploader, recordId, index) {
-            try {
-                const res = await fetch(`/rejected_record/${uploader}/${recordId}`, {
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                });
-                if (!res.ok) throw new Error("获取记录失败");
-                const item = await res.json();
-
-                // 解析四段式文本
-                const textParts = item.data.text.split('\n        ');
-                const replyLogic = textParts[0].replace('回复内容：', '').trim();
-                const featureExplanation = textParts[1]?.replace('说明功能：', '').trim() || '';
-                const example = textParts[2]?.replace('举例说明/视频链接：', '').trim() || '';
-                const notes = textParts[3]?.replace('注意事项：', '').trim() || '';
-
-                const modal = document.createElement('div');
-                modal.id = 'tempEditModal';
-                modal.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:950px;background:white;padding:30px;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,0.4);z-index:10002;max-height:95vh;overflow:auto;font-family:Arial,sans-serif;';
-                
-                modal.innerHTML = `
-                    <h2 style="margin-top:0;color:#d32f2f;border-bottom:2px solid #ffcdd2;padding-bottom:10px;">修改被拒记录并重新上传</h2>
-                    
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
-                        <div><label>问题类型</label>
-                            <select id="edit_type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">${document.querySelector('#type').innerHTML}</select>
-                        </div>
-                        <div><label>具体功能&相关模块</label>
-                            <select id="edit_object" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">${document.querySelector('#object').innerHTML}</select>
-                        </div>
-                        <div><label>应用场景</label>
-                            <select id="edit_purpose" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">${document.querySelector('#purpose').innerHTML}</select>
-                        </div>
-                        <div><label>客户类型</label>
-                            <select id="edit_customer_type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;">${document.querySelector('#customer_type').innerHTML}</select>
-                        </div>
-                    </div>
-
-                    <!-- 数据库选择（新增） -->
-                    <div style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px; border-left:4px solid #007bff;">
-                        <label style="font-weight:bold; color:#1976d2;">目标数据库（可多选）</label>
-                        <div style="margin-top:10px; line-height:2;">
-                            <label><input type="checkbox" class="edit-db-checkbox" value="rag_bge_m3_structured_v4_1"> 融航期货交易平台</label><br>
-                            <label><input type="checkbox" class="edit-db-checkbox" value="rag_bge_m3_structured_v4_2"> 融航AMS资管平台</label><br>
-                            <label><input type="checkbox" class="edit-db-checkbox" value="rag_bge_m3_structured_v4_3"> 融航HMS资产管理平台</label><br>
-                            <label><input type="checkbox" class="edit-db-checkbox" value="rag_bge_m3_structured_v4_4"> 核算模块</label><br>
-                            <label><input type="checkbox" class="edit-db-checkbox" value="rag_bge_m3_structured_v4_5"> 随心易终端</label>
-                            <label><input type="checkbox" class="edit-db-checkbox" value="TEST"> 多模态混合测试</label>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom:15px;">
-                        <label>回复逻辑框架（必填）</label>
-                        <textarea id="edit_reply_logic" style="width:100%;height:80px;padding:10px;border:1px solid #ddd;border-radius:4px;">${replyLogic}</textarea>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <label>说明功能（必填）</label>
-                        <textarea id="edit_feature_explanation" style="width:100%;height:80px;padding:10px;border:1px solid #ddd;border-radius:4px;">${featureExplanation}</textarea>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <label>举例说明/视频链接（选填）</label>
-                        <textarea id="edit_example" style="width:100%;height:60px;padding:10px;border:1px solid #ddd;border-radius:4px;">${example}</textarea>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <label>注意事项（选填）</label>
-                        <textarea id="edit_notes" style="width:100%;height:60px;padding:10px;border:1px solid #ddd;border-radius:4px;">${notes}</textarea>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <label>关键词（逗号分隔）</label>
-                        <input type="text" id="edit_keyword" value="${item.data.keyword || ''}" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;"/>
-                    </div>
-                    <div style="margin-bottom:20px;">
-                        <label>类似问法（每行一个）</label>
-                        <textarea id="edit_problem" style="width:100%;height:100px;padding:10px;border:1px solid #ddd;border-radius:4px;">${(item.data.problem || []).join('\n')}</textarea>
-                    </div>
-
-                    <!-- 当前图片（取消勾选即删除） -->
-                    <div style="margin-bottom:15px;">
-                        <label>当前图片（取消勾选即删除）</label>
-                        <div id="current-images" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;">
-                            ${item.data.image_url && item.data.image_url[0] !== "N/A" ? item.data.image_url.map(url => {
-                                const name = url.split('/').pop();
-                                return `
-                                    <div style="position:relative; border:2px solid #ddd; border-radius:8px; overflow:hidden; background:#fff;">
-                                        <img src="${url}" style="width:130px; height:130px; object-fit:cover; display:block;">
-                                        <div style="padding:6px; background:rgba(0,0,0,0.6); color:white; font-size:12px; text-align:center;">
-                                            ${name}
-                                        </div>
-                                        <input type="checkbox" 
-                                            checked 
-                                            data-type="image" 
-                                            data-url="${url}" 
-                                            style="position:absolute; top:8px; left:8px; width:20px; height:20px; transform:scale(1.4);">
-                                    </div>
-                                `;
-                            }).join('') : '<span style="color:#999; font-size:14px;">无图片</span>'}
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom:20px;">
-                        <label style="color:#2e7d32; font-weight:bold;">新增图片（支持拖拽或粘贴截图）</label>
-                        <input type="file" id="edit-new-images-input" multiple accept="image/*" style="display:none;">
-                        <div class="preview-container" style="margin-top:10px; min-height:120px;" 
-                             ondrop="handleEditImageDrop(event)" 
-                             ondragover="allowDrop(event)" 
-                             onclick="document.getElementById('edit-new-images-input').click()">
-                            <p style="text-align:center; color:#666; margin:20px 0;">拖放图片到此处或点击选择 / 粘贴截图</p>
-                            <div id="edit-new-images-preview" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px;"></div>
-                        </div>
-                    </div>
-
-                    <!-- 当前文档（取消勾选即删除） -->
-                    <div style="margin-bottom:15px;">
-                        <label>当前文档（取消勾选即删除）</label>
-                        <div id="current-docs" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-                            ${item.data.file_url && item.data.file_url[0] !== "N/A" ? item.data.file_url.map(url => {
-                                const name = url.split('/').pop();
-                                return `
-                                    <div style="display:flex; align-items:center; gap:12px; padding:12px; background:#f8fff8; border:1px solid #d0e8d0; border-radius:8px;">
-                                        <input type="checkbox" 
-                                            checked 
-                                            data-type="doc" 
-                                            data-url="${url}" 
-                                            style="width:18px; height:18px; transform:scale(1.3);">
-                                        <span style="flex:1; font-weight:500;">${name}</span>
-                                        <a href="${url}" target="_blank" style="color:#1976d2; text-decoration:none;">查看文档</a>
-                                    </div>
-                                `;
-                            }).join('') : '<span style="color:#999; font-size:14px;">无文档</span>'}
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom:20px;">
-                        <label style="color:#2e7d32; font-weight:bold;">新增文档（.docx / .pdf / .zip）</label>
-                        <input type="file" id="edit-new-docs-input" multiple accept=".docx,.pdf,.zip" style="display:none;">
-                        <div class="preview-container" style="margin-top:10px; min-height:120px;" 
-                             ondrop="handleEditDocDrop(event)" 
-                             ondragover="allowDrop(event)" 
-                             onclick="document.getElementById('edit-new-docs-input').click()">
-                            <p style="text-align:center; color:#666; margin:20px 0;">拖放文档到此处或点击选择</p>
-                            <div id="edit-new-docs-preview" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
-                        </div>
-                    </div>
-
-                    <div style="text-align:right;padding-top:20px;border-top:1px solid #eee;">
-                        <button onclick="document.getElementById('tempEditModal').remove()" 
-                                style="margin-right:15px; padding:10px 20px; background:white; color:#333; border:1px solid #ccc; border-radius:4px; cursor:pointer; font-size:14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                            取消
-                        </button>
-                        <button onclick="reSubmitRejectedFull('${uploader}', '${recordId}', '${item.selected_dbs.join(',')}')" 
-                                style="padding:10px 25px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold;">
-                            确认修改并重新上传
-                        </button>
-                    </div>
-                `;
-
-                document.body.appendChild(modal);
-
-                // 自动填充下拉框
-                setTimeout(() => {
-                    
-                    document.getElementById('edit_type').value = item.data.type || '';
-                    document.getElementById('edit_object').value = item.data.object || '';
-                    document.getElementById('edit_purpose').value = item.data.purpose || '';
-                    document.getElementById('edit_customer_type').value = item.data.customer_type || '';
-                    const originalDbs = item.selected_dbs || [];
-                    document.querySelectorAll('.edit-db-checkbox').forEach(checkbox => {
-                        checkbox.checked = originalDbs.includes(checkbox.value);
-                    });
-                
-                }, 100);
-                // 绑定新增图片的文件选择事件
-                document.getElementById('edit-new-images-input').addEventListener('change', function(e) {
-                    const input = e.target;
-                    const dt = new DataTransfer();
-                    // 合并已有 + 新选（去重）
-                    Array.from(input.files).forEach(f => dt.items.add(f)); // 先保留已有（虽然初始为空）
-                    Array.from(e.target.files).forEach(file => {
-                        const duplicate = Array.from(input.files).some(f => 
-                            f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
-                        );
-                        if (!duplicate) dt.items.add(file);
-                    });
-                    input.files = dt.files;
-                    updateEditImagePreview();
-                });
-
-                // 绑定新增文档的文件选择事件
-                document.getElementById('edit-new-docs-input').addEventListener('change', function(e) {
-                    const input = e.target;
-                    const dt = new DataTransfer();
-                    Array.from(input.files).forEach(f => dt.items.add(f));
-                    Array.from(e.target.files).forEach(file => {
-                        const duplicate = Array.from(input.files).some(f => 
-                            f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
-                        );
-                        if (!duplicate) dt.items.add(file);
-                    });
-                    input.files = dt.files;
-                    updateEditDocPreview();
-                });
-
-                // 支持粘贴截图（复用主页面已有的 paste 监听器逻辑，稍作调整）
-                const imageContainer = document.querySelector('#tempEditModal .preview-container');
-                imageContainer.addEventListener('paste', function(event) {
-                    const items = (event.clipboardData || window.clipboardData).items;
-                    if (!items) return;
-                    let imageFile = null;
-                    for (let i = 0; i < items.length; i++) {
-                        if (items[i].type.indexOf('image') === 0) {
-                            imageFile = items[i].getAsFile();
-                            break;
-                        }
-                    }
-                    if (!imageFile) return;
-
-                    const input = document.getElementById('edit-new-images-input');
-                    const duplicate = Array.from(input.files).some(f => 
-                        f.name === imageFile.name && f.size === imageFile.size && f.lastModified === imageFile.lastModified
-                    );
-                    if (duplicate) return;
-
-                    const dt = new DataTransfer();
-                    Array.from(input.files).forEach(f => dt.items.add(f));
-                    dt.items.add(imageFile);
-                    input.files = dt.files;
-                    updateEditImagePreview();
-                });
-            } catch (err) {
-                alert("加载失败：" + err.message);
-            }
-        }
-
-        async function reSubmitRejectedFull(uploader, oldId, selectedDbs) {
-            if (!confirm("确认修改并重新上传？这将清除原被拒记录")) return;
-
-            const formData = new FormData();
-            // ============ 【关键兜底】必须至少选一个数据库 ============
-            const selectedCheckboxes = document.querySelectorAll('#tempEditModal .edit-db-checkbox:checked');
-            if (selectedCheckboxes.length === 0) {
-                alert('请至少选择一个目标数据库！');
-                return;
-            }
-            // 收集用户最新选择的数据库
-            selectedCheckboxes.forEach(cb => {
-                formData.append('selected_dbs', cb.value);
-            });
-
-            // 基本信息
-            formData.append('old_record_id', oldId);
-            formData.append('uploader', uploader);
-            
-
-            // 四段式内容
-            const recordData = {
-                type: document.getElementById('edit_type').value,
-                object: document.getElementById('edit_object').value,
-                purpose: document.getElementById('edit_purpose').value,
-                customer_type: document.getElementById('edit_customer_type').value,
-                reply_logic: document.getElementById('edit_reply_logic').value.trim(),
-                feature_explanation: document.getElementById('edit_feature_explanation').value.trim(),
-                example: document.getElementById('edit_example').value.trim(),
-                notes: document.getElementById('edit_notes').value.trim(),
-                keyword: document.getElementById('edit_keyword').value,
-                problem: document.getElementById('edit_problem').value.split('\n').map(s => s.trim()).filter(s => s)
-            };
-            formData.append('record_data', JSON.stringify(recordData));
-
-            // 保留的旧图片URL
-            document.querySelectorAll('#current-images input[type="checkbox"]:checked').forEach(cb => {
-                formData.append('keep_image_urls', cb.dataset.url);
-            });
-
-            // 保留的旧文档URL
-            document.querySelectorAll('#current-docs input[type="checkbox"]:checked').forEach(cb => {
-                formData.append('keep_file_urls', cb.dataset.url);
-            });
-
-            // 新增图片（支持拖拽、粘贴、多选）
-            const newImagesInput = document.getElementById('edit-new-images-input');
-            if (newImagesInput && newImagesInput.files) {
-                Array.from(newImagesInput.files).forEach(file => {
-                    formData.append('new_images', file);
-                });
-            }
-
-            // 新增文档
-            const newDocsInput = document.getElementById('edit-new-docs-input');
-            if (newDocsInput && newDocsInput.files) {
-                Array.from(newDocsInput.files).forEach(file => {
-                    formData.append('new_docs', file);
-                });
-            }
-
-            try {
-                const res = await fetch('/resubmit_rejected', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: formData
-                });
-
-                const result = await res.json();
-                if (res.ok) {
-                    alert('修改成功！已重新提交审核');
-                    document.getElementById('tempEditModal').remove();
-                    checkRejectedRecords();  // 刷新红点
-                } else {
-                    alert('提交失败：' + (result.detail || result.message));
-                }
-            } catch (err) {
-                alert('网络错误：' + err.message);
-            }
-        }
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0c1865ef35e2e9',t:'MTc2MzUxNzQzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ensureLoginByToken();
+setInterval(checkRejectedRecords, 30000);
+</script>
+</body>
 </html>

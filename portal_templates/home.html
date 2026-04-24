@@ -1,77 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>RAG 系统统一门户</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG 统一门户</title>
     <style>
-        body{font-family:Arial;background:#f0f2f5;margin:0}
-        .container{max-width:1200px;margin:60px auto;padding:20px;text-align:center}
-        h1{color:#1a73e8}
-        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px;margin-top:60px}
-        .card{background:white;padding:50px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.12);cursor:pointer;transition:0.3s}
-        .card:hover{transform:translateY(-15px);box-shadow:0 20px 40px rgba(0,0,0,0.2)}
-        .card h2{font-size:28px;margin:25px 0 15px;color:#333}
-        .card p{color:#666;font-size:17px}
-        .user-info{position:fixed;top:15px;right:20px;background:rgba(0,0,0,0.75);color:white;padding:12px 25px;border-radius:30px;font-size:15px}
-        .logout{margin-left:15px;color:#ff5252;cursor:pointer;font-weight:bold}
+        :root {
+            --bg: #f3f7fb;
+            --card: #ffffff;
+            --line: #dbe4ee;
+            --text: #0f172a;
+            --muted: #475569;
+            --a: #0ea5e9;
+            --b: #059669;
+            --c: #f59e0b;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--text); background: var(--bg); }
+        .head {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 24px;
+            align-items: center;
+        }
+        .head .user { color: var(--muted); font-size: 14px; }
+        .role { margin-left: 8px; padding: 4px 10px; border-radius: 999px; background: #e0f2fe; color: #0369a1; }
+        .logout { border: 1px solid #fecaca; background: #fff1f2; color: #be123c; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+        .container { max-width: 1100px; margin: 28px auto 46px; padding: 0 18px; }
+        h1 { margin: 0 0 8px; font-size: 34px; }
+        .sub { margin: 0; color: var(--muted); }
+        .grid {
+            margin-top: 24px;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+        .tag { display: inline-block; padding: 4px 10px; font-size: 12px; border-radius: 999px; margin-bottom: 12px; }
+        .tag.upload { background: rgba(14,165,233,.12); color: #0369a1; }
+        .tag.search { background: rgba(5,150,105,.12); color: #047857; }
+        .tag.admin { background: rgba(245,158,11,.14); color: #b45309; }
+        .card h2 { margin: 0 0 10px; font-size: 22px; }
+        .card p { margin: 0; color: var(--muted); line-height: 1.6; }
     </style>
 </head>
 <body>
-<div class="user-info">
-    当前用户：<span id="user">加载中...</span>
-    <span style="margin-left:10px;padding:4px 12px;background:#1890ff;color:white;border-radius:20px;font-size:13px;">
-        <span id="role">admin</span>
-    </span>
-    <span class="logout" onclick="location.href='/logout'">[退出]</span>
+<div class="head">
+    <div class="user">
+        当前用户: <strong id="user">加载中...</strong>
+        <span class="role" id="role">ROLE</span>
+    </div>
+    <button class="logout" onclick="location.href='/logout'">退出登录</button>
 </div>
 
 <div class="container">
-    <h1>欢迎使用 RAG 知识库系统</h1>
-    <p style="font-size:19px;color:#555">登录成功！点击下方模块直接进入（已自动登录）</p>
+    <h1>RAG 协同工作台</h1>
+    <p class="sub">已登录成功，请选择要进入的系统模块</p>
 
     <div class="grid">
         <div class="card" onclick="openModule('http://192.168.1.100:8001')">
-            <h2>数据上传中心</h2>
-            <p>结构化知识录入 + 审核驳回</p>
+            <span class="tag upload">UPLOAD · 8001</span>
+            <h2>数据采集端</h2>
+            <p>结构化录入、附件上传、待审入队。支持被拒数据回改后重新提交。</p>
         </div>
 
         <div class="card" onclick="openModule('http://192.168.1.100:8003')">
-            <h2>智能查询系统</h2>
-            <p>支持文字 + 图片OCR 多库检索</p>
+            <span class="tag search">SEARCH · 8003</span>
+            <h2>智能查询端</h2>
+            <p>支持文本 + OCR 图片查询，并按文档聚合展示 chunk，结果更清晰。</p>
         </div>
 
         <div class="card" onclick="openModule('http://192.168.1.100:5000/app_reject_928_2.html')">
-            <h2>数据审批管理</h2>
-            <p>审核待入库数据、编辑、删除</p>
+            <span class="tag admin">ADMIN · 5000</span>
+            <h2>审批与管理端</h2>
+            <p>处理待审数据、批量通过/拒绝、文档分组管理、用户权限维护。</p>
         </div>
     </div>
 </div>
 
 <script>
-function getUser() {
-    const name = localStorage.getItem('authUsername') || '未知用户';
-    const role = localStorage.getItem('authRole') || '';
-    document.getElementById('user').textContent = name;
-    document.getElementById('role').textContent = role.toUpperCase();
-}
-getUser();
+(function bindUser() {
+    const username = localStorage.getItem('authUsername') || '未知用户';
+    const role = (localStorage.getItem('authRole') || 'user').toUpperCase();
+    document.getElementById('user').textContent = username;
+    document.getElementById('role').textContent = role;
+})();
 
 function openModule(url) {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        alert('认证信息已丢失，请重新登录');
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+        alert('认证信息缺失，请重新登录');
         location.href = '/';
         return;
     }
+
     const win = window.open(url, '_blank');
-    // 关键：把 token 注入到新打开的页面（适配所有三个前端）
-    win.onload = () => {
-        try {
-            win.localStorage.setItem('authToken', token);
-            win.localStorage.setItem('authUsername', localStorage.getItem('authUsername'));
-            win.localStorage.setItem('authRole', localStorage.getItem('authRole'));
-        } catch(e) { console.log('注入token成功') }
+    if (!win) {
+        alert('浏览器拦截了新窗口，请允许弹窗后重试');
+        return;
+    }
+
+    const payload = {
+        authToken: authToken,
+        flaskToken: localStorage.getItem('flaskToken') || '',
+        authUsername: localStorage.getItem('authUsername') || '',
+        authRole: localStorage.getItem('authRole') || ''
     };
+
+    const inject = () => {
+        try {
+            Object.entries(payload).forEach(([k, v]) => win.localStorage.setItem(k, v));
+        } catch (_) {}
+    };
+
+    inject();
+    setTimeout(inject, 300);
+    setTimeout(inject, 1000);
 }
 </script>
 </body>
