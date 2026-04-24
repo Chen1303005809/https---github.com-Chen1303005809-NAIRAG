@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RAG 系统统一登录</title>
+    <style>
+        body{background:linear-gradient(135deg,#667eea,#764ba2);font-family:Arial;margin:0;display:flex;align-items:center;justify-content:center;height:100vh}
+        .box{background:white;padding:60px 50px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,0.3);width:420px;text-align:center}
+        h1{color:#333;margin-bottom:30px}
+        input{margin:15px 0;padding:15px;border:1px solid #ddd;border-radius:8px;width:100%;box-sizing:border-box;font-size:16px}
+        button{width:100%;padding:16px;background:#1890ff;color:white;border:none;border-radius:8px;cursor:pointer;font-size:18px;margin-top:20px}
+        button:hover{background:#1677e0}
+        .tips{margin-top:25px;color:#666;font-size:14px}
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1> RAG 系统统一登录</h1>
+    <form action="/login" method="post">
+        <input type="text" name="username" placeholder="用户名" required>
+        <input type="password" name="password" placeholder="密码" required>
+        <button type="submit">立即登录</button>
+    </form>
+    <div class="tips">
+        默认账号：<br>
+        admin / admin123<br>
+        user1 / user123
+    </div>
+</div>
+</body>
+</html>

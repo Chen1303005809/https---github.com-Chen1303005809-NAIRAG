@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG 问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        async function submitQuery() {
+            const queryInput = document.getElementById('query').value;
+            const sessionId = document.getElementById('sessionId').value || 'user1';
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p class="text-gray-500">加载中...</p>';
+
+            if (!queryInput.trim()) {
+                resultDiv.innerHTML = '<p class="text-red-500">请输入有效的问题！</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: queryInput, session_id: sessionId })
+                });
+                const data = await response.json();
+
+                if (data.message) {
+                    resultDiv.innerHTML = `<p class="text-green-500">${data.message}</p>`;
+                    return;
+                }
+
+                let output = `<h3 class="text-lg font-bold mb-2">回答：</h3><p class="mb-4">${data.answer}</p>`;
+                output += '<h3 class="text-lg font-bold mb-2">搜索结果：</h3>';
+                data.search_results.forEach((res, index) => {
+                    output += `
+                        <div class="border p-4 mb-4 rounded">
+                            <p><strong>分数：</strong>${res.score.toFixed(4)}</p>
+                            <p><strong>类型：</strong>${res.type}</p>
+                            <p><strong>对象：</strong>${res.object}</p>
+                            <p><strong>操作目的：</strong>${res.purpose}</p>
+                            <p><strong>说明：</strong>${res.note}</p>
+                            <p><strong>内容：</strong>${res.steps}</p>
+                        </div>
+                    `;
+                });
+                resultDiv.innerHTML = output;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">错误：${error.message}</p>`;
+            }
+        }
+
+        function clearHistory() {
+            document.getElementById('query').value = 'clear';
+            submitQuery();
+            document.getElementById('query').value = '';
+        }
+    </script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow">
+        <h1 class="text-2xl font-bold mb-4">RAG 问答系统</h1>
+        <div class="mb-4">
+            <label for="sessionId" class="block text-sm font-medium text-gray-700">会话ID</label>
+            <input id="sessionId" type="text" value="user1" class="mt-1 p-2 w-full border rounded">
+        </div>
+        <div class="mb-4">
+            <label for="query" class="block text-sm font-medium text-gray-700">请输入您的问题</label>
+            <textarea id="query" class="mt-1 p-2 w-full border rounded" rows="4" placeholder="输入问题或输入 'clear' 清空上下文"></textarea>
+        </div>
+        <div class="flex space-x-4">
+            <button onclick="submitQuery()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">提交</button>
+            <button onclick="clearHistory()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">清空历史</button>
+        </div>
+        <div id="result" class="mt-6"></div>
+    </div>
+</body>
+</html>

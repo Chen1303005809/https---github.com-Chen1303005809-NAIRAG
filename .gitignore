@@ -1,0 +1,11 @@
+*.db
+*.pdf
+*.jpg
+*.png
+*.zip
+*.sh
+*.log
+__pycache__
+review_pending
+PaddleOCR/*
+static/documents

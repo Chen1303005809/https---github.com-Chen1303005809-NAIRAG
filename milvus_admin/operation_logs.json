@@ -1,0 +1,5136 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-09-11T09:07:40.974Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296260,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296260的记录"
+  },
+  {
+    "id": 2,
+    "timestamp": "2025-09-11T09:07:52.486Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296300,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296300的记录"
+  },
+  {
+    "id": 3,
+    "timestamp": "2025-09-11T09:08:35.544Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296260,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296260的记录"
+  },
+  {
+    "id": 4,
+    "timestamp": "2025-09-11T09:08:44.195Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296300,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296300的记录"
+  },
+  {
+    "id": 5,
+    "timestamp": "2025-09-11T09:08:48.667Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296300,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296300的记录"
+  },
+  {
+    "id": 6,
+    "timestamp": "2025-09-12T15:51:36.423144",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test111, 类型: test"
+  },
+  {
+    "id": 7,
+    "timestamp": "2025-09-12T06:51:35.059Z",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test111, 类型: test"
+  },
+  {
+    "id": 8,
+    "timestamp": "2025-09-12T15:52:15.349344",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test112, 类型: test"
+  },
+  {
+    "id": 9,
+    "timestamp": "2025-09-12T06:52:13.983Z",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test112, 类型: test"
+  },
+  {
+    "id": 10,
+    "timestamp": "2025-09-12T16:09:19.229576",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test113, 类型: test"
+  },
+  {
+    "id": 11,
+    "timestamp": "2025-09-12T07:09:17.845Z",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test113, 类型: test"
+  },
+  {
+    "id": 12,
+    "timestamp": "2025-09-12T16:09:31.094566",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 13,
+    "timestamp": "2025-09-12T07:09:29.710Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 14,
+    "timestamp": "2025-09-12T16:09:39.620711",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 15,
+    "timestamp": "2025-09-12T07:09:38.234Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 16,
+    "timestamp": "2025-09-12T16:37:54.627293",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test114, 类型: test"
+  },
+  {
+    "id": 17,
+    "timestamp": "2025-09-12T07:37:53.207Z",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test114, 类型: test"
+  },
+  {
+    "id": 18,
+    "timestamp": "2025-09-12T16:38:00.279055",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 19,
+    "timestamp": "2025-09-12T07:37:58.857Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 20,
+    "timestamp": "2025-09-12T16:38:08.452733",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 21,
+    "timestamp": "2025-09-12T07:38:07.029Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 22,
+    "timestamp": "2025-09-12T16:38:33.136295",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      458853557223296000,
+      458853557223296200,
+      458853557223296200,
+      458853557223296260
+    ],
+    "details": "批量删除了 4 条记录"
+  },
+  {
+    "id": 23,
+    "timestamp": "2025-09-12T07:38:31.711Z",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      458853557223296000,
+      458853557223296200,
+      458853557223296200,
+      458853557223296260
+    ],
+    "details": "批量删除了 4 条记录"
+  },
+  {
+    "id": 24,
+    "timestamp": "2025-09-12T16:41:28.161995",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test115, 类型: test"
+  },
+  {
+    "id": 25,
+    "timestamp": "2025-09-12T07:41:26.734Z",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "修改了对象: test115, 类型: test"
+  },
+  {
+    "id": 26,
+    "timestamp": "2025-09-12T16:41:37.178393",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 27,
+    "timestamp": "2025-09-12T07:41:35.750Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 28,
+    "timestamp": "2025-09-12T16:58:03.730869",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 29,
+    "timestamp": "2025-09-12T07:58:02.281Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 30,
+    "timestamp": "2025-09-12T16:58:52.179352",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      458853557223296000
+    ],
+    "details": "批量删除了 1 条记录"
+  },
+  {
+    "id": 31,
+    "timestamp": "2025-09-12T07:58:50.727Z",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      458853557223296000
+    ],
+    "details": "批量删除了 1 条记录"
+  },
+  {
+    "id": 32,
+    "timestamp": "2025-09-15T10:27:19.165019",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 33,
+    "timestamp": "2025-09-15T01:27:19.354Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 34,
+    "timestamp": "2025-09-15T10:28:18.748220",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 35,
+    "timestamp": "2025-09-15T01:28:18.938Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 36,
+    "timestamp": "2025-09-15T11:19:27.706116",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 37,
+    "timestamp": "2025-09-15T02:19:27.756Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 38,
+    "timestamp": "2025-09-15T15:23:39.841851",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 39,
+    "timestamp": "2025-09-15T06:23:39.934Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 40,
+    "timestamp": "2025-09-15T16:08:22.173256",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 41,
+    "timestamp": "2025-09-15T07:08:22.248Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 42,
+    "timestamp": "2025-09-15T16:18:42.766359",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 43,
+    "timestamp": "2025-09-15T07:18:42.815Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 44,
+    "timestamp": "2025-09-15T16:34:39.861595",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 45,
+    "timestamp": "2025-09-15T07:34:39.881Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296000,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296000的记录"
+  },
+  {
+    "id": 46,
+    "timestamp": "2025-09-15T16:43:22.162798",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223295978,
+    "record_ids": [],
+    "details": "删除了ID=458853557223295978的记录"
+  },
+  {
+    "id": 47,
+    "timestamp": "2025-09-15T16:50:06.768638",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 48,
+    "timestamp": "2025-09-15T07:50:06.754Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 49,
+    "timestamp": "2025-09-15T16:57:42.756635",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 50,
+    "timestamp": "2025-09-15T07:57:42.728Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 51,
+    "timestamp": "2025-09-15T17:00:00.813075",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 52,
+    "timestamp": "2025-09-15T08:00:00.779Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 53,
+    "timestamp": "2025-09-15T17:33:00.811459",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296060,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296060的记录"
+  },
+  {
+    "id": 54,
+    "timestamp": "2025-09-15T08:33:00.745Z",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296060,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296060的记录"
+  },
+  {
+    "id": 55,
+    "timestamp": "2025-09-15T17:44:24.777560",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296600,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296600的记录"
+  },
+  {
+    "id": 56,
+    "timestamp": "2025-09-15T18:43:24.827559",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296559,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296559的记录"
+  },
+  {
+    "id": 57,
+    "timestamp": "2025-09-15T18:45:31.281112",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296176,
+    "record_ids": [],
+    "details": "修改了对象: 测试二次图片100, 类型: 测试"
+  },
+  {
+    "id": 58,
+    "timestamp": "2025-09-15T18:45:54.136947",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296176,
+    "record_ids": [],
+    "details": "修改了对象: 测试二次图片100, 类型: 测试"
+  },
+  {
+    "id": 59,
+    "timestamp": "2025-09-16T10:26:15.850765",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      "458853557223296277"
+    ],
+    "details": "批量删除了 1 条记录"
+  },
+  {
+    "id": 60,
+    "timestamp": "2025-09-16T11:48:36.701120",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": null,
+    "record_ids": [
+      "458853557223296628",
+      "458853557223296631"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 61,
+    "timestamp": "2025-09-16T15:53:06.767014",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296579,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296579的记录"
+  },
+  {
+    "id": 62,
+    "timestamp": "2025-09-16T15:53:26.765416",
+    "user": "editor",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_4",
+    "record_id": 458853557223296573,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296573的记录"
+  },
+  {
+    "id": 63,
+    "timestamp": "2025-09-16T17:47:39.774273",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v3_1",
+    "record_id": 458853557223296612,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296612的记录"
+  },
+  {
+    "id": 64,
+    "timestamp": "2025-09-16T17:48:15.689578",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_1",
+    "record_id": null,
+    "record_ids": [
+      "458853557223296143",
+      "458853557223296600",
+      "458853557223296604",
+      "458853557223296608"
+    ],
+    "details": "批量删除了 4 条记录"
+  },
+  {
+    "id": 65,
+    "timestamp": "2025-09-16T18:15:19.179826",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_1",
+    "record_id": null,
+    "record_ids": [
+      "458853557223296139",
+      "458853557223296596"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 66,
+    "timestamp": "2025-09-16T18:16:06.767549",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v3_2",
+    "record_id": null,
+    "record_ids": [
+      "458853557223296141",
+      "458853557223296145",
+      "458853557223296598",
+      "458853557223296602",
+      "458853557223296606",
+      "458853557223296610",
+      "458853557223296614"
+    ],
+    "details": "批量删除了 7 条记录"
+  },
+  {
+    "id": 67,
+    "timestamp": "2025-09-23T11:59:06.786088",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296775,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296775的记录"
+  },
+  {
+    "id": 68,
+    "timestamp": "2025-09-23T17:34:18.842080",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296878,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296878的记录"
+  },
+  {
+    "id": 69,
+    "timestamp": "2025-09-23T17:35:03.571310",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296779,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 70,
+    "timestamp": "2025-09-23T17:35:21.213342",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296779,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 71,
+    "timestamp": "2025-09-23T17:35:28.769790",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297004,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297004的记录"
+  },
+  {
+    "id": 72,
+    "timestamp": "2025-09-24T16:08:24.209585",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296812,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 73,
+    "timestamp": "2025-09-24T16:09:24.251300",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297070,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 74,
+    "timestamp": "2025-09-24T16:36:51.707921",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 458853557223297075,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297075的记录"
+  },
+  {
+    "id": 75,
+    "timestamp": "2025-09-24T16:38:21.867635",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": 458853557223297077,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297077的记录"
+  },
+  {
+    "id": 76,
+    "timestamp": "2025-09-25T16:35:33.112745",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 458853557223297065,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 77,
+    "timestamp": "2025-09-25T17:24:54.205684",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 458853557223297697,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 78,
+    "timestamp": "2025-09-25T17:24:57.283792",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297699,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 79,
+    "timestamp": "2025-09-25T17:26:33.192550",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297705,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 80,
+    "timestamp": "2025-09-26T10:34:27.275639",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297001,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 81,
+    "timestamp": "2025-09-26T10:35:57.115857",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297711,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 82,
+    "timestamp": "2025-09-26T12:23:15.141751",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 458853557223296781,
+    "record_ids": [],
+    "details": "修改了对象: 风控设置, 类型: 解释概念"
+  },
+  {
+    "id": 83,
+    "timestamp": "2025-09-26T14:16:12.179042",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297714,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 84,
+    "timestamp": "2025-09-26T14:16:57.215019",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297721,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 85,
+    "timestamp": "2025-09-26T14:33:48.226517",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297724,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 86,
+    "timestamp": "2025-09-26T17:45:49.094005",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 87,
+    "timestamp": "2025-09-26T17:46:46.925096",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 88,
+    "timestamp": "2025-09-26T17:52:19.851007",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 89,
+    "timestamp": "2025-09-26T17:53:06.905939",
+    "user": "admin",
+    "type": "reject",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 90,
+    "timestamp": "2025-09-28T11:29:48.548584",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 91,
+    "timestamp": "2025-09-28T11:30:24.803564",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 458853557223297826,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297826的记录"
+  },
+  {
+    "id": 92,
+    "timestamp": "2025-09-28T12:06:12.177742",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7ff12efa-a5d8-43b4-9210-5cd643d75fa9"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 93,
+    "timestamp": "2025-09-28T12:23:08.525143",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ec08e0b2-8e16-4b3a-95d4-61d21626c777"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 94,
+    "timestamp": "2025-09-28T12:51:49.772529",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b539854f-3d99-4b0d-8624-528beb214dba"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 95,
+    "timestamp": "2025-09-28T12:52:46.876755",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "be50af88-b96e-4832-9e56-b4c21cea58b4"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 96,
+    "timestamp": "2025-09-28T13:01:44.615244",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "29c5db37-63ca-479a-8591-db2f560053cb"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 97,
+    "timestamp": "2025-09-28T14:29:04.713101",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "9571a2cb-b6e4-4bd0-ae1b-a62962749349"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 98,
+    "timestamp": "2025-09-28T14:30:30.356322",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "e2b4c6a4-9f4b-4bf3-952e-03b1eaff9d37"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 99,
+    "timestamp": "2025-09-28T14:57:34.094337",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "331bd331-2b45-4793-bb12-326b7e6fd91f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 100,
+    "timestamp": "2025-09-28T15:19:12.991869",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "104f54fb-3ccf-4e73-9219-98c4f9b186f9"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 101,
+    "timestamp": "2025-09-28T15:20:59.140087",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "5250bca3-e3c7-49f3-9383-99e4f792bb11",
+      "a670e7c7-86e1-4f49-8684-0ea222489c62"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 102,
+    "timestamp": "2025-11-25T17:57:51.085648",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297760,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297760的记录"
+  },
+  {
+    "id": 103,
+    "timestamp": "2025-11-25T17:58:41.091450",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297729,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297729的记录"
+  },
+  {
+    "id": 104,
+    "timestamp": "2025-11-25T17:58:48.231683",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297727,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297727的记录"
+  },
+  {
+    "id": 105,
+    "timestamp": "2025-11-25T17:59:13.050204",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296843,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296843的记录"
+  },
+  {
+    "id": 106,
+    "timestamp": "2025-11-25T17:59:45.078174",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296847,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296847的记录"
+  },
+  {
+    "id": 107,
+    "timestamp": "2025-11-25T17:59:58.060171",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223296938,
+    "record_ids": [],
+    "details": "删除了ID=458853557223296938的记录"
+  },
+  {
+    "id": 108,
+    "timestamp": "2025-11-25T18:00:09.085113",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 458853557223297073,
+    "record_ids": [],
+    "details": "删除了ID=458853557223297073的记录"
+  },
+  {
+    "id": 109,
+    "timestamp": "2025-11-25T18:13:03.499527",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "e4adfb26-e996-4a40-89e5-4fa7f92b3395"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 110,
+    "timestamp": "2025-11-25T18:16:30.969659",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 111,
+    "timestamp": "2025-11-25T18:16:31.151195",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 112,
+    "timestamp": "2025-11-25T18:16:31.285916",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 113,
+    "timestamp": "2025-11-25T18:32:53.596140",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "2cc2e1db-a23d-442e-8ab0-1f2c7b109701",
+      "4c7632c7-c2f9-49d3-9827-b63f5447657d",
+      "014feecf-49d5-4e14-90d7-62c3814fd1c0"
+    ],
+    "details": "拒绝 3 条审核记录"
+  },
+  {
+    "id": 114,
+    "timestamp": "2025-11-25T18:46:26.914427",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7137b775-69d9-4d59-a9a0-9ad577d37162"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 115,
+    "timestamp": "2025-11-26T14:18:25.167765",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 116,
+    "timestamp": "2025-11-26T15:01:08.102354",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183670,
+    "record_ids": [],
+    "details": "删除了ID=462273400771183670的记录"
+  },
+  {
+    "id": 117,
+    "timestamp": "2025-11-26T15:01:09.232202",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183670,
+    "record_ids": [],
+    "details": "删除了ID=462273400771183670的记录"
+  },
+  {
+    "id": 118,
+    "timestamp": "2025-11-26T15:01:36.072522",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183668,
+    "record_ids": [],
+    "details": "删除了ID=462273400771183668的记录"
+  },
+  {
+    "id": 119,
+    "timestamp": "2025-11-26T15:27:42.679699",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 120,
+    "timestamp": "2025-11-26T16:49:52.328105",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "a803c64d-73d2-4dcb-ab7f-c591a94b73c1",
+      "273c6123-8809-414c-bef0-9518c79e5654",
+      "1506ca73-e89c-429c-a95c-176f4ca70e63"
+    ],
+    "details": "拒绝 3 条审核记录"
+  },
+  {
+    "id": 121,
+    "timestamp": "2025-11-27T11:22:15.497085",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183666,
+    "record_ids": [],
+    "details": "修改了对象: 自设套利, 类型: 交易终端/管理平台功能咨询类"
+  },
+  {
+    "id": 122,
+    "timestamp": "2025-11-27T11:23:14.425649",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183764,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 123,
+    "timestamp": "2025-11-27T11:24:18.550366",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183886,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 124,
+    "timestamp": "2025-11-27T11:58:27.458623",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183889,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 125,
+    "timestamp": "2025-11-27T11:59:02.485563",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183892,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 126,
+    "timestamp": "2025-11-27T12:04:11.415036",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183895,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 127,
+    "timestamp": "2025-11-27T12:05:26.594802",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183898,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 128,
+    "timestamp": "2025-11-27T12:08:50.427289",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183901,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 129,
+    "timestamp": "2025-11-27T17:41:54.980646",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b7914d02-fe47-4e4f-8ccd-9a4aa5307a0f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 130,
+    "timestamp": "2025-11-27T18:22:13.361065",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "c9bfd3a1-14cc-41e6-968d-d5adcb987651"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 131,
+    "timestamp": "2025-11-28T14:17:17.656680",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "73703cb5-d035-4008-8805-0125cc9560ba"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 132,
+    "timestamp": "2025-11-28T14:46:41.710786",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "288f1b02-c955-4f3d-aad3-9510723c719e"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 133,
+    "timestamp": "2025-11-28T14:58:36.538782",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 134,
+    "timestamp": "2025-11-28T14:58:36.541588",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 135,
+    "timestamp": "2025-11-28T14:58:46.728700",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 136,
+    "timestamp": "2025-11-28T14:58:46.939107",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 137,
+    "timestamp": "2025-11-28T14:58:47.022826",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 138,
+    "timestamp": "2025-11-28T14:58:47.074155",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 139,
+    "timestamp": "2025-11-28T14:58:47.165782",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 140,
+    "timestamp": "2025-11-28T14:58:47.170783",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 141,
+    "timestamp": "2025-11-28T14:58:55.688449",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 142,
+    "timestamp": "2025-11-28T14:58:55.730686",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 143,
+    "timestamp": "2025-11-28T14:58:55.772384",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 144,
+    "timestamp": "2025-11-28T14:58:55.846169",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 145,
+    "timestamp": "2025-11-28T14:58:55.992355",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 146,
+    "timestamp": "2025-11-28T15:00:06.196301",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": null,
+    "record_ids": [
+      "462273400771183964",
+      "462273400771183965",
+      "462273400771183968",
+      "462273400771183970",
+      "462273400771183972",
+      "462273400771183974",
+      "462273400771183976",
+      "462273400771183978",
+      "462273400771183980",
+      "462273400771183982",
+      "462273400771183984",
+      "462273400771183986",
+      "462273400771183988"
+    ],
+    "details": "批量删除了 13 条记录"
+  },
+  {
+    "id": 147,
+    "timestamp": "2025-11-28T17:31:18.769477",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 148,
+    "timestamp": "2025-11-28T18:11:08.932775",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "e9acf2ee-8845-4d33-8bff-d40412a86eb1",
+      "63eb08fa-867d-45e4-8d71-a77384a0ec42"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 149,
+    "timestamp": "2025-12-01T14:25:20.038434",
+    "user": "admin",
+    "type": "create_user",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "创建用户 userA (user)"
+  },
+  {
+    "id": 150,
+    "timestamp": "2025-12-01T14:30:45.510667",
+    "user": "admin",
+    "type": "update_user",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "更新用户 ID=9 角色=editor"
+  },
+  {
+    "id": 151,
+    "timestamp": "2025-12-01T14:46:51.884804",
+    "user": "admin",
+    "type": "create_user",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "创建用户 editor (editor)"
+  },
+  {
+    "id": 152,
+    "timestamp": "2025-12-01T16:21:53.562610",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 458853557223297079,
+    "record_ids": [],
+    "details": "修改了对象: 报表导出, 类型: 操作步骤"
+  },
+  {
+    "id": 153,
+    "timestamp": "2025-12-01T16:22:14.478430",
+    "user": "editor",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771183904,
+    "record_ids": [],
+    "details": "修改了对象: 用户权限, 类型: 故障排查"
+  },
+  {
+    "id": 154,
+    "timestamp": "2025-12-01T16:23:05.187164",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 155,
+    "timestamp": "2025-12-01T16:23:53.471668",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184098,
+    "record_ids": [],
+    "details": "修改了对象: 自设套利, 类型: 咨询类"
+  },
+  {
+    "id": 156,
+    "timestamp": "2025-12-01T16:25:23.465868",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184101,
+    "record_ids": [],
+    "details": "修改了对象: 自设套利, 类型: 咨询类"
+  },
+  {
+    "id": 157,
+    "timestamp": "2025-12-01T17:52:10.149718",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "762131ff-0f0d-4bc0-a313-255996176090",
+      "12035588-ee89-40c1-b14d-fc86f8b48a99"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 158,
+    "timestamp": "2025-12-01T17:56:16.955126",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 159,
+    "timestamp": "2025-12-01T17:56:17.056753",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 160,
+    "timestamp": "2025-12-01T17:56:17.087054",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 161,
+    "timestamp": "2025-12-01T17:56:17.098449",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 162,
+    "timestamp": "2025-12-01T17:56:17.103637",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 163,
+    "timestamp": "2025-12-01T17:56:17.156053",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 164,
+    "timestamp": "2025-12-01T17:56:26.237241",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 165,
+    "timestamp": "2025-12-01T17:56:26.307743",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 166,
+    "timestamp": "2025-12-01T18:00:59.997959",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184132,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184132的记录"
+  },
+  {
+    "id": 167,
+    "timestamp": "2025-12-01T18:01:00.117317",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184106,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184106的记录"
+  },
+  {
+    "id": 168,
+    "timestamp": "2025-12-01T18:01:11.961935",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184130,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184130的记录"
+  },
+  {
+    "id": 169,
+    "timestamp": "2025-12-01T18:09:12.042358",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 170,
+    "timestamp": "2025-12-01T18:10:24.022524",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 171,
+    "timestamp": "2025-12-02T14:30:16.691986",
+    "user": "admin",
+    "type": "create_user",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "创建用户 用户 (user)"
+  },
+  {
+    "id": 172,
+    "timestamp": "2025-12-03T16:01:44.367474",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "2a321125-5d44-48ef-9ee4-ec7c7891168f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 173,
+    "timestamp": "2025-12-03T16:25:30.299993",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7611b93c-4643-4b98-9a48-ccb4f9a7b714"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 174,
+    "timestamp": "2025-12-03T16:39:10.592772",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "55d9c95f-98a7-42ec-b1b3-25e967f110c4",
+      "daab543f-59a0-4b4d-b0a9-53b5e52f7ce3",
+      "aad2873a-4749-4f5c-8b94-c9f069c4ed05",
+      "b08b1f22-c121-4e8b-9cd6-b59082607014"
+    ],
+    "details": "拒绝 4 条审核记录"
+  },
+  {
+    "id": 175,
+    "timestamp": "2025-12-04T11:48:53.424174",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 458853557223296777,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 176,
+    "timestamp": "2025-12-04T12:46:12.580697",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 177,
+    "timestamp": "2025-12-04T15:15:53.373767",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ceb9f695-61df-4cac-a106-08cd3cd30ded"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 178,
+    "timestamp": "2025-12-04T16:04:13.265175",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "afffcb4d-a50a-487b-9f80-059318b77385"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 179,
+    "timestamp": "2025-12-04T16:34:39.378509",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "6225097b-a4d1-4bc8-85e8-ad907e6ec381",
+      "284cc269-94f0-47dd-84de-2a0a8580b5c1"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 180,
+    "timestamp": "2025-12-04T16:36:12.785763",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "20938028-41be-4860-8b56-9d8165584b18"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 181,
+    "timestamp": "2025-12-04T17:00:00.372329",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "a92ee062-9d49-419e-8098-9a4cd63357ba",
+    "record_ids": [],
+    "details": "修改待审核记录 a92ee062-9d49-419e-8098-9a4cd63357ba"
+  },
+  {
+    "id": 182,
+    "timestamp": "2025-12-04T17:00:08.718737",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "a92ee062-9d49-419e-8098-9a4cd63357ba"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 183,
+    "timestamp": "2025-12-04T17:16:06.364316",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "91e66c31-84af-48b9-876a-bed70b477ff7",
+      "76a7d99e-8412-451c-81da-3a15a76f2d8f",
+      "95a50561-d023-4d87-8daf-e357a4e000e6",
+      "9ff4dd73-c7cb-40ef-9347-d31b19bcdf70",
+      "82acbd95-be2e-47ff-9926-9a5c0f3011bc"
+    ],
+    "details": "拒绝 5 条审核记录"
+  },
+  {
+    "id": 184,
+    "timestamp": "2025-12-08T09:29:20.310186",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 185,
+    "timestamp": "2025-12-08T09:51:33.259605",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184500,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184500的记录"
+  },
+  {
+    "id": 186,
+    "timestamp": "2025-12-08T09:58:26.978872",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 187,
+    "timestamp": "2025-12-08T13:25:40.448190",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "585f8a61-0467-4400-9183-d8ced47fa12c",
+    "record_ids": [],
+    "details": "修改待审核记录 585f8a61-0467-4400-9183-d8ced47fa12c"
+  },
+  {
+    "id": 188,
+    "timestamp": "2025-12-08T13:26:08.094236",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 189,
+    "timestamp": "2025-12-08T13:31:53.980071",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 190,
+    "timestamp": "2025-12-08T13:35:38.667044",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "061a5d3d-d96f-4bd8-9b08-570de8a564c7"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 191,
+    "timestamp": "2025-12-08T13:45:12.730802",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "164a2149-f9ba-4248-aa35-95e306894dd1",
+    "record_ids": [],
+    "details": "修改待审核记录 164a2149-f9ba-4248-aa35-95e306894dd1"
+  },
+  {
+    "id": 192,
+    "timestamp": "2025-12-08T13:45:27.981600",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 193,
+    "timestamp": "2025-12-08T13:54:26.339162",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ec737f8c-aa89-4a3f-899a-f649d361c436"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 194,
+    "timestamp": "2025-12-08T14:19:08.518910",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "ae35a366-a2a7-4805-9e8d-80d570752dc2",
+    "record_ids": [],
+    "details": "修改待审核记录 ae35a366-a2a7-4805-9e8d-80d570752dc2"
+  },
+  {
+    "id": 195,
+    "timestamp": "2025-12-08T14:19:19.052758",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ae35a366-a2a7-4805-9e8d-80d570752dc2"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 196,
+    "timestamp": "2025-12-08T14:20:50.480364",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "f2a8cfd4-f986-4ed2-bd5c-99bd914fe526"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 197,
+    "timestamp": "2025-12-08T14:41:16.148813",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "3d50bd72-2768-4803-9d57-b248989d5c03",
+    "record_ids": [],
+    "details": "修改待审核记录 3d50bd72-2768-4803-9d57-b248989d5c03"
+  },
+  {
+    "id": 198,
+    "timestamp": "2025-12-08T14:41:30.953268",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "3d50bd72-2768-4803-9d57-b248989d5c03"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 199,
+    "timestamp": "2025-12-08T14:52:11.900138",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "c2bdfc78-e81e-4faf-953a-2138c96306d3",
+    "record_ids": [],
+    "details": "修改待审核记录 c2bdfc78-e81e-4faf-953a-2138c96306d3"
+  },
+  {
+    "id": 200,
+    "timestamp": "2025-12-08T14:52:21.793717",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "c2bdfc78-e81e-4faf-953a-2138c96306d3"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 201,
+    "timestamp": "2025-12-08T14:52:26.474795",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": 458853557223297067,
+    "record_ids": [],
+    "details": "修改了对象: 净头寸, 类型: 解释概念"
+  },
+  {
+    "id": 202,
+    "timestamp": "2025-12-08T15:06:06.023738",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "fabaf54c-3966-4204-80fb-488266b8a409",
+    "record_ids": [],
+    "details": "修改待审核记录 fabaf54c-3966-4204-80fb-488266b8a409"
+  },
+  {
+    "id": 203,
+    "timestamp": "2025-12-08T15:06:14.529642",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "fabaf54c-3966-4204-80fb-488266b8a409"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 204,
+    "timestamp": "2025-12-08T15:19:45.842458",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "869e3380-5da4-423c-a8e4-c7d389c7f9d5",
+    "record_ids": [],
+    "details": "修改待审核记录 869e3380-5da4-423c-a8e4-c7d389c7f9d5"
+  },
+  {
+    "id": 205,
+    "timestamp": "2025-12-08T15:19:56.918396",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "869e3380-5da4-423c-a8e4-c7d389c7f9d5"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 206,
+    "timestamp": "2025-12-08T15:29:48.424724",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 207,
+    "timestamp": "2025-12-08T15:32:00.960961",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 208,
+    "timestamp": "2025-12-08T15:32:08.581072",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 209,
+    "timestamp": "2025-12-08T15:32:21.626874",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 210,
+    "timestamp": "2025-12-08T15:32:29.994106",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 211,
+    "timestamp": "2025-12-08T15:32:40.748031",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 212,
+    "timestamp": "2025-12-08T15:32:48.966910",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 213,
+    "timestamp": "2025-12-08T15:32:56.490347",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 214,
+    "timestamp": "2025-12-08T15:33:01.141261",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 215,
+    "timestamp": "2025-12-08T16:13:13.080422",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 216,
+    "timestamp": "2025-12-08T16:13:40.851594",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 217,
+    "timestamp": "2025-12-08T16:13:46.371484",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 218,
+    "timestamp": "2025-12-08T16:23:12.873973",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 219,
+    "timestamp": "2025-12-08T16:24:10.247073",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 220,
+    "timestamp": "2025-12-08T16:24:18.771944",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 221,
+    "timestamp": "2025-12-08T16:26:38.051280",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 222,
+    "timestamp": "2025-12-08T16:26:48.508599",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "cbc9d95d-a101-4018-a879-59870dfd7e79",
+    "record_ids": [],
+    "details": "修改待审核记录 cbc9d95d-a101-4018-a879-59870dfd7e79"
+  },
+  {
+    "id": 223,
+    "timestamp": "2025-12-08T16:27:03.996323",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 224,
+    "timestamp": "2025-12-09T09:32:55.157958",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "bdb50107-3f07-4679-a68c-1dfcf2120eef",
+    "record_ids": [],
+    "details": "修改待审核记录 bdb50107-3f07-4679-a68c-1dfcf2120eef"
+  },
+  {
+    "id": 225,
+    "timestamp": "2025-12-09T09:33:10.458792",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "bdb50107-3f07-4679-a68c-1dfcf2120eef",
+    "record_ids": [],
+    "details": "修改待审核记录 bdb50107-3f07-4679-a68c-1dfcf2120eef"
+  },
+  {
+    "id": 226,
+    "timestamp": "2025-12-09T09:33:30.967463",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "bdb50107-3f07-4679-a68c-1dfcf2120eef"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 227,
+    "timestamp": "2025-12-09T09:40:52.707285",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "d651d0d7-da16-413b-9034-57c0f89e7815"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 228,
+    "timestamp": "2025-12-09T09:41:24.699100",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "f072175b-4b7b-4048-8fe7-2cebb2aeb61d"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 229,
+    "timestamp": "2025-12-09T09:55:46.016996",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b7c8998d-ea0f-4126-8923-5de6f7f5d982"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 230,
+    "timestamp": "2025-12-09T09:57:37.227639",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "37e880d9-0e15-4293-b5c8-8756c04588ad"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 231,
+    "timestamp": "2025-12-09T10:00:37.461404",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "2b2e7d43-7dc5-44d3-ade2-cd727831ea0c"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 232,
+    "timestamp": "2025-12-09T10:13:27.314745",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "dfd2de0a-f5fc-4bbe-969c-1a7dc3da3fdb"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 233,
+    "timestamp": "2025-12-09T10:15:22.120985",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 234,
+    "timestamp": "2025-12-09T10:16:06.915395",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "d5802bec-b99a-495c-9f26-dfc99067695f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 235,
+    "timestamp": "2025-12-09T10:26:07.717019",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 236,
+    "timestamp": "2025-12-09T10:26:24.530612",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "dcddb3fa-827b-428c-aa81-082be917b1e0"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 237,
+    "timestamp": "2025-12-09T10:39:34.403564",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b79bdbab-af3c-4d66-9aab-bc4ce43446d6"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 238,
+    "timestamp": "2025-12-09T11:33:14.902047",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "116f9876-9c24-442c-ba99-d4f2e0af4f51"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 239,
+    "timestamp": "2025-12-09T11:35:27.948776",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "73a953c8-d989-41cf-b8da-a9b85a43fab5"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 240,
+    "timestamp": "2025-12-09T11:35:54.517171",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "d146b708-07ec-4971-b033-51a438edec86"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 241,
+    "timestamp": "2025-12-09T11:36:22.629075",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "f1f3473b-554d-4897-bbca-770193261d87"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 242,
+    "timestamp": "2025-12-09T13:07:51.646698",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "67d1acef-23f7-4bf7-9383-a35c1d409e65"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 243,
+    "timestamp": "2025-12-09T13:09:11.214312",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 244,
+    "timestamp": "2025-12-09T13:10:21.124902",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": null,
+    "record_ids": [
+      "462273400771184547",
+      "462273400771184578"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 245,
+    "timestamp": "2025-12-09T13:31:52.540760",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "8ced6093-64ea-43a5-aee3-6a76927c8de6"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 246,
+    "timestamp": "2025-12-09T13:32:47.830761",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "f32c2a12-b338-45a8-80f7-28950d0a9cc6"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 247,
+    "timestamp": "2025-12-09T13:40:52.558253",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 248,
+    "timestamp": "2025-12-09T13:41:01.033284",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 249,
+    "timestamp": "2025-12-09T13:41:08.044622",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 250,
+    "timestamp": "2025-12-09T13:53:48.968628",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 251,
+    "timestamp": "2025-12-09T13:54:26.133228",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 252,
+    "timestamp": "2025-12-09T14:11:59.945334",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 253,
+    "timestamp": "2025-12-09T14:12:20.642586",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 254,
+    "timestamp": "2025-12-09T14:15:42.302542",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 255,
+    "timestamp": "2025-12-09T14:16:02.283668",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 256,
+    "timestamp": "2025-12-09T14:16:40.405462",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "e3ca0140-04cd-4370-9589-195cb4ffa7b7",
+    "record_ids": [],
+    "details": "修改待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7"
+  },
+  {
+    "id": 257,
+    "timestamp": "2025-12-09T17:32:30.910399",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 258,
+    "timestamp": "2025-12-09T17:38:24.097199",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": 462273400771184646,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184646的记录"
+  },
+  {
+    "id": 259,
+    "timestamp": "2025-12-10T09:39:04.840885",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ff194e93-5e43-4c00-abfb-8acb5a5b9abc"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 260,
+    "timestamp": "2025-12-10T09:51:32.542369",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "d8127188-a1ae-4ae5-9b90-9181ffc81e18",
+    "record_ids": [],
+    "details": "修改待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18"
+  },
+  {
+    "id": 261,
+    "timestamp": "2025-12-10T09:51:50.091983",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "d8127188-a1ae-4ae5-9b90-9181ffc81e18",
+    "record_ids": [],
+    "details": "修改待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18"
+  },
+  {
+    "id": 262,
+    "timestamp": "2025-12-10T09:52:08.491712",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "d8127188-a1ae-4ae5-9b90-9181ffc81e18",
+    "record_ids": [],
+    "details": "修改待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18"
+  },
+  {
+    "id": 263,
+    "timestamp": "2025-12-10T09:53:19.643233",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ce0a4c1e-3112-4c9f-ad80-651085ebe118"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 264,
+    "timestamp": "2025-12-10T09:59:07.117826",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "a37d366d-4175-4de1-872d-42e0c198ee44"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 265,
+    "timestamp": "2025-12-10T10:08:45.970676",
+    "user": "admin",
+    "type": "edit_review_record",
+    "collection": "",
+    "record_id": "d8127188-a1ae-4ae5-9b90-9181ffc81e18",
+    "record_ids": [],
+    "details": "修改待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18"
+  },
+  {
+    "id": 266,
+    "timestamp": "2025-12-10T10:17:05.289230",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 267,
+    "timestamp": "2025-12-10T10:17:12.871872",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 268,
+    "timestamp": "2025-12-10T10:19:55.328137",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 269,
+    "timestamp": "2025-12-10T10:20:05.542911",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 270,
+    "timestamp": "2025-12-10T10:20:50.951533",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 e3ca0140-04cd-4370-9589-195cb4ffa7b7，目标库: "
+  },
+  {
+    "id": 271,
+    "timestamp": "2025-12-10T10:24:04.151317",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 272,
+    "timestamp": "2025-12-10T10:24:51.836938",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 273,
+    "timestamp": "2025-12-10T10:29:52.710606",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 274,
+    "timestamp": "2025-12-10T10:31:33.860730",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: "
+  },
+  {
+    "id": 275,
+    "timestamp": "2025-12-10T10:54:51.107016",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d8127188-a1ae-4ae5-9b90-9181ffc81e18，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 276,
+    "timestamp": "2025-12-10T13:10:48.077199",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": null,
+    "record_ids": [
+      "462273400771183883",
+      "462273400771184003",
+      "462273400771184096",
+      "462273400771184104",
+      "462273400771184532",
+      "462273400771184540",
+      "462273400771184542",
+      "462273400771184640",
+      "462273400771184649",
+      "462273400771184663",
+      "462273400771184665",
+      "462273400771184667",
+      "462273400771184669",
+      "462273400771184671",
+      "462273400771184675"
+    ],
+    "details": "批量删除了 15 条记录"
+  },
+  {
+    "id": 277,
+    "timestamp": "2025-12-10T13:16:48.748698",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "d8127188-a1ae-4ae5-9b90-9181ffc81e18"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 278,
+    "timestamp": "2025-12-10T13:18:10.859059",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 279,
+    "timestamp": "2025-12-10T13:28:00.049639",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 280,
+    "timestamp": "2025-12-10T13:28:57.083629",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 11 条审核记录"
+  },
+  {
+    "id": 281,
+    "timestamp": "2025-12-10T13:29:48.121897",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "458853557223297702",
+      "462273400771183672",
+      "462273400771184093",
+      "462273400771184107",
+      "462273400771184108",
+      "462273400771184112",
+      "462273400771184114",
+      "462273400771184116",
+      "462273400771184143",
+      "462273400771184147",
+      "462273400771184534",
+      "462273400771184580",
+      "462273400771184644",
+      "462273400771184655",
+      "462273400771184681",
+      "462273400771184726"
+    ],
+    "details": "批量删除了 16 条记录"
+  },
+  {
+    "id": 282,
+    "timestamp": "2025-12-10T13:30:03.024719",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "458853557223297081",
+      "458853557223297764",
+      "462273400771184118",
+      "462273400771184120",
+      "462273400771184122",
+      "462273400771184123",
+      "462273400771184125",
+      "462273400771184128",
+      "462273400771184134",
+      "462273400771184136",
+      "462273400771184145",
+      "462273400771184536",
+      "462273400771184545",
+      "462273400771184657",
+      "462273400771184659",
+      "462273400771184683",
+      "462273400771184685",
+      "462273400771184728",
+      "462273400771184730"
+    ],
+    "details": "批量删除了 19 条记录"
+  },
+  {
+    "id": 283,
+    "timestamp": "2025-12-10T13:30:42.098576",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_3",
+    "record_id": null,
+    "record_ids": [
+      "458853557223297762",
+      "462273400771184538",
+      "462273400771184661",
+      "462273400771184687",
+      "462273400771184732"
+    ],
+    "details": "批量删除了 5 条记录"
+  },
+  {
+    "id": 284,
+    "timestamp": "2025-12-10T13:31:04.924549",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": null,
+    "record_ids": [
+      "458853557223297718",
+      "458853557223297766",
+      "462273400771184150",
+      "462273400771184651",
+      "462273400771184653",
+      "462273400771184673",
+      "462273400771184677",
+      "462273400771184679",
+      "462273400771184714",
+      "462273400771184722",
+      "462273400771184724",
+      "462273400771184744"
+    ],
+    "details": "批量删除了 12 条记录"
+  },
+  {
+    "id": 285,
+    "timestamp": "2025-12-10T13:32:00.197360",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": null,
+    "record_ids": [
+      "462273400771184689",
+      "462273400771184706",
+      "462273400771184708",
+      "462273400771184710",
+      "462273400771184712",
+      "462273400771184716",
+      "462273400771184718",
+      "462273400771184720",
+      "462273400771184734",
+      "462273400771184736",
+      "462273400771184738",
+      "462273400771184740",
+      "462273400771184742"
+    ],
+    "details": "批量删除了 13 条记录"
+  },
+  {
+    "id": 286,
+    "timestamp": "2025-12-10T13:42:27.812279",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 287,
+    "timestamp": "2025-12-10T13:43:11.441914",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184811,
+    "record_ids": [],
+    "details": "修改了对象: 1.基础知识与算法, 类型: 1.功能故障类"
+  },
+  {
+    "id": 288,
+    "timestamp": "2025-12-10T13:44:23.465323",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184814,
+    "record_ids": [],
+    "details": "修改了对象: 1.基础知识与算法, 类型: 1.功能故障类"
+  },
+  {
+    "id": 289,
+    "timestamp": "2025-12-10T13:45:11.510211",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184817,
+    "record_ids": [],
+    "details": "修改了对象: 1.基础知识与算法, 类型: 1.功能故障类"
+  },
+  {
+    "id": 290,
+    "timestamp": "2025-12-10T13:48:14.409067",
+    "user": "用户",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184820,
+    "record_ids": [],
+    "details": "修改了对象: 1.基础知识与算法, 类型: 1.功能故障类"
+  },
+  {
+    "id": 291,
+    "timestamp": "2025-12-10T14:22:45.041840",
+    "user": "admin",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_5",
+    "record_id": 462273400771184823,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184823的记录"
+  },
+  {
+    "id": 292,
+    "timestamp": "2025-12-11T14:36:09.688284",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "beb35b1d-5a91-42c5-b134-a587b79fefee",
+      "7022d4c5-8bfc-4e89-b5fb-3856bdd85ee8",
+      "cd0c7ec6-205a-4c04-b8c1-1a609501183e"
+    ],
+    "details": "拒绝 3 条审核记录"
+  },
+  {
+    "id": 293,
+    "timestamp": "2025-12-11T14:44:04.021051",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7b387dc8-9a30-4550-8c50-0197bcd41c83"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 294,
+    "timestamp": "2025-12-11T14:45:41.757169",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ae50c162-2143-4557-ae1b-89ea60174d9b"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 295,
+    "timestamp": "2025-12-11T14:54:18.200321",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "2975ec85-c0e7-48d0-ab89-07bd9cce5e0b"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 296,
+    "timestamp": "2025-12-11T14:55:56.829593",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 297,
+    "timestamp": "2025-12-11T14:56:40.761975",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 298,
+    "timestamp": "2025-12-11T14:56:59.486525",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "9681306b-c241-497a-8b0e-ad4323580645"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 299,
+    "timestamp": "2025-12-11T14:57:25.653212",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 300,
+    "timestamp": "2025-12-11T14:58:47.067714",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "52675b76-f269-40c8-b067-1fab3e8fd503"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 301,
+    "timestamp": "2025-12-11T15:02:44.814389",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 302,
+    "timestamp": "2025-12-11T15:29:03.175763",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 a2b51793-411f-40c1-b335-8e07bff9c2e2，目标库: rag_bge_m3_structured_v4_1"
+  },
+  {
+    "id": 303,
+    "timestamp": "2025-12-11T15:31:04.510375",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 a2b51793-411f-40c1-b335-8e07bff9c2e2，目标库: rag_bge_m3_structured_v4_1"
+  },
+  {
+    "id": 304,
+    "timestamp": "2025-12-11T15:31:19.966753",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 305,
+    "timestamp": "2025-12-11T15:34:00.765406",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 abfbeccd-5c1d-4510-b48f-98ea3bb405ca，目标库: rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 306,
+    "timestamp": "2025-12-11T15:34:11.542581",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 307,
+    "timestamp": "2025-12-11T15:39:00.211108",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 3bc198ff-a0ed-47fc-ba5d-b86c3006b860，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 308,
+    "timestamp": "2025-12-11T15:41:55.299577",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 3bc198ff-a0ed-47fc-ba5d-b86c3006b860，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 309,
+    "timestamp": "2025-12-11T15:43:06.310216",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 310,
+    "timestamp": "2025-12-11T15:51:35.589472",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "43cfa659-7dda-43e7-9e54-2f4711e2b4fb"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 311,
+    "timestamp": "2025-12-11T15:52:02.571317",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 57cdb739-be19-4c3d-a6d9-f50f31a9407e，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 312,
+    "timestamp": "2025-12-11T15:53:50.701751",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "5c7e5f42-c475-4ea0-a38f-b5a3ae564e47"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 313,
+    "timestamp": "2025-12-11T15:57:43.530379",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "57cdb739-be19-4c3d-a6d9-f50f31a9407e"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 314,
+    "timestamp": "2025-12-11T16:00:32.787953",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b699f643-765e-4136-bc15-4c3f2e1241a5"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 315,
+    "timestamp": "2025-12-11T16:06:35.125324",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7d2f51c1-fd45-468b-b8b9-0cfce3ec3a36",
+      "1a7907ab-89a4-4a4b-9340-b3ed1427126e",
+      "b9f3d726-bf53-4fb6-b1b8-8c39efa1a9ea"
+    ],
+    "details": "拒绝 3 条审核记录"
+  },
+  {
+    "id": 316,
+    "timestamp": "2025-12-11T16:07:17.469741",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "82c9fcbf-0a6b-48c3-ba0a-c38e80f3464a",
+      "91bba9e5-08c4-4cdd-a542-563dec976eb9"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 317,
+    "timestamp": "2025-12-11T16:08:49.816930",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "c04a0212-7a5d-4565-98b7-cf50efdc9579",
+      "e54d7109-b8b3-4ff0-ba25-da3b8d164d95"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 318,
+    "timestamp": "2025-12-17T14:28:25.208165",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 ea8535b5-714f-43f4-b337-9355ed820ed9，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 319,
+    "timestamp": "2025-12-17T14:28:41.014281",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 ea8535b5-714f-43f4-b337-9355ed820ed9，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 320,
+    "timestamp": "2025-12-17T14:30:44.263026",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 321,
+    "timestamp": "2025-12-17T14:31:23.932882",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "a967d5e6-8a3d-4506-9338-7311a191996b"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 322,
+    "timestamp": "2025-12-17T14:32:01.375505",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 219b54c6-b435-4a8f-8ccb-92cdcb0bb20c，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 323,
+    "timestamp": "2025-12-17T14:33:01.611467",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "219b54c6-b435-4a8f-8ccb-92cdcb0bb20c"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 324,
+    "timestamp": "2025-12-17T14:33:40.593532",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "5ac968d0-a0df-478f-9df3-b9ea9b386d5c"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 325,
+    "timestamp": "2025-12-17T14:36:14.024949",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "f9dacd2a-ba1a-41e7-82f8-bb243cac1a50"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 326,
+    "timestamp": "2025-12-17T14:39:57.073610",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 7be657f9-15a2-442e-aa29-683347b3584b，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 327,
+    "timestamp": "2025-12-17T14:43:29.082019",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 7be657f9-15a2-442e-aa29-683347b3584b，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 328,
+    "timestamp": "2025-12-17T14:43:59.658336",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 329,
+    "timestamp": "2025-12-17T14:56:46.129330",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 df4037a1-90ae-4ecb-9472-87e60c666f62，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 330,
+    "timestamp": "2025-12-17T14:57:06.643785",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 331,
+    "timestamp": "2025-12-17T14:57:54.358946",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 a10f55b8-f1af-4e76-9c7b-abce3e8c045f，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 332,
+    "timestamp": "2025-12-17T14:58:20.388504",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 333,
+    "timestamp": "2025-12-17T14:59:40.439520",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 4f07b843-60bf-4106-a73d-49024adf5eb2，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 334,
+    "timestamp": "2025-12-17T14:59:50.059983",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 335,
+    "timestamp": "2025-12-17T15:01:40.149716",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 8f5aa08d-c62d-4268-8f9e-18cb776de9e8，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 336,
+    "timestamp": "2025-12-17T15:06:12.214702",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 1d8c7b1c-db69-4e50-8e96-9ef784fe36ce，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 337,
+    "timestamp": "2025-12-17T15:06:30.563540",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 338,
+    "timestamp": "2025-12-17T15:06:51.708235",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 8f5aa08d-c62d-4268-8f9e-18cb776de9e8，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 339,
+    "timestamp": "2025-12-17T15:07:04.320170",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 8f5aa08d-c62d-4268-8f9e-18cb776de9e8，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 340,
+    "timestamp": "2025-12-17T15:07:11.420191",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 341,
+    "timestamp": "2025-12-17T15:07:54.016506",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 87379861-5102-4993-9a32-2cea9d60eaf5，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 342,
+    "timestamp": "2025-12-17T15:08:07.829936",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 343,
+    "timestamp": "2025-12-17T15:20:06.040869",
+    "user": "王丹丹",
+    "type": "delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184844,
+    "record_ids": [],
+    "details": "删除了ID=462273400771184844的记录"
+  },
+  {
+    "id": 344,
+    "timestamp": "2025-12-17T15:26:23.593214",
+    "user": "王丹丹",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184836,
+    "record_ids": [],
+    "details": "修改了对象: 6.程序化接入, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 345,
+    "timestamp": "2025-12-17T15:57:56.478876",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184928,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 346,
+    "timestamp": "2025-12-17T16:02:08.411723",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184941,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 347,
+    "timestamp": "2025-12-17T16:04:02.598765",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184944,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 348,
+    "timestamp": "2025-12-17T16:08:44.439505",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184947,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 349,
+    "timestamp": "2025-12-17T16:25:09.499228",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184950,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 350,
+    "timestamp": "2025-12-17T16:26:41.421963",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184953,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 351,
+    "timestamp": "2025-12-17T16:27:08.431785",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184956,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 352,
+    "timestamp": "2025-12-17T16:31:02.440709",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184959,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 353,
+    "timestamp": "2025-12-17T16:32:14.402702",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184962,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 354,
+    "timestamp": "2025-12-17T16:33:59.451117",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184965,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 355,
+    "timestamp": "2025-12-17T16:34:41.403537",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184968,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 356,
+    "timestamp": "2025-12-17T16:38:11.422518",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184971,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 357,
+    "timestamp": "2025-12-17T16:53:43.425637",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184974,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 358,
+    "timestamp": "2025-12-17T16:57:41.453186",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184977,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 359,
+    "timestamp": "2025-12-17T16:58:08.519050",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184980,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 360,
+    "timestamp": "2025-12-18T13:39:59.656121",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "5b475e30-e296-40c0-8e5c-d2cf39fdf233"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 361,
+    "timestamp": "2025-12-18T13:40:57.891789",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "47c469ef-4118-4590-93b8-2a942348d589"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 362,
+    "timestamp": "2025-12-22T09:30:57.291026",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 f2e80de6-8a32-4716-850e-c8264d1f16c3，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 363,
+    "timestamp": "2025-12-22T09:31:13.216642",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 364,
+    "timestamp": "2025-12-22T09:40:56.550851",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d77ac97f-fe6f-444d-b862-37c1120e4a64，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 365,
+    "timestamp": "2025-12-22T09:52:29.542010",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 3fcbf3de-c68e-42bb-acdf-7f4f830d9ca5，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 366,
+    "timestamp": "2025-12-22T09:52:47.934834",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 2 条审核记录"
+  },
+  {
+    "id": 367,
+    "timestamp": "2025-12-22T09:55:18.668606",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 db43a22b-c642-4995-88d2-1dc8b16b4ac9，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 368,
+    "timestamp": "2025-12-22T09:55:57.295519",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 369,
+    "timestamp": "2025-12-30T16:41:59.476571",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184924,
+    "record_ids": [],
+    "details": "修改了对象: 5.企业版交易终端相关配置, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 370,
+    "timestamp": "2025-12-30T16:43:44.343665",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d7869e62-d69e-4c4e-9395-29871058b020，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 371,
+    "timestamp": "2025-12-30T16:46:43.646765",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d7869e62-d69e-4c4e-9395-29871058b020，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 372,
+    "timestamp": "2025-12-30T16:46:56.028135",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 373,
+    "timestamp": "2026-01-12T14:08:27.436865",
+    "user": "龙嘉欣",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 462273400771184983,
+    "record_ids": [],
+    "details": "修改了对象: 8.账户建立&账户迁移, 类型: 4.账户迁仓类"
+  },
+  {
+    "id": 374,
+    "timestamp": "2026-01-12T16:25:47.689293",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "ca36862e-fd66-4a96-ac51-714eea92002c"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 375,
+    "timestamp": "2026-01-12T16:26:35.914676",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "175e2328-9330-4b3f-9ea4-dd08737b527a"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 376,
+    "timestamp": "2026-01-12T16:31:16.336420",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "acd6cbe6-1650-4105-89ff-ca46bf684e7b"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 377,
+    "timestamp": "2026-01-12T16:34:35.284681",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7312a4ec-bfee-408c-9d50-9d3c4cb420db"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 378,
+    "timestamp": "2026-01-12T16:36:24.508403",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 d78d0847-8496-4969-947f-d06e92f00857，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 379,
+    "timestamp": "2026-01-12T16:36:38.532297",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 380,
+    "timestamp": "2026-01-12T16:37:48.232303",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "cd26c5aa-6898-4d6d-810a-495e17c80bce"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 381,
+    "timestamp": "2026-01-12T16:38:31.545877",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 382,
+    "timestamp": "2026-01-12T16:54:33.430748",
+    "user": "王丹丹",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184938,
+    "record_ids": [],
+    "details": "修改了对象: 6.程序化接入, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 383,
+    "timestamp": "2026-01-12T16:56:36.325295",
+    "user": "王丹丹",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 463433605068620283,
+    "record_ids": [],
+    "details": "修改了对象: 6.程序化接入, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 384,
+    "timestamp": "2026-01-12T16:59:16.474677",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 385,
+    "timestamp": "2026-01-12T17:02:15.038838",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 65e2039f-d310-4e9b-b64b-ceec2c3b38e4，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 386,
+    "timestamp": "2026-01-12T17:04:02.299877",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "65e2039f-d310-4e9b-b64b-ceec2c3b38e4"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 387,
+    "timestamp": "2026-01-12T17:05:26.399504",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "df59a1bf-88c2-4e32-a9fe-9fd17804a982"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 388,
+    "timestamp": "2026-01-12T17:09:16.953489",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 e18cdd4e-4cde-4ba4-8506-cd6464f7cebd，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 389,
+    "timestamp": "2026-01-12T17:09:34.586302",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 e18cdd4e-4cde-4ba4-8506-cd6464f7cebd，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 390,
+    "timestamp": "2026-01-12T17:09:55.776935",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 391,
+    "timestamp": "2026-01-12T17:14:37.225551",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "770e5d88-39cc-4249-bf45-4f8406b8cb4a"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 392,
+    "timestamp": "2026-01-12T17:18:27.346661",
+    "user": "王丹丹",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 462273400771184910,
+    "record_ids": [],
+    "details": "修改了对象: 9.绩效系统使用, 类型: 3.对账/账单数据类"
+  },
+  {
+    "id": 393,
+    "timestamp": "2026-01-12T17:19:14.157301",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "1b7d7c0f-438f-4fea-8757-552c632ad65c"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 394,
+    "timestamp": "2026-01-12T17:22:02.660040",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 395,
+    "timestamp": "2026-01-12T17:23:24.301026",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "72d7b75b-4fe3-46d7-9ffc-fbc68f403055",
+      "221b7c0d-6a23-4ff4-a0c4-095831583131"
+    ],
+    "details": "拒绝 2 条审核记录"
+  },
+  {
+    "id": 396,
+    "timestamp": "2026-01-13T11:17:09.595871",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "36a0265e-a593-402d-9727-81dbaf5b9341"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 397,
+    "timestamp": "2026-01-13T11:17:46.304240",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "d51b12ed-02e6-44b4-9505-55296d497856"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 398,
+    "timestamp": "2026-01-13T11:23:45.561242",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "b8bf062b-9ef0-4915-a530-9b2b060fc13b"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 399,
+    "timestamp": "2026-01-13T11:32:40.456268",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7e3f0835-2923-46f5-aed7-ebfaca29ed86"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 400,
+    "timestamp": "2026-01-13T13:08:27.662604",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 4c757c77-42bf-49c7-bc86-9bc1d589ff91，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 401,
+    "timestamp": "2026-01-13T13:09:54.509795",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 4c757c77-42bf-49c7-bc86-9bc1d589ff91，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 402,
+    "timestamp": "2026-01-13T13:10:10.121419",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 403,
+    "timestamp": "2026-01-13T13:11:00.103252",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "1cac5968-edd4-43f6-b89b-740e765f9496"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 404,
+    "timestamp": "2026-01-13T13:18:03.340559",
+    "user": "李佳辉",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 463433605068620307,
+    "record_ids": [],
+    "details": "修改了对象: 7.仓位、资金比对及处理, 类型: 3.对账/账单数据类"
+  },
+  {
+    "id": 405,
+    "timestamp": "2026-01-13T13:21:44.303344",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 2a448a95-4b13-4b4b-99fc-3659f95a289f，目标库: rag_bge_m3_structured_v4_4"
+  },
+  {
+    "id": 406,
+    "timestamp": "2026-01-13T13:21:56.687476",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 407,
+    "timestamp": "2026-01-14T10:12:52.430340",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 efc6b736-64d3-4532-9724-e2613a95a93d，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 408,
+    "timestamp": "2026-01-14T10:13:25.858501",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 409,
+    "timestamp": "2026-01-14T10:37:51.964886",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 fe942eed-6a37-48db-bac6-68a4dec69b0f，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 410,
+    "timestamp": "2026-01-14T10:38:10.323887",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "fe942eed-6a37-48db-bac6-68a4dec69b0f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 411,
+    "timestamp": "2026-01-14T10:39:03.518672",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 412,
+    "timestamp": "2026-01-14T10:39:37.937279",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 413,
+    "timestamp": "2026-01-14T10:42:09.012083",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 51019023-8324-49d6-b357-bbcd4eb4b924，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 414,
+    "timestamp": "2026-01-14T10:42:18.192041",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 415,
+    "timestamp": "2026-01-14T14:27:05.353406",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 2c4d7c1a-e04f-4864-93e5-e7bb1c1ef76e，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 416,
+    "timestamp": "2026-01-14T14:27:15.876180",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 417,
+    "timestamp": "2026-01-15T13:15:16.078609",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 c1572e9c-6726-464a-9c4a-378cf833f8ed，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 418,
+    "timestamp": "2026-01-15T13:15:33.916884",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 419,
+    "timestamp": "2026-01-15T13:20:27.882353",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 96075c1f-516f-442a-9e97-7a3e5ef8b2db，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_3"
+  },
+  {
+    "id": 420,
+    "timestamp": "2026-01-15T13:20:58.761334",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 2 条审核记录"
+  },
+  {
+    "id": 421,
+    "timestamp": "2026-01-15T16:22:53.288315",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 428428df-ad1d-4ec8-8056-f79110fd052c，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 422,
+    "timestamp": "2026-01-15T16:23:09.606012",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 423,
+    "timestamp": "2026-01-15T16:25:59.104469",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 424,
+    "timestamp": "2026-01-15T16:25:59.463949",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 425,
+    "timestamp": "2026-01-15T16:26:47.233837",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "33c977d8-4dd8-472f-917d-142a42bd6f55"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 426,
+    "timestamp": "2026-01-16T17:19:26.369587",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "de47d7d5-aa04-41f2-9546-40b392718e5e"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 427,
+    "timestamp": "2026-01-16T17:20:37.246417",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "e6254f63-f5b2-4f0f-b8fe-fcf34eaedd8f"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 428,
+    "timestamp": "2026-01-16T17:20:57.716330",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 429,
+    "timestamp": "2026-01-16T17:21:26.955511",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 7dabc2ad-af4a-4760-8695-be7688d85cbc，目标库: rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 430,
+    "timestamp": "2026-01-16T17:21:44.654036",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 431,
+    "timestamp": "2026-01-22T10:54:59.387631",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 3eab62a7-3762-4174-b388-2820281568a8，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 432,
+    "timestamp": "2026-01-22T10:55:20.992619",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 c27df579-5db6-468f-9490-effe36c069bc，目标库: rag_bge_m3_structured_v4_1"
+  },
+  {
+    "id": 433,
+    "timestamp": "2026-01-22T10:55:31.953340",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 b479a441-e7f4-4b6c-b4ad-83a6c37df77c，目标库: rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 434,
+    "timestamp": "2026-01-22T11:17:12.240063",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 004f3273-fd6d-4461-963f-2443c5610d40，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 435,
+    "timestamp": "2026-01-22T13:00:59.239769",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 3eab62a7-3762-4174-b388-2820281568a8，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 436,
+    "timestamp": "2026-01-22T15:04:28.137136",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 17 条审核记录"
+  },
+  {
+    "id": 437,
+    "timestamp": "2026-01-22T15:05:07.789723",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 17 条审核记录"
+  },
+  {
+    "id": 438,
+    "timestamp": "2026-01-22T15:07:03.846788",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 17 条审核记录"
+  },
+  {
+    "id": 439,
+    "timestamp": "2026-01-22T15:20:10.234243",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837567",
+      "463744322074837615"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 440,
+    "timestamp": "2026-01-22T15:20:43.260728",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837573",
+      "463744322074837627"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 441,
+    "timestamp": "2026-01-22T15:21:52.258283",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837557",
+      "463744322074837597"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 442,
+    "timestamp": "2026-01-22T15:23:52.354048",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837561",
+      "463744322074837575",
+      "463744322074837605",
+      "463744322074837631"
+    ],
+    "details": "批量删除了 4 条记录"
+  },
+  {
+    "id": 443,
+    "timestamp": "2026-01-22T15:25:04.345442",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837583",
+      "463744322074837635"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 444,
+    "timestamp": "2026-01-22T15:25:40.125347",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837559",
+      "463744322074837601"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 445,
+    "timestamp": "2026-01-22T15:27:07.265594",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837587",
+      "463744322074837637"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 446,
+    "timestamp": "2026-01-22T15:27:42.707847",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 463744322074837693,
+    "record_ids": [],
+    "details": "修改了对象: 4.管理平台&风控终端配置, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 447,
+    "timestamp": "2026-01-22T15:28:34.272907",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837547",
+      "463744322074837577"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 448,
+    "timestamp": "2026-01-22T15:29:16.300668",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837591",
+      "463744322074837639"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 449,
+    "timestamp": "2026-01-22T15:29:36.260383",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837625",
+      "463744322074837655"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 450,
+    "timestamp": "2026-01-22T15:29:56.273920",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837607",
+      "463744322074837647"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 451,
+    "timestamp": "2026-01-22T15:30:37.341950",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837617",
+      "463744322074837651"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 452,
+    "timestamp": "2026-01-22T15:31:13.157535",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837551",
+      "463744322074837585"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 453,
+    "timestamp": "2026-01-22T15:32:49.152370",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837599",
+      "463744322074837643"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 454,
+    "timestamp": "2026-01-22T15:33:37.364164",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837563",
+      "463744322074837609"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 455,
+    "timestamp": "2026-01-22T15:34:25.331739",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837569",
+      "463744322074837619"
+    ],
+    "details": "批量删除了 2 条记录"
+  },
+  {
+    "id": 456,
+    "timestamp": "2026-01-22T16:46:19.786830",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 5 条审核记录"
+  },
+  {
+    "id": 457,
+    "timestamp": "2026-01-22T16:55:45.599299",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 463433605068620310,
+    "record_ids": [],
+    "details": "修改了对象: 7.仓位、资金比对及处理, 类型: 3.对账/账单数据类"
+  },
+  {
+    "id": 458,
+    "timestamp": "2026-01-22T16:56:48.765831",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_4",
+    "record_id": 463433605068620312,
+    "record_ids": [],
+    "details": "修改了对象: 7.仓位、资金比对及处理, 类型: 3.对账/账单数据类"
+  },
+  {
+    "id": 459,
+    "timestamp": "2026-01-23T13:53:19.091323",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 6 条审核记录"
+  },
+  {
+    "id": 460,
+    "timestamp": "2026-01-23T13:55:41.345931",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 461,
+    "timestamp": "2026-01-23T13:59:28.547794",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 94874a6f-0d02-489b-8743-74c6afb77724，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 462,
+    "timestamp": "2026-01-23T14:00:22.834688",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 463,
+    "timestamp": "2026-01-23T14:00:58.846327",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 94a14cdc-d391-49c0-b251-b63ab25ea0a8，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2, rag_bge_m3_structured_v4_5"
+  },
+  {
+    "id": 464,
+    "timestamp": "2026-01-23T14:01:12.738011",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 465,
+    "timestamp": "2026-01-23T14:36:55.044681",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 3 条审核记录"
+  },
+  {
+    "id": 466,
+    "timestamp": "2026-01-26T13:18:32.802269",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 467,
+    "timestamp": "2026-01-26T13:19:42.330209",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": null,
+    "record_ids": [
+      "463744322074837816"
+    ],
+    "details": "批量删除了 1 条记录"
+  },
+  {
+    "id": 468,
+    "timestamp": "2026-01-26T13:20:13.747038",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 469,
+    "timestamp": "2026-01-26T15:29:54.802991",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 4 条审核记录"
+  },
+  {
+    "id": 470,
+    "timestamp": "2026-01-26T15:30:55.357077",
+    "user": "admin",
+    "type": "update_review_record",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "编辑待审核记录 681e9dec-b476-48ed-91ad-76a98fb2e0a6，目标库: rag_bge_m3_structured_v4_1, rag_bge_m3_structured_v4_2"
+  },
+  {
+    "id": 471,
+    "timestamp": "2026-01-26T15:31:12.197457",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 472,
+    "timestamp": "2026-01-26T16:06:44.683400",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_2",
+    "record_id": 462273400771184926,
+    "record_ids": [],
+    "details": "修改了对象: 5.企业版交易终端相关配置, 类型: 2.终端/管理平台功能咨询类"
+  },
+  {
+    "id": 473,
+    "timestamp": "2026-01-27T13:18:35.313204",
+    "user": "admin",
+    "type": "update",
+    "collection": "rag_bge_m3_structured_v4_1",
+    "record_id": 463744322074837555,
+    "record_ids": [],
+    "details": "修改了对象: 4.管理平台&风控终端配置, 类型: 2.终端/管理平台功能咨询类"
+  }
+]

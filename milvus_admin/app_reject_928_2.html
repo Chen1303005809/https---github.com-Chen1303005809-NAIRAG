@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Milvus 数据管理后台（增强版）</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        #dataTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #dataTable th,
+        #dataTable td {
+            padding: 10px;
+            vertical-align: top;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        #dataTable th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: left;
+        }
+        #dataTable th:last-child,
+        #dataTable td:last-child {
+            width: 1%;
+            white-space: nowrap;
+            text-align: right;
+        }
+        .modal { display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-dialog { margin: 10% auto; max-width: 700px; }
+        .modal-content { background-color: #fefefe; padding: 20px; border: 1px solid #888; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        #previewImage { max-width: 100%; }
+        #totalInfo { margin-top: 10px; }
+        .filter-section { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .file-item { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            margin: 4px 0; 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: center; 
+        }
+        .file-item input[type="checkbox"] { margin-right: 8px; }
+        .file-item label { flex: 1; }
+        .file-item a, .file-item button {
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📊 Milvus 数据管理后台（增强版）</h2>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <div>
+                <label for="collectionSelect" class="form-label">选择数据库：</label>
+                <select id="collectionSelect" class="form-select w-25">
+                    <option value="">-- 请选择 --</option>
+                    <option value="rag_bge_m3_structured_v4_1">融航期货交易平台</option>
+                    <option value="rag_bge_m3_structured_v4_2">融航AMS资管平台</option>
+                    <option value="rag_bge_m3_structured_v4_3">融航HMS资产管理平台</option>
+                    <option value="rag_bge_m3_structured_v4_4">核算模块</option>
+                    <option value="rag_bge_m3_structured_v4_5">随心易终端</option>
+                    <option value="TEST">多模态混合检索测试</option>
+                </select>
+                <div class="mt-2">
+                    <button class="btn btn-primary" onclick="loadData(currentCollection)">🔄 刷新</button>
+                    <button class="btn btn-danger" onclick="batchDelete()">🗑️ 批量删除选中</button>
+                    <button class="btn btn-info" onclick="showLogs()">查看操作日志</button>
+                    <!-- 增加被拒数据选项卡 -->
+                    <button class="btn btn-warning ms-2" onclick="loadRejectedManagement()" style="font-weight:bold;">
+                        被拒数据管理
+                    </button>
+                    <button class="btn btn-success ms-2" onclick="window.open('/user_management.html','_blank')">
+                        用户管理
+                    </button>
+                    <button class="btn btn-danger ms-2" onclick="if(confirm('确定清除所有被拒数据？')) clearAllRejected()" id="clearAllBtn" style="display:none;">
+                        全部清除
+                    </button>
+                </div>
+            </div>
+            <div>
+                <span id="currentUserDisplay" class="me-3"></span>
+                <button class="btn btn-outline-secondary" onclick="logout()">登出</button>
+            </div>
+        </div>
+
+        <!-- 筛选和搜索区域 -->
+        <div class="filter-section">
+            <div class="row g-2 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">具体功能&相关模块</label>
+                    <select class="form-select" id="filterObject" onchange="applyFilters()">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">问题类型</label>
+                    <select class="form-select" id="filterType" onchange="applyFilters()">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">应用场景</label>
+                    <select class="form-select" id="filterPurpose" onchange="applyFilters()">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">客户类型</label>
+                    <select class="form-select" id="filterCustomerType" onchange="applyFilters()">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="searchInput" class="form-label">🔍 搜索关键词 / 类似问题 / 回复内容</label>
+                <input type="text" class="form-control" id="searchInput" placeholder="输入关键词搜索..." oninput="applyFilters()">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="ms-1">全选</span>
+                            <input type="checkbox" id="selectAll" onclick="toggleSelectAll()">
+                        </th>
+                        <th>ID</th>
+                        <th>具体功能&相关模块</th>
+                        <th>问题类型</th>
+                        <th>应用场景</th>
+                        <th>客户类型</th>
+                        <th>关键词</th>
+                        <th>类似问题</th>
+                        <th>回复内容</th>
+                        <th>更新时间</th>
+                        <th>图片</th>
+                        <th>文档</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="11">正在加载数据...</td></tr>
+                </tbody>
+            </table>
+            <div id="totalInfo">总计: 0 条</div>
+        </div>
+
+        <!-- 编辑模态框（升级版：支持下拉 + 可手动输入） -->
+        <div id="editModal" class="modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">编辑记录</h5>
+                        <span class="close" onclick="closeModal('editModal')">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <!-- ======== 新增：目标数据库选择（审核端编辑时可用）======== -->
+                        <div class="mb-4 p-3 border-start border-primary border-4 bg-light">
+                            <label class="form-label fw-bold text-primary">目标数据库（可多选）</label>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-db-checkbox" type="checkbox" value="rag_bge_m3_structured_v4_1" id="db1_edit">
+                                        <label class="form-check-label" for="db1_edit">融航期货交易平台</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-db-checkbox" type="checkbox" value="rag_bge_m3_structured_v4_2" id="db2_edit">
+                                        <label class="form-check-label" for="db2_edit">融航AMS资管平台</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-db-checkbox" type="checkbox" value="rag_bge_m3_structured_v4_3" id="db3_edit">
+                                        <label class="form-check-label" for="db3_edit">融航HMS资产管理平台</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-db-checkbox" type="checkbox" value="rag_bge_m3_structured_v4_4" id="db4_edit">
+                                        <label class="form-check-label" for="db4_edit">核算模块</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input edit-db-checkbox" type="checkbox" value="rag_bge_m3_structured_v4_5" id="db5_edit">
+                                        <label class="form-check-label" for="db5_edit">随心易终端</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="editId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>具体功能&相关模块 (object)</label>
+                                <input type="text" class="form-control" id="editObject" list="objectOptions" placeholder="可选择或手动输入">
+                                <datalist id="objectOptions"></datalist>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>问题类型 (type)</label>
+                                <input type="text" class="form-control" id="editType" list="typeOptions" placeholder="可选择或手动输入">
+                                <datalist id="typeOptions"></datalist>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>应用场景 (purpose)</label>
+                                <input type="text" class="form-control" id="editPurpose" list="purposeOptions" placeholder="可选择或手动输入">
+                                <datalist id="purposeOptions"></datalist>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>客户类型 (customer_type)</label>
+                                <input type="text" class="form-control" id="editCustomerType" list="customerOptions" placeholder="可选择或手动输入">
+                                <datalist id="customerOptions"></datalist>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label>关键词 (keyword)</label>
+                            <input type="text" class="form-control" id="editKeyword">
+                        </div>
+                        <div class="mb-3">
+                            <label>类似问题 (problem) 多行</label>
+                            <textarea class="form-control" id="editProblem" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>回复内容 (text)</label>
+                            <textarea class="form-control" id="editText" rows="6"></textarea>
+                        </div>
+                        <!-- 多图片支持 -->
+                        <div class="mb-3">
+                            <label class="form-label">当前图片</label>
+                            <div id="currentImageList" class="form-text text-muted"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editImage" class="form-label">新增图片（可多选）</label>
+                            <input type="file" class="form-control" id="editImage" accept="image/*" multiple>
+                        </div>
+                        <!-- 多文档支持 -->
+                        <div class="mb-3">
+                            <label class="form-label">当前文档</label>
+                            <div id="currentDocumentList" class="form-text text-muted"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDocument" class="form-label">新增文档（可多选，支持 PDF/DOCX）</label>
+                            <input type="file" class="form-control" id="editDocument" accept=".pdf,.docx" multiple>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeModal('editModal')">取消</button>
+                        <button class="btn btn-primary" onclick="saveEdit().catch(e => { console.error(e); alert('保存出错：' + e.message); })">保存修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片预览模态框 -->
+        <div id="previewModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">🖼️ 图片预览</h5>
+                        <span class="close" onclick="closeModal('previewModal')">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <img id="previewImage" src="" class="img-fluid">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeModal('previewModal')">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作日志模态框 -->
+        <div id="logModal" class="modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">📜 操作日志</h5>
+                        <span class="close" onclick="closeModal('logModal')">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>用户</th>
+                                    <th>操作</th>
+                                    <th>集合</th>
+                                    <th>记录ID</th>
+                                    <th>详情</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTable"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeModal('logModal')">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 登录模态框 -->
+        <div id="loginModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">🔐 用户登录</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">用户名</label>
+                            <input type="text" class="form-control" id="loginUsername" placeholder="请输入用户名">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">密码</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="请输入密码">
+                        </div>
+                        <div class="alert alert-danger d-none" id="loginError">错误信息</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="doLogin()">登录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        let currentCollection = '';
+        let currentData = [];
+        let authToken = localStorage.getItem('authToken') || '';
+        let currentUsername = '';
+
+        function getAuthHeaders() {
+            return authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
+        }
+
+        async function authFetch(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                ...getAuthHeaders()
+            };
+            const res = await fetch(url, options);
+            if (res.status === 401) {
+                logout();
+                return null;
+            }
+            return res;
+        }
+
+        function checkLogin() {
+            if (!authToken) {
+                showLogin();
+                return false;
+            }
+            authFetch('/admin/whoami')
+                .then(res => res ? res.json() : null)
+                .then(data => {
+                    if (data && data.username) {
+                        currentUsername = data.username;
+                        document.getElementById('currentUserDisplay').textContent = '当前用户：' + currentUsername;
+                        if (currentUsername === 'admin') {
+                            const reviewOption = document.createElement('option');
+                            reviewOption.value = '__REVIEW__';
+                            reviewOption.textContent = '🔍 审核内容';
+                            // 防止重复添加
+                            if (!document.querySelector('option[value="__REVIEW__"]')) {
+                                document.getElementById('collectionSelect').appendChild(reviewOption);
+                            }
+                        }
+                    
+                    } else {
+                        showLogin();
+                    }
+                })
+                .catch(showLogin);
+           
+        }
+
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function doLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.add('d-none');
+
+            if (!username || !password) {
+                errorDiv.textContent = '请输入用户名和密码';
+                errorDiv.classList.remove('d-none');
+                return;
+            }
+
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    authToken = data.token;
+                    currentUsername = data.username;
+                    localStorage.setItem('authToken', authToken);
+                    document.getElementById('currentUserDisplay').textContent = '当前用户：' + currentUsername;
+                    closeModal('loginModal');
+                    if (document.getElementById('collectionSelect').value) {
+                        loadData(document.getElementById('collectionSelect').value);
+                    }
+                } else {
+                    errorDiv.textContent = data.error || '登录失败';
+                    errorDiv.classList.remove('d-none');
+                }
+            })
+            .catch(err => {
+                console.error('登录错误:', err);
+                errorDiv.textContent = '网络错误，请重试';
+                errorDiv.classList.remove('d-none');
+            });
+        }
+
+        function logout() {
+            authToken = '';
+            currentUsername = '';
+            localStorage.removeItem('authToken');
+            document.getElementById('currentUserDisplay').textContent = '';
+            const reviewOption = document.querySelector('option[value="__REVIEW__"]');
+            if (reviewOption) {
+                reviewOption.remove();
+            }
+    
+            showLogin();
+        }
+
+        function loadData(collection) {
+            if (collection === '__REVIEW__') {
+                loadReviewData();
+                return;
+            }
+            currentCollection = collection;
+            if (!collection) {
+                alert('请选择一个数据库');
+                return;
+            }
+            // 重置筛选条件
+            document.getElementById('filterObject').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterPurpose').value = '';
+            document.getElementById('filterCustomerType').value = '';
+            document.getElementById('searchInput').value = '';
+
+            authFetch(`/admin/get_data_paginated?collection=${collection}&page=1&page_size=13683`)
+                .then(res => res ? res.json() : null)
+                .then(data => {
+                    if (!data) return;
+                    if (data.error) {
+                        alert('加载失败: ' + data.error);
+                        return;
+                    }
+                    currentData = data.data;
+                    const tbody = document.querySelector('#dataTable tbody');
+                    tbody.innerHTML = '';
+                    const thead = document.querySelector('#dataTable thead tr');
+                    thead.innerHTML = `
+                        <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                        <th>ID</th>
+                        <th>具体功能&相关模块</th>
+                        <th>问题类型</th>
+                        <th>应用场景</th>
+                        <th>客户类型</th>
+                        <th>关键词</th>
+                        <th>类似问题</th>
+                        <th>回复内容</th>
+                        <th>更新时间</th>
+                        <th>图片</th>
+                        <th>文档</th>
+                        <th>操作</th>
+                    `;
+                    data.data.forEach((item, index) => {
+                        const idStr = String(item.id);
+                        const row = tbody.insertRow();
+                        
+                        // 解析图片和文档URL
+                        const imageUrls = safeParseFileUrls(item.image_url);
+                        const fileUrls = safeParseFileUrls(item.file_url);
+                        
+                        row.innerHTML = `
+                            <td><input type="checkbox" name="selectRow" value="${idStr}"></td>
+                            <td>${idStr}</td> 
+                            <td>${item.object || 'N/A'}</td>
+                            <td>${item.type || 'N/A'}</td>
+                            <td>${item.purpose || 'N/A'}</td>
+                            <td>${item.customer_type || 'N/A'}</td>
+                            <td>${item.keyword || 'N/A'}</td>
+                            <td>${item.problem ? JSON.parse(item.problem).join('; ') : 'N/A'}</td>
+                            <td>${item.text || 'N/A'}</td>
+                            <td>${item.updated_at || 'N/A'}</td>
+                            <td>
+                                <!-- 图片缩略图 -->
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px; max-width: 150px;">
+                                    ${imageUrls.length > 0 && imageUrls[0] !== "N/A" ? 
+                                        imageUrls.map(url => `
+                                            <div style="position: relative; width: 40px; height: 40px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; cursor: pointer;">
+                                                <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" 
+                                                    onclick="showDataImageModal('${url}')" title="点击查看大图">
+                                            </div>
+                                        `).join('') : 
+                                        '<span style="color: #999; font-size: 12px;">无图片</span>'
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <!-- 文档链接 -->
+                                <div style="max-width: 150px;">
+                                    ${fileUrls.length > 0 && fileUrls[0] !== "N/A" ? 
+                                        fileUrls.map(url => {
+                                            const fileName = url.split('/').pop();
+                                            return `
+                                                <a href="${url}" target="_blank" style="color: #1976d2; text-decoration: none; display: block; margin-bottom: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${fileName}">
+                                                    📄 ${fileName.length > 15 ? fileName.substring(0,15)+'...' : fileName}
+                                                </a>
+                                            `;
+                                        }).join('') : 
+                                        '<span style="color: #999; font-size: 12px;">无文档</span>'
+                                    }
+                                </div>
+                            </td>
+                            <td style="white-space: nowrap; text-align: right;">
+                                <button class="btn btn-sm btn-warning mb-1" onclick="editRecord(${index})">编辑</button><br>
+                                <button class="btn btn-sm btn-danger mb-1" onclick="deleteRecord('${idStr}')">删除</button>
+                            </td>
+                        `;
+                    });
+                    populateFilterOptions(data.data);
+                    applyFilters();
+                    document.getElementById('totalInfo').textContent = `总计: ${data.total} 条`;
+
+                    // ✅ 新增：重置操作按钮为普通模式
+                    document.querySelector('.btn-primary').textContent = '🔄 刷新';
+                    document.querySelector('.btn-danger').textContent = '🗑️ 批量删除';
+                    document.querySelector('.btn-primary').onclick = () => loadData(currentCollection);
+                    document.querySelector('.btn-danger').onclick = batchDelete;
+
+                })
+                .catch(err => {
+                    console.error('加载错误:', err);
+                    alert('加载数据失败');
+                });
+        }
+        // 完全替换原来的 loadReviewData() 或在 <script> 里新增这个函数
+        async function loadReviewData() {
+            currentCollection = '__REVIEW__';
+            document.getElementById('totalInfo').textContent = '正在加载审核数据...';
+
+            // 更稳妥的映射方式：直接用 collection 全名 → 中文名
+            const DB_CHINESE_MAP = {
+                "rag_bge_m3_structured_v4_1": "融航期货交易平台",
+                "rag_bge_m3_structured_v4_2": "融航AMS资管平台",
+                "rag_bge_m3_structured_v4_3": "融航HMS资产管理平台",
+                "rag_bge_m3_structured_v4_4": "核算模块",
+                "rag_bge_m3_structured_v4_5": "随心易终端"
+            };
+
+            try {
+                const res = await authFetch('/admin/get_review_data');
+                if (!res) return;
+                const records = await res.json();
+
+                currentData = records;
+
+                // ================== 关键修复：强制插入按钮区（保持你原来的逻辑不变）==================
+                let reviewButtons = document.getElementById('reviewActionButtons');
+                if (!reviewButtons) {
+                    const selectWrapper = document.querySelector('#collectionSelect').parentElement.parentElement;
+                    reviewButtons = document.createElement('div');
+                    reviewButtons.id = 'reviewActionButtons';
+                    reviewButtons.className = 'mt-3';
+                    reviewButtons.innerHTML = `
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-success btn-lg" onclick="batchApprove()">
+                                批量通过选中记录
+                            </button>
+                            <button class="btn btn-danger btn-lg" onclick="batchReject()">
+                                批量拒绝选中记录
+                            </button>
+                            <span class="ms-3 badge bg-primary fs-6">
+                                已选中: <span id="selectedCount">0</span> 条
+                            </span>
+                        </div>
+                    `;
+                    selectWrapper.after(reviewButtons);
+                }
+                // ==============================================================================
+
+                const tbody = document.querySelector('#dataTable tbody');
+                tbody.innerHTML = '';
+
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="14" class="text-center text-muted">暂无待审核数据</td></tr>';
+                    document.getElementById('totalInfo').textContent = '待审核: 0 条';
+                    return;
+                }
+
+                document.getElementById('totalInfo').textContent = `待审核: ${records.length} 条`;
+                
+                records.forEach((item, index) => {
+                    const rec = item.data || {};
+                    const uploader = escapeHtml(item.uploader || '匿名用户');
+
+                    // 关键修改：直接用映射表，彻底解决显示英文名的问题
+                    const chineseDbs = (item.selected_dbs || [])
+                        .map(db => DB_CHINESE_MAP[db] || db)  // 如果没匹配到就原样显示，永不出错
+                        .filter(name => name)
+                        .join('、') || '未指定';
+
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="row-checkbox" data-id="${item.id}" onchange="updateSelectedCount()"></td>
+                        <td><strong>${uploader}</strong></td>
+                        <td>${escapeHtml(chineseDbs)}</td>
+                        <td>${escapeHtml(rec.object || '')}</td>
+                        <td>${escapeHtml(rec.type || '')}</td>
+                        <td>${escapeHtml(rec.purpose || '')}</td>
+                        <td>${escapeHtml(rec.customer_type || '')}</td>
+                        <td>${escapeHtml(rec.keyword || '')}</td>
+                        <td>${(rec.problem || []).slice(0,3).join('; ')}</td>
+                        <td style="max-width:350px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            ${escapeHtml(rec.text || '').substring(0,120)}...
+                        </td>
+                        <td>${new Date(item.timestamp).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}</td>
+                        <td>
+                            <div style="display: flex; flex-wrap: wrap; gap: 5px; max-width: 150px;">
+                                ${Array.isArray(rec.image_url) && rec.image_url.length > 0 
+                                    ? rec.image_url
+                                        .filter(url => url && url !== 'N/A')
+                                        .map(url => `
+                                            <div style="position: relative; width: 40px; height: 40px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; cursor: pointer;">
+                                                <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" 
+                                                    onclick="showDataImageModal('${url}')" title="点击查看大图">
+                                            </div>
+                                        `).join('')
+                                    : '<span style="color: #999; font-size: 12px;">无图片</span>'
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div style="max-width: 150px;">
+                                ${Array.isArray(rec.file_url) && rec.file_url.length > 0
+                                    ? rec.file_url
+                                        .filter(url => url && url !== 'N/A')
+                                        .map(url => {
+                                            const fileName = url.split('/').pop();
+                                            return `
+                                                <a href="${url}" target="_blank" 
+                                                style="color: #1976d2; text-decoration: none; display: block; margin-bottom: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" 
+                                                title="${fileName}">
+                                                    ${fileName.length > 15 ? fileName.substring(0,15)+'...' : fileName}
+                                                </a>
+                                            `;
+                                        }).join('')
+                                    : '<span style="color: #999; font-size: 12px;">无文档</span>'
+                                }
+                            </div>
+                        </td>
+                            <button class="btn btn-sm btn-warning" onclick="openEditModalForReview(${index})">编辑</button>
+                        </td>
+                    `;
+                });
+
+                // 表头保持你现在的 14 列，完全不动
+                document.querySelector('#dataTable thead tr').innerHTML = `
+                    <th><input type="checkbox" onclick="toggleSelectAll()"></th>
+                    <th>上传人</th>
+                    <th>目标库</th>
+                    <th>具体功能</th>
+                    <th>问题类型</th>
+                    <th>应用场景</th>
+                    <th>客户类型</th>
+                    <th>关键词</th>
+                    <th>类似问题</th>
+                    <th>回复内容</th>
+                    <th>上传时间</th>
+                    <th>图片</th>
+                    <th>文档</th>
+                    <th>操作</th>
+                `;
+
+                updateSelectedCount();
+
+            } catch (err) {
+                console.error(err);
+                alert('加载审核数据失败');
+            }
+        }
+
+        // 打开审核记录的编辑弹窗（复用正式库的模态框）
+        function openEditModalForReview(index) {
+            const item = currentData[index];
+            const data = item.data;
+
+            // 填充所有字段（和正式库一模一样）
+            document.getElementById('editId').value = item.id;
+            document.getElementById('editObject').value = data.object || '';
+            document.getElementById('editType').value = data.type || '';
+            document.getElementById('editPurpose').value = data.purpose || '';
+            document.getElementById('editCustomerType').value = data.customer_type || '';
+            document.getElementById('editKeyword').value = data.keyword || '';
+            document.getElementById('editProblem').value = (data.problem || []).join('\n');
+            document.getElementById('editText').value = data.text || '';
+
+
+            const currentDbs = item.selected_dbs || [];  // 就是这个字段！
+                document.querySelectorAll('#editModal .edit-db-checkbox').forEach(cb => {
+                    cb.checked = currentDbs.includes(cb.value);
+                });
+
+
+            // 处理图片
+            const imageListDiv = document.getElementById('currentImageList');
+            const imageUrls = (data.image_url || []).filter(u => u && u !== 'N/A');
+            if (imageUrls.length > 0) {
+                let html = '';
+                imageUrls.forEach(url => {
+                    html += `
+                        <div class="file-item" data-url="${url}">
+                            <input type="checkbox" checked>
+                            <label><img src="${url}" style="width:80px; height:80px; object-fit:cover; margin-right:10px;"> ${url.split('/').pop()}</label>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(this, 'image')">删除</button>
+                        </div>`;
+                });
+                imageListDiv.innerHTML = html;
+            } else {
+                imageListDiv.innerHTML = '<span class="text-muted">无图片</span>';
+            }
+
+            // 处理文档
+            const docListDiv = document.getElementById('currentDocumentList');
+            const fileUrls = (data.file_url || []).filter(u => u && u !== 'N/A');
+            if (fileUrls.length > 0) {
+                let html = '';
+                fileUrls.forEach(url => {
+                    html += `
+                        <div class="file-item" data-url="${url}">
+                            <input type="checkbox" checked>
+                            <label>📎 ${url.split('/').pop()}</label>
+                            <a href="${url}" target="_blank" class="btn btn-sm btn-secondary">下载</a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeFile(this, 'document')">删除</button>
+                        </div>`;
+                });
+                docListDiv.innerHTML = html;
+            } else {
+                docListDiv.innerHTML = '<span class="text-muted">无文档</span>';
+            }
+
+            // 给模态框加个标记，保存时知道是审核记录
+            document.getElementById('editModal').dataset.mode = 'review';
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function renderReviewTable(data) {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><input type="checkbox" name="selectRow" value="${item.id}"></td>
+                    <td>${item.uploader}</td>
+                    <td>${item.data.object || 'N/A'}</td>
+                    <td>${item.data.type || 'N/A'}</td>
+                    <td>${item.data.purpose || 'N/A'}</td>
+                    <td>${item.data.customer_type || 'N/A'}</td>
+                    <td>${item.data.keyword || 'N/A'}</td>
+                    <td>${item.data.problem ? item.data.problem.join('; ') : 'N/A'}</td>
+                    <td>${item.data.text || 'N/A'}</td>
+                    <td>${item.timestamp.toLocaleString()}</td>
+                    <td>
+                        <!-- 图片缩略图 -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 5px; max-width: 150px;">
+                            ${item.data.image_url && item.data.image_url.length > 0 && item.data.image_url[0] !== "N/A" ? 
+                                item.data.image_url.map(url => `
+                                    <div style="position: relative; width: 40px; height: 40px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; cursor: pointer;">
+                                        <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" 
+                                            onclick="showReviewImageModal('${url}')" title="点击查看大图">
+                                    </div>
+                                `).join('') : 
+                                '<span style="color: #999; font-size: 12px;">无图片</span>'
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <!-- 文档链接 -->
+                        <div style="max-width: 150px;">
+                            ${item.data.file_url && item.data.file_url.length > 0 && item.data.file_url[0] !== "N/A" ? 
+                                item.data.file_url.map(url => {
+                                    const fileName = url.split('/').pop();
+                                    return `
+                                        <a href="${url}" target="_blank" style="color: #1976d2; text-decoration: none; display: block; margin-bottom: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${fileName}">
+                                            📄 ${fileName.length > 15 ? fileName.substring(0,15)+'...' : fileName}
+                                        </a>
+                                    `;
+                                }).join('') : 
+                                '<span style="color: #999; font-size: 12px;">无文档</span>'
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-success mb-1" onclick="previewRecord(${index})">预览</button><br>
+                        <!-- 审核界面无编辑/删除按钮 -->
+                    </td>
+                `;
+            });
+            
+            document.getElementById('totalInfo').textContent = `审核队列: ${data.length} 条`;
+            
+            // 更新操作按钮
+            document.querySelector('.btn-primary').textContent = '✅ 批量通过';
+            document.querySelector('.btn-danger').textContent = '❌ 批量拒绝';
+            document.querySelector('.btn-primary').onclick = batchApprove;
+            document.querySelector('.btn-danger').onclick = batchReject;
+        }
+
+        // 显示审核界面图片的模态框
+        function showReviewImageModal(url) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.9);
+                z-index: 10002;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border: 2px solid white;
+                box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            `;
+            
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            
+            modal.onclick = function() {
+                document.body.removeChild(modal);
+            };
+            
+            // ESC键关闭
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(modal);
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        }
+
+        // 更新“已选 N 条”显示
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('#dataTable .row-checkbox:checked').length;
+            const counter = document.getElementById('selectedCount');
+            if (counter) counter.textContent = count;
+        }
+
+        // 批量通过
+        async function batchApprove() {
+            const checked = document.querySelectorAll('#dataTable .row-checkbox:checked');
+            if (checked.length === 0) return alert('请至少选择一条记录');
+            if (!confirm(`确定将这 ${checked.length} 条记录通过并入库？`)) return;
+
+            const ids = Array.from(checked).map(cb => cb.dataset.id);
+            const records = currentData.filter(r => ids.includes(r.id));
+
+            const res = await authFetch('/admin/approve_records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids, records })
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert(`成功通过 ${checked.length} 条记录`);
+                loadReviewData();
+            } else {
+                alert('通过失败：' + result.error);
+            }
+        }
+
+        // 批量拒绝（带理由输入框）
+        async function batchReject() {
+            const checked = document.querySelectorAll('#dataTable .row-checkbox:checked');
+            if (checked.length === 0) return alert('请至少选择一条记录');
+
+            const reason = prompt(`请输入拒绝原因（会发给上传人）：`, '');
+            if (reason === null) return; // 取消
+            if (!reason.trim()) return alert('拒绝原因不能为空');
+
+            if (!confirm(`确定拒绝这 ${checked.length} 条记录？`)) return;
+
+            const ids = Array.from(checked).map(cb => cb.dataset.id);
+            const records = currentData.filter(r => ids.includes(r.id));
+
+            const res = await authFetch('/admin/reject_records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids, records, reject_reason: reason })
+            });
+            const result = await res.json();
+            if (result.success !== false) {
+                alert(`已拒绝 ${checked.length} 条记录，已归档到被拒区`);
+                loadReviewData();
+            } else {
+                alert('拒绝失败：' + result.error);
+            }
+        }
+
+
+
+        function deleteRecord(idStr) {
+            if (confirm(`确认删除 ID=${idStr}？`)) {
+                authFetch(`/admin/delete_record?collection=${currentCollection}&id=${idStr}`, { method: 'DELETE' })
+                    .then(res => res ? res.json() : null)
+                    .then(result => {
+                        if (result && result.success) {
+                            alert(result.message);
+                            loadData(currentCollection);
+                        } else if (result) {
+                            alert('删除失败: ' + result.error);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('删除错误:', err);
+                        alert('删除请求失败');
+                    });
+            }
+        }
+        // 显示数据管理界面图片的模态框
+        function showDataImageModal(url) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.9);
+                z-index: 10002;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border: 2px solid white;
+                box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            `;
+            
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            
+            modal.onclick = function() {
+                document.body.removeChild(modal);
+            };
+            
+            // ESC键关闭
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(modal);
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        }
+        function batchDelete() {
+            const checkboxes = document.querySelectorAll('input[name="selectRow"]:checked');
+            const ids = Array.from(checkboxes).map(cb => cb.value);
+            if (ids.length === 0) {
+                alert('请选择要删除的记录');
+                return;
+            }
+            if (confirm(`确认删除 ${ids.length} 条记录？`)) {
+                authFetch(`/admin/delete_records?collection=${currentCollection}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids })
+                })
+                    .then(res => res ? res.json() : null)
+                    .then(result => {
+                        if (result && result.success) {
+                            alert(result.message);
+                            loadData(currentCollection);
+                        } else if (result) {
+                            alert('批量删除失败: ' + result.error);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('批量删除错误:', err);
+                        alert('批量删除请求失败');
+                    });
+            }
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll').checked;
+            document.querySelectorAll('input[name="selectRow"]').forEach(cb => cb.checked = selectAll);
+        }
+
+        // ========== 安全解析函数（修复编辑无响应问题）==========
+        function safeParseFileUrls(value) {
+            if (!value || value === 'N/A') {
+                return [];
+            }
+            if (Array.isArray(value)) {
+                return value;
+            }
+            if (typeof value === 'string' && !value.startsWith('[')) {
+                return [value];
+            }
+            try {
+                const parsed = JSON.parse(value);
+                if (Array.isArray(parsed)) {
+                    return parsed;
+                } else {
+                    return [parsed];
+                }
+            } catch (e) {
+                console.warn('解析文件URL失败，回退为单个URL:', value, e);
+                return [value];
+            }
+        }
+
+        function editRecord(index) {
+            const item = currentData[index];
+            document.getElementById('editId').value = String(item.id);
+            document.getElementById('editObject').value = item.object || '';
+            document.getElementById('editType').value = item.type || '';
+            document.getElementById('editPurpose').value = item.purpose || '';
+            document.getElementById('editCustomerType').value = item.customer_type || '';
+            document.getElementById('editKeyword').value = item.keyword || '';
+            document.getElementById('editProblem').value = item.problem ? JSON.parse(item.problem).join('\n') : '';
+            document.getElementById('editText').value = item.text || '';
+
+            const selectedDbs = item.selected_dbs || [];
+            document.querySelectorAll('#editModal .edit-db-checkbox').forEach(cb => {
+                cb.checked = selectedDbs.includes(cb.value);
+            });
+
+            // 解析当前图片和文档
+            const imageUrls = safeParseFileUrls(item.image_url);
+            const fileUrls = safeParseFileUrls(item.file_url);
+
+            // 显示当前图片（带 × 删除按钮）
+            const imageListDiv = document.getElementById('currentImageList');
+            if (imageUrls.length > 0) {
+                let html = '<div class="d-flex flex-wrap gap-2">';
+                imageUrls.forEach((url, idx) => {
+                    if (url && url !== 'N/A') {
+                        const name = url.split('/').pop() || url;
+                        html += `
+                            <div class="file-item border p-2 rounded d-flex align-items-center" data-url="${url}">
+                                <span class="me-2">${name}</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger p-0" 
+                                        style="width: 24px; height: 24px; font-size: 14px;"
+                                        onclick="removeFile(this, 'image')">×</button>
+                                <button type="button" class="btn btn-sm btn-link p-0 ms-2" onclick="previewSingleImage('${url}')">预览</button>
+                            </div>
+                        `;
+                    }
+                });
+                html += '</div>';
+                imageListDiv.innerHTML = html;
+            } else {
+                imageListDiv.innerHTML = '<span class="text-muted">无图片</span>';
+            }
+
+            // 显示当前文档（带 × 删除按钮）
+            const docListDiv = document.getElementById('currentDocumentList');
+            if (fileUrls.length > 0) {
+                let html = '<div class="d-flex flex-wrap gap-2">';
+                fileUrls.forEach((url, idx) => {
+                    if (url && url !== 'N/A') {
+                        const name = url.split('/').pop() || url;
+                        html += `
+                            <div class="file-item border p-2 rounded d-flex align-items-center" data-url="${url}">
+                                <span class="me-2">${name}</span>
+                                <button type="button" class="btn btn-sm btn-outline-danger p-0" 
+                                        style="width: 24px; height: 24px; font-size: 14px;"
+                                        onclick="removeFile(this, 'document')">×</button>
+                                <a href="${url}" target="_blank" class="btn btn-sm btn-link p-0 ms-2">打开</a>
+                            </div>
+                        `;
+                    }
+                });
+                html += '</div>';
+                docListDiv.innerHTML = html;
+            } else {
+                docListDiv.innerHTML = '<span class="text-muted">无文档</span>';
+            }
+
+            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('editImage').value = '';
+            document.getElementById('editDocument').value = '';
+        }
+
+        function removeFile(button, type) {
+            const fileItem = button.closest('.file-item');
+            if (fileItem) {
+                fileItem.remove();
+                console.log(`已移除 ${type}: ${fileItem.dataset.url}`);
+            }
+        }
+
+        function previewSingleImage(url) {
+            document.getElementById('previewImage').src = url;
+            document.getElementById('previewModal').style.display = 'block';
+        }
+
+        function previewFirstImage(index) {
+            const item = currentData[index];
+            const imageUrls = safeParseFileUrls(item.image_url);
+            const firstUrl = imageUrls.find(url => url && url !== 'N/A');
+            if (firstUrl) {
+                previewSingleImage(firstUrl);
+            } else {
+                alert('无图片');
+            }
+        }
+
+        async function saveEdit() {
+            const modal = document.getElementById('editModal');
+            if (!modal) return;
+
+            // 判断模式：优先使用 currentCollection（最可靠），其次用 dataset
+            const isReviewMode = currentCollection === '__REVIEW__' || modal.dataset.mode === 'review';
+
+            // ========== 1. 安全收集要保留的旧文件（关键修复！）==========
+            let newImageUrls = [];
+            document.querySelectorAll('#currentImageList .file-item').forEach(item => {
+                if (item.dataset.url) {
+                    newImageUrls.push(item.dataset.url);
+                }
+            });
+
+            let newFileUrls = [];
+            document.querySelectorAll('#currentDocumentList .file-item').forEach(item => {
+                if (item.dataset.url) {
+                    newFileUrls.push(item.dataset.url);
+                }
+            });
+
+            // ========== 2. 上传新图片 ==========
+            const imageInput = document.getElementById('editImage');
+            if (imageInput && imageInput.files.length > 0) {
+                for (let file of imageInput.files) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    const res = await fetch('/upload_image', {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: formData
+                    });
+                    if (!res.ok) {
+                        alert(`图片 ${file.name} 上传失败`);
+                        return;
+                    }
+                    const json = await res.json();
+                    if (json.success && json.url) {
+                        newImageUrls.push(json.url);
+                    } else {
+                        alert(json.error || '图片上传失败');
+                        return;
+                    }
+                }
+            }
+
+            // ========== 3. 上传新文档 ==========
+            const docInput = document.getElementById('editDocument');
+            if (docInput && docInput.files.length > 0) {
+                for (let file of docInput.files) {
+                    const formData = new FormData();
+                    formData.append('document', file);
+                    const res = await fetch('/upload_document', {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: formData
+                    });
+                    if (!res.ok) {
+                        alert(`文档 ${file.name} 上传失败`);
+                        return;
+                    }
+                    const json = await res.json();
+                    if (json.success && json.url) {
+                        newFileUrls.push(json.url);
+                    } else {
+                        alert(json.error || '文档上传失败');
+                        return;
+                    }
+                }
+            }
+
+            // ========== 4. 组装基础数据 ==========
+            const submitData = {
+                id: document.getElementById('editId')?.value || '',
+                object: document.getElementById('editObject')?.value.trim() || '',
+                type: document.getElementById('editType')?.value.trim() || '',
+                purpose: document.getElementById('editPurpose')?.value.trim() || '',
+                customer_type: document.getElementById('editCustomerType')?.value.trim() || '',
+                keyword: document.getElementById('editKeyword')?.value.trim() || '',
+                problem: (document.getElementById('editProblem')?.value || '')
+                            .split('\n').map(s => s.trim()).filter(s => s),
+                text: document.getElementById('editText')?.value.trim() || '',
+                image_url: newImageUrls.length ? newImageUrls : ["N/A"],
+                file_url: newFileUrls.length ? newFileUrls : ["N/A"]
+            };
+
+            let url, body;
+
+            if (isReviewMode) {
+                // ========== 审核模式：处理 selected_dbs ==========
+                url = '/admin/update_review_record';
+
+                const selectedDbs = [];
+                const dbCheckboxes = document.querySelectorAll('#editModal .edit-db-checkbox:checked');
+                dbCheckboxes.forEach(cb => {
+                    if (cb.value) selectedDbs.push(cb.value);
+                });
+
+                if (selectedDbs.length === 0) {
+                    alert('请至少选择一个目标数据库！');
+                    return;
+                }
+
+                body = {
+                    id: submitData.id,
+                    selected_dbs: selectedDbs,
+                    data: {
+                        object: submitData.object,
+                        type: submitData.type,
+                        purpose: submitData.purpose,
+                        customer_type: submitData.customer_type,
+                        keyword: submitData.keyword,
+                        problem: submitData.problem,
+                        text: submitData.text,
+                        image_url: submitData.image_url,
+                        file_url: submitData.file_url
+                    }
+                };
+
+            } else {
+                // ========== 正式库模式：不传 selected_dbs ==========
+                url = `/admin/update_record?collection=${currentCollection}`;
+                body = {
+                    id: submitData.id,
+                    object: submitData.object,
+                    type: submitData.type,
+                    purpose: submitData.purpose,
+                    customer_type: submitData.customer_type,
+                    keyword: submitData.keyword,
+                    problem: submitData.problem,
+                    text: submitData.text,
+                    image_url: submitData.image_url,
+                    file_url: submitData.file_url
+                };
+            }
+
+            // ========== 5. 提交请求 ==========
+            try {
+                const res = await authFetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const result = res ? await res.json() : null;
+
+                if (res?.ok && result?.success !== false) {
+                    alert(result?.message || '保存成功！');
+                    closeModal('editModal');
+                    modal.dataset.mode = ''; // 清除模式标记
+
+                    if (isReviewMode) {
+                        loadReviewData();
+                    } else {
+                        loadData(currentCollection);
+                    }
+                } else {
+                    alert('更新失败: ' + (result?.error || '服务器无响应'));
+                }
+            } catch (err) {
+                console.error('更新请求错误:', err);
+                alert('网络错误: ' + err.message);
+            }
+        }
+        function getAuthHeaders() {
+            return authToken ? { 'Authorization': 'Bearer ' + authToken } : {};
+        }
+
+        function showLogs() {
+            authFetch('/admin/get_logs')
+                .then(res => res ? res.json() : null)
+                .then(logs => {
+                    if (!logs) return;
+                    const tbody = document.querySelector('#logTable');
+                    tbody.innerHTML = '';
+                    logs.forEach(log => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${log.timestamp}</td>
+                            <td>${log.user}</td>
+                            <td>${log.type}</td>
+                            <td>${log.collection}</td>
+                            <td>${log.record_id || log.record_ids.join(',') || 'N/A'}</td>
+                            <td>${log.details}</td>
+                        `;
+                    });
+                    document.getElementById('logModal').style.display = 'block';
+                })
+                .catch(err => {
+                    console.error('日志加载错误:', err);
+                    alert('加载日志失败');
+                });
+        }
+
+        // 增添新的加载被拒数据管理界面函数
+        async function loadRejectedManagement() {
+            currentCollection = '__REJECTED__';
+            document.getElementById('totalInfo').textContent = '正在加载被拒数据...';
+
+            try {
+                const res = await authFetch('/admin/get_all_rejected');
+                const data = await res.json();
+
+                const tbody = document.querySelector('#dataTable tbody');
+                tbody.innerHTML = '';
+
+                if (!data.rejected || data.rejected.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="14" class="text-center text-muted">暂无被拒数据</td></tr>';
+                    document.getElementById('totalInfo').textContent = '被拒数据: 0 条';
+                    document.getElementById('clearAllBtn').style.display = 'none';
+                    return;
+                }
+
+                document.getElementById('clearAllBtn').style.display = 'inline-block';
+                document.getElementById('totalInfo').textContent = `被拒数据: ${data.rejected.length} 条（来自 ${Object.keys(data.rejected).length} 人）`;
+
+                let index = 0;
+                for (const [uploader, items] of Object.entries(data.rejected)) {
+                    items.forEach(item => {
+                        const row = tbody.insertRow();
+                        const reason = item.reject_reason || "未填写原因";
+                        const rejectedAt = item.rejected_at ? new Date(item.rejected_at).toLocaleString() : "未知时间";
+
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td><strong>${uploader}</strong></td>
+                            <td>${item.data.object || 'N/A'}</td>
+                            <td>${item.data.type || 'N/A'}</td>
+                            <td>${item.data.purpose || 'N/A'}</td>
+                            <td>${item.data.customer_type || 'N/A'}</td>
+                            <td>${item.data.keyword || 'N/A'}</td>
+                            <td>${Array.isArray(item.data.problem) ? item.data.problem.slice(0,3).join('; ') : 'N/A'}</td>
+                            <td style="max-width:300px; white-space: pre-wrap;">${item.data.text?.slice(0,100) || 'N/A'}...</td>
+                            <td>${new Date(item.timestamp).toLocaleDateString()}</td>
+                            <td style="background:#ffebee; color:#c62828; font-weight:bold; padding:8px;">
+                                ${reason}
+                                <br><small style="color:#999;">${rejectedAt}</small>
+                            </td>
+                            <td>
+                                ${item.data.image_url?.length > 0 && item.data.image_url[0] !== "N/A" ? '有' : '无'}
+                            </td>
+                            <td>
+                                ${item.data.file_url?.length > 0 && item.data.file_url[0] !== "N/A" ? '有' : '无'}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-danger delete-rejected-btn"
+                                        data-uploader="${uploader}"
+                                        data-id="${item.id}">
+                                    删除
+                                </button>
+                            </td>
+                        `;
+                        index++;
+                    });
+                }
+
+                // 临时调整表头
+                const thead = document.querySelector('#dataTable thead tr');
+                thead.innerHTML = `
+                    <th>#</th>
+                    <th>上传人</th>
+                    <th>功能</th>
+                    <th>类型</th>
+                    <th>场景</th>
+                    <th>客户</th>
+                    <th>关键词</th>
+                    <th>类似问题</th>
+                    <th>回复内容</th>
+                    <th>上传时间</th>
+                    <th>拒绝原因</th>
+                    <th>图片</th>
+                    <th>文档</th>
+                    <th>操作</th>
+                `;
+
+            } catch (err) {
+                alert('加载被拒数据失败: ' + err.message);
+            }
+        }
+        
+        // 增添删除函数
+        async function deleteRejected(uploader, recordId) {
+            if (!confirm('确定删除这条被拒记录？')) return;
+            
+            const res = await authFetch('/admin/delete_rejected', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uploader, id: recordId })
+            });
+            
+            if (res?.ok) {
+                alert('已删除');
+                loadRejectedManagement();
+            } else {
+                alert('删除失败');
+            }
+        }
+
+        async function clearAllRejected() {
+            const res = await authFetch('/admin/clear_all_rejected', { method: 'POST' });
+            if (res?.ok) {
+                alert('已清除所有被拒数据');
+                loadRejectedManagement();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // ========== 筛选和搜索 ==========
+        function populateFilterOptions(data) {
+            const fields = {
+                'filterObject': 'object',
+                'filterType': 'type',
+                'filterPurpose': 'purpose',
+                'filterCustomerType': 'customer_type'
+            };
+
+            const presets = {
+                object: ['报表导出', '净头寸', '订单管理', '用户权限', '风险设置'],
+                type: ['权限说明', '解释概念', '操作步骤', '故障排查', '故障说明', '数据查询'],
+                purpose: ['审计合规', '用户咨询', '内部培训', '系统帮助', '客户支持'],
+                customer_type: ['系统管理员', '个人客户', '机构客户', '内部员工', '合作伙伴']
+            };
+
+            for (let [selectId, fieldName] of Object.entries(fields)) {
+                const select = document.getElementById(selectId);
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">全部</option>';
+                
+                const uniqueValues = [...new Set(data.map(item => item[fieldName] || '').filter(v => v))].sort();
+                const valuesToUse = uniqueValues.length > 0 ? uniqueValues : presets[fieldName];
+
+                valuesToUse.forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    select.appendChild(option);
+                });
+
+                if (valuesToUse.includes(currentVal)) {
+                    select.value = currentVal;
+                }
+            }
+        }
+
+        function applyFilters() {
+            const filters = {
+                object: document.getElementById('filterObject').value,
+                type: document.getElementById('filterType').value,
+                purpose: document.getElementById('filterPurpose').value,
+                customer_type: document.getElementById('filterCustomerType').value
+            };
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const tbody = document.querySelector('#dataTable tbody');
+            let visibleCount = 0;
+
+            currentData.forEach((item, index) => {
+                const row = tbody.rows[index];
+                if (!row) return;
+
+                let match = true;
+                for (let [field, value] of Object.entries(filters)) {
+                    if (value && item[field] !== value) {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match && searchTerm) {
+                    const searchableFields = [
+                        item.keyword || '',
+                        item.problem ? JSON.parse(item.problem).join(' ') : '',
+                        item.text || ''
+                    ];
+                    const searchText = searchableFields.join(' ').toLowerCase();
+                    if (!searchText.includes(searchTerm)) {
+                        match = false;
+                    }
+                }
+
+                if (match) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            document.getElementById('totalInfo').textContent = `总计: ${currentData.length} 条，当前显示: ${visibleCount} 条`;
+        }
+
+        checkLogin();
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('collectionSelect');
+            if (select) {
+                // 移除可能的旧监听器，避免重复
+                const handleChange = function(e) {
+                    const val = e.target.value;
+                    if (val) {
+                        loadData(val);
+                    }
+                };
+                select.removeEventListener('change', handleChange); // 先移除
+                select.addEventListener('change', handleChange);   // 再添加
+            }
+        });
+        // 被拒数据单条删除 - 事件委托（推荐）
+        document.getElementById('dataTable').addEventListener('click', async function(e) {
+            const btn = e.target.closest('.delete-rejected-btn');
+            if (!btn) return;
+
+            const uploader = btn.dataset.uploader;
+            const recordId = btn.dataset.id;
+
+            if (!confirm('确定删除这条被拒记录？')) return;
+
+            const res = await authFetch('/admin/delete_rejected', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uploader, id: recordId })
+            });
+
+            if (res && res.ok) {
+                alert('已删除');
+                loadRejectedManagement();  // 刷新列表
+            } else {
+                const err = await res?.json();
+                alert('删除失败: ' + (err?.error || '未知错误'));
+            }
+        });
+        let RAG_OPTIONS = {};
+
+        // 页面加载时获取选项
+        async function loadRagOptions() {
+        try {
+            const res = await authFetch('/admin/get_rag_options');
+            const data = await res.json();
+            if (data.success) {
+            RAG_OPTIONS = data.options;
+            populateDatalists();
+            }
+        } catch (e) {
+            console.error("加载选项失败", e);
+        }
+        }
+
+        function populateDatalists() {
+        const maps = {
+            objectOptions: RAG_OPTIONS.object || [],
+            typeOptions: RAG_OPTIONS.type || [],
+            purposeOptions: RAG_OPTIONS.purpose || [],
+            customerOptions: RAG_OPTIONS.customer_type || []
+        };
+        for (const [datalistId, items] of Object.entries(maps)) {
+            const dl = document.getElementById(datalistId);
+            if (!dl) continue;
+            dl.innerHTML = items.map(opt => `<option value="${opt}">`).join('');
+        }
+        }
+
+        // 在页面初始化时调用（你已经有 checkLogin() 或 DOMContentLoaded）
+        document.addEventListener('DOMContentLoaded', () => {
+        loadRagOptions();  // ← 加上这行！
+        });
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a0c1bb5bd9ae2e9',t:'MTc2MzUxNzU2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
