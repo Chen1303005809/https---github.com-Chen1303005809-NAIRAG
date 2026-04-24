@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 import unicodedata
 from typing import Any, Dict, List, Optional, Union
 
@@ -52,12 +53,54 @@ class Qwen3VLEmbedder:
         self.max_frames = max_frames
         self.default_instruction = default_instruction
 
-        self.model = Qwen3VLForEmbedding.from_pretrained(
-            model_name_or_path,
-            trust_remote_code=True,
-            **kwargs,
-        ).to(device)
-        self.processor = Qwen3VLProcessor.from_pretrained(model_name_or_path, padding_side="right")
+        # Local-first loading:
+        # 1) explicit local path in env QWEN3_VL_EMBEDDING_PATH
+        # 2) local cache with local_files_only=True
+        # 3) remote repo fallback
+        env_local_path = os.getenv("QWEN3_VL_EMBEDDING_PATH", "").strip()
+        prefer_sources: List[str] = []
+        if env_local_path:
+            prefer_sources.append(env_local_path)
+        prefer_sources.append(model_name_or_path)
+
+        self.model = None
+        self.processor = None
+        load_errors: List[str] = []
+        for source in prefer_sources:
+            # Local-only attempt first
+            try:
+                model = Qwen3VLForEmbedding.from_pretrained(
+                    source,
+                    trust_remote_code=True,
+                    local_files_only=True,
+                    **kwargs,
+                ).to(device)
+                processor = Qwen3VLProcessor.from_pretrained(
+                    source, padding_side="right", local_files_only=True
+                )
+                self.model = model
+                self.processor = processor
+                logger.info("Qwen3-VL loaded locally from: %s", source)
+                break
+            except Exception as exc:
+                load_errors.append(f"[local_only:{source}] {exc}")
+
+        # Remote fallback if local-only loading failed
+        if self.model is None or self.processor is None:
+            try:
+                self.model = Qwen3VLForEmbedding.from_pretrained(
+                    model_name_or_path,
+                    trust_remote_code=True,
+                    **kwargs,
+                ).to(device)
+                self.processor = Qwen3VLProcessor.from_pretrained(
+                    model_name_or_path, padding_side="right"
+                )
+                logger.info("Qwen3-VL loaded from remote repo: %s", model_name_or_path)
+            except Exception as exc:
+                load_errors.append(f"[remote:{model_name_or_path}] {exc}")
+                raise RuntimeError("Failed to load Qwen3-VL model/processor: " + " | ".join(load_errors))
+
         self.model.eval()
 
     @torch.no_grad()
@@ -141,7 +184,7 @@ class Qwen3VLEmbedder:
 
         return conversation
 
-    def _preprocess_inputs(self, conversations: List[List[Dict]]) -> Dict[str, torch.Tensor]:
+    def _preprocess_inputs(self, conversations: List[List[Dict]], do_resize: bool = False) -> Dict[str, torch.Tensor]:
         text = self.processor.apply_chat_template(conversations, add_generation_prompt=True, tokenize=False)
 
         try:
@@ -174,7 +217,7 @@ class Qwen3VLEmbedder:
             truncation=True,
             max_length=self.max_length,
             padding=True,
-            do_resize=False,
+            do_resize=do_resize,
             return_tensors="pt",
             **video_kwargs,
         )
@@ -199,10 +242,20 @@ class Qwen3VLEmbedder:
             )
             for ele in inputs
         ]
-        processed_inputs = self._preprocess_inputs(conversations)
+        processed_inputs = self._preprocess_inputs(conversations, do_resize=False)
         processed_inputs = {k: v.to(self.model.device) for k, v in processed_inputs.items()}
 
-        outputs = self.forward(processed_inputs)
+        try:
+            outputs = self.forward(processed_inputs)
+        except Exception as exc:
+            # Retry with resize enabled for edge-case images that trigger shape mismatch.
+            if "shape" not in str(exc):
+                raise
+            logger.warning("Embedding forward failed with do_resize=False, retrying with do_resize=True: %s", exc)
+            processed_inputs = self._preprocess_inputs(conversations, do_resize=True)
+            processed_inputs = {k: v.to(self.model.device) for k, v in processed_inputs.items()}
+            outputs = self.forward(processed_inputs)
+
         embeddings = self._pooling_last(outputs["last_hidden_state"], outputs["attention_mask"])
         if normalize:
             embeddings = F.normalize(embeddings, p=2, dim=-1)

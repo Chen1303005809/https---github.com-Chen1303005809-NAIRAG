@@ -69,10 +69,22 @@ class MilvusSearchEngine:
         if self.visual_embedder["family"] == "qwen3_vl":
             import logging
             import numpy as np
+            from PIL import Image, ImageOps
             logger = logging.getLogger(__name__)
 
             outputs: List[List[float]] = []
             visual_dim = self.visual_embedder["dimension"]
+
+            def _load_safe_image(path: str):
+                with Image.open(path) as img:
+                    rgb = ImageOps.exif_transpose(img).convert("RGB")
+                    max_side = 1536
+                    if max(rgb.size) > max_side:
+                        scale = max_side / float(max(rgb.size))
+                        new_w = max(28, int(rgb.size[0] * scale))
+                        new_h = max(28, int(rgb.size[1] * scale))
+                        rgb = rgb.resize((new_w, new_h), Image.Resampling.BICUBIC)
+                    return rgb
 
             # Process images one by one to avoid occasional batch shape conflicts.
             for image_path in image_paths:
@@ -84,8 +96,18 @@ class MilvusSearchEngine:
                         vec = result[0]
                     outputs.append(vec)
                 except Exception as exc:
-                    logger.error("Image embedding failed for %s: %s", image_path, exc)
-                    outputs.append(np.zeros(visual_dim).tolist())
+                    logger.warning("Image embedding failed for %s, retry with safe PIL image: %s", image_path, exc)
+                    try:
+                        safe_img = _load_safe_image(image_path)
+                        result = self.visual_embedder["model"].process([{"image": safe_img}], normalize=True)
+                        if torch is not None:
+                            vec = result.detach().cpu().float().numpy().tolist()[0]
+                        else:
+                            vec = result[0]
+                        outputs.append(vec)
+                    except Exception as exc2:
+                        logger.error("Image embedding failed for %s after retry: %s", image_path, exc2)
+                        outputs.append(np.zeros(visual_dim).tolist())
             return outputs
 
         # Fallback to dummy embeddings if visual embedder fails
