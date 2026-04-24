@@ -83,7 +83,8 @@ def process_vision_info(
                                 local_path = _unwrap_local_file_uri(image_data)
                                 if os.path.exists(local_path):
                                     try:
-                                        images.append(Image.open(local_path))
+                                        with Image.open(local_path) as img:
+                                            images.append(img.convert("RGB"))
                                     except Exception:
                                         images.append(local_path)
                                 else:

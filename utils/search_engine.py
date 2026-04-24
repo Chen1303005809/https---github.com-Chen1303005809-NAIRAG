@@ -67,11 +67,26 @@ class MilvusSearchEngine:
     def _embed_images(self, image_paths: List[str]) -> List[List[float]]:
         """Embed images using Qwen3-VL model."""
         if self.visual_embedder["family"] == "qwen3_vl":
-            inputs = [{"image": p} for p in image_paths]
-            result = self.visual_embedder["model"].process(inputs, normalize=True)
-            if torch is not None:
-                return result.detach().cpu().float().numpy().tolist()
-            return result
+            import logging
+            import numpy as np
+            logger = logging.getLogger(__name__)
+
+            outputs: List[List[float]] = []
+            visual_dim = self.visual_embedder["dimension"]
+
+            # Process images one by one to avoid occasional batch shape conflicts.
+            for image_path in image_paths:
+                try:
+                    result = self.visual_embedder["model"].process([{"image": image_path}], normalize=True)
+                    if torch is not None:
+                        vec = result.detach().cpu().float().numpy().tolist()[0]
+                    else:
+                        vec = result[0]
+                    outputs.append(vec)
+                except Exception as exc:
+                    logger.error("Image embedding failed for %s: %s", image_path, exc)
+                    outputs.append(np.zeros(visual_dim).tolist())
+            return outputs
 
         # Fallback to dummy embeddings if visual embedder fails
         import numpy as np
