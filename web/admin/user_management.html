@@ -5,19 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>用户管理</title>
     <style>
-        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f1f5f9; color: #0f172a; }
+        :root {
+            --bg: #f5f7fb;
+            --line: #e3e8f2;
+            --text: #25314c;
+            --muted: #6f7a94;
+            --primary: #344767;
+            --danger: #ea0606;
+            --shadow: 0 18px 34px rgba(52, 71, 103, 0.1);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background:
+                radial-gradient(circle at 10% -6%, rgba(73,163,241,.18), transparent 34%),
+                radial-gradient(circle at 92% 14%, rgba(52,71,103,.14), transparent 32%),
+                var(--bg);
+            color: var(--text);
+        }
         .wrap { max-width: 980px; margin: 16px auto; padding: 0 12px; }
-        .panel { background: #fff; border: 1px solid #d6dee9; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-        .head { padding: 12px; border-bottom: 1px solid #d6dee9; font-weight: 700; }
-        .body { padding: 12px; }
+        .panel {
+            background: rgba(255,255,255,0.95);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .head { padding: 13px 14px; border-bottom: 1px solid var(--line); font-weight: 700; color: var(--primary); }
+        .body { padding: 13px 14px; }
         .grid { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
-        input, select { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 10px; }
-        .btn { border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-        .btn.primary { background: #1d4ed8; color: #fff; }
-        .btn.danger { background: #b91c1c; color: #fff; }
+        input, select {
+            width: 100%;
+            border: 1px solid #cfd7e6;
+            border-radius: 10px;
+            padding: 9px 10px;
+            color: var(--text);
+            background: #fff;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #49a3f1;
+            box-shadow: 0 0 0 4px rgba(73,163,241,.16);
+        }
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #31415f;
+            background: #edf1f8;
+            transition: 0.2s ease;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn.primary {
+            background: linear-gradient(135deg, #344767, #1a2035);
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(26,32,53,0.24);
+        }
+        .btn.danger { background: linear-gradient(135deg, #f56565, #ea0606); color: #fff; }
         .topbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { border-bottom: 1px solid #e2e8f0; padding: 8px; font-size: 13px; text-align: left; }
+        th, td { border-bottom: 1px solid #e5eaf3; padding: 9px 8px; font-size: 13px; text-align: left; }
+        th { color: #415272; }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>

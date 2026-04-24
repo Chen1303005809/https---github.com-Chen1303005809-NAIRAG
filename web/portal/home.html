@@ -6,34 +6,52 @@
     <title>RAG 统一门户</title>
     <style>
         :root {
-            --bg: #f3f7fb;
+            --bg: #f5f7fb;
             --card: #ffffff;
-            --line: #dbe4ee;
-            --text: #0f172a;
-            --muted: #475569;
-            --a: #0ea5e9;
-            --b: #059669;
-            --c: #f59e0b;
+            --line: #e3e8f2;
+            --text: #25314c;
+            --muted: #6f7a94;
+            --a: #49a3f1;
+            --b: #2dce89;
+            --c: #fb8c00;
+            --shadow: 0 18px 34px rgba(52, 71, 103, 0.1);
         }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: var(--text); background: var(--bg); }
+        body {
+            margin: 0;
+            font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 7% -6%, rgba(73,163,241,0.2), transparent 34%),
+                radial-gradient(circle at 95% 12%, rgba(45,206,137,0.16), transparent 32%),
+                var(--bg);
+        }
         .head {
             position: sticky;
             top: 0;
             z-index: 10;
-            background: rgba(255,255,255,0.88);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--line);
+            background: linear-gradient(140deg, #252f4a, #344767 70%);
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             display: flex;
             justify-content: space-between;
             padding: 14px 24px;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .head .user { color: var(--muted); font-size: 14px; }
-        .role { margin-left: 8px; padding: 4px 10px; border-radius: 999px; background: #e0f2fe; color: #0369a1; }
-        .logout { border: 1px solid #fecaca; background: #fff1f2; color: #be123c; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+        .head .user { color: rgba(255,255,255,0.86); font-size: 14px; }
+        .role { margin-left: 8px; padding: 4px 10px; border-radius: 999px; background: rgba(73,163,241,0.22); color: #e6f3ff; border: 1px solid rgba(73,163,241,0.45); }
+        .logout {
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
         .container { max-width: 1100px; margin: 28px auto 46px; padding: 0 18px; }
-        h1 { margin: 0 0 8px; font-size: 34px; }
+        h1 { margin: 0 0 8px; font-size: 34px; letter-spacing: 0.2px; }
         .sub { margin: 0; color: var(--muted); }
         .grid {
             margin-top: 24px;
@@ -42,19 +60,20 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         }
         .card {
-            background: var(--card);
+            background: rgba(255,255,255,0.95);
             border: 1px solid var(--line);
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 20px;
             cursor: pointer;
             transition: transform .2s ease, box-shadow .2s ease;
+            box-shadow: var(--shadow);
         }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
-        .tag { display: inline-block; padding: 4px 10px; font-size: 12px; border-radius: 999px; margin-bottom: 12px; }
-        .tag.upload { background: rgba(14,165,233,.12); color: #0369a1; }
-        .tag.search { background: rgba(5,150,105,.12); color: #047857; }
-        .tag.admin { background: rgba(245,158,11,.14); color: #b45309; }
-        .card h2 { margin: 0 0 10px; font-size: 22px; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 36px rgba(52, 71, 103, 0.18); }
+        .tag { display: inline-block; padding: 4px 10px; font-size: 12px; border-radius: 999px; margin-bottom: 12px; font-weight: 700; }
+        .tag.upload { background: rgba(73,163,241,.16); color: #2f6ea7; }
+        .tag.search { background: rgba(45,206,137,.16); color: #1d8f61; }
+        .tag.admin { background: rgba(251,140,0,.16); color: #b86600; }
+        .card h2 { margin: 0 0 10px; font-size: 22px; color: #344767; }
         .card p { margin: 0; color: var(--muted); line-height: 1.6; }
     </style>
 </head>
