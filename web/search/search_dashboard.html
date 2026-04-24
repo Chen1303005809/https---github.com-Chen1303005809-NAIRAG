@@ -175,6 +175,28 @@
         .chunk-text { white-space: pre-wrap; line-height: 1.6; font-size: 13px; }
         .chunk-files { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
         .file-link { font-size: 12px; color: #315e95; background: #e8f1ff; border-radius: 999px; padding: 4px 8px; text-decoration: none; }
+        .attachment-block { margin-top: 8px; display: grid; gap: 8px; }
+        .attachment-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+        .attachment-image {
+            display: block;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(52, 71, 103, 0.08);
+            text-decoration: none;
+        }
+        .attachment-image img { width: 100%; height: 106px; object-fit: cover; display: block; }
+        .attachment-image span {
+            display: block;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .attachment-files { display: flex; flex-wrap: wrap; gap: 6px; }
         .empty { margin-top: 12px; border: 1px dashed #c8d4e8; border-radius: 11px; padding: 14px; color: var(--muted); background: #fbfcff; }
         .error { margin-top: 12px; border: 1px solid #fecaca; background: #fff5f6; color: var(--warn); border-radius: 11px; padding: 12px; }
         .ok { margin-top: 12px; border: 1px solid #b7f0d4; background: #f1fcf7; color: var(--ok); border-radius: 11px; padding: 12px; }
@@ -388,6 +410,18 @@ function escapeHtml(text) {
     return String(text || '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
 }
 
+function toViewUrl(url) {
+    const value = String(url || '').trim();
+    if (!value) return '';
+    if (/^https?:\/\//i.test(value) || value.startsWith('/')) return value;
+    return '/' + value.replace(/^\.?\//, '');
+}
+
+function isImageUrl(url) {
+    const path = String(url || '').split('?')[0].toLowerCase();
+    return /\.(png|jpe?g|gif|webp|bmp|svg|tiff?)$/.test(path);
+}
+
 function validUrls(urls) {
     const values = Array.isArray(urls) ? urls : (urls ? [urls] : []);
     const result = [];
@@ -402,6 +436,37 @@ function validUrls(urls) {
 function summarizeFileNames(urls, limit = 2) {
     const names = validUrls(urls).map(url => decodeURIComponent(url.split('/').pop() || url));
     return names.slice(0, limit).join('、');
+}
+
+function buildAttachmentHtml(urls) {
+    const all = validUrls(urls).map(raw => {
+        const href = toViewUrl(raw);
+        const name = decodeURIComponent(href.split('/').pop() || href);
+        return { raw, href, hrefEsc: escapeHtml(href), name, image: isImageUrl(href) };
+    }).filter(item => !!item.href);
+    if (!all.length) return '<span style="font-size:12px; color:#64748b;">无附件</span>';
+
+    const imageItems = all.filter(item => item.image);
+    const fileItems = all.filter(item => !item.image);
+
+    const imageHtml = imageItems.length
+        ? `<div class="attachment-images">
+            ${imageItems.map(item => `
+                <a class="attachment-image" href="${item.hrefEsc}" target="_blank" title="${escapeHtml(item.name)}">
+                    <img src="${item.hrefEsc}" alt="${escapeHtml(item.name)}" loading="lazy" />
+                    <span>${escapeHtml(item.name)}</span>
+                </a>
+            `).join('')}
+           </div>`
+        : '';
+
+    const fileHtml = fileItems.length
+        ? `<div class="attachment-files">
+            ${fileItems.map(item => `<a class="file-link" href="${item.hrefEsc}" target="_blank">${escapeHtml(item.name)}</a>`).join('')}
+           </div>`
+        : '';
+
+    return `<div class="attachment-block">${imageHtml}${fileHtml}</div>`;
 }
 
 function pickBestDoc(textDocs, imageDocs) {
@@ -484,12 +549,7 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
           `).join('')
         : `<div style="margin-top:8px; color:#475569;">暂无证据片段</div>`;
 
-    const filesHtml = validUrls(bestDoc.file_urls || []).length
-        ? validUrls(bestDoc.file_urls || []).map(url => {
-            const name = decodeURIComponent(url.split('/').pop() || url);
-            return `<a class="file-link" href="${url}" target="_blank">${escapeHtml(name)}</a>`;
-        }).join('')
-        : '<span style="font-size:12px; color:#64748b;">无附件</span>';
+    const filesHtml = buildAttachmentHtml(bestDoc.file_urls || []);
 
     node.innerHTML = `
         <div><strong>综合结论（仅输出 1 个最相关文档）</strong></div>
@@ -551,10 +611,7 @@ function renderDocGroup(title, grouped) {
         (doc.chunks || []).forEach(chunk => {
             const item = document.createElement('div');
             item.className = 'chunk';
-            const files = validUrls(chunk.file_url || []).map(url => {
-                const name = decodeURIComponent(url.split('/').pop() || url);
-                return `<a class="file-link" href="${url}" target="_blank">${name}</a>`;
-            }).join('');
+            const files = buildAttachmentHtml(chunk.file_url || []);
             item.innerHTML = `
                 <div class="chunk-top">
                     <span>chunk: ${chunk.chunk_id ?? '-'} · ${chunk.field_type || 'unknown'}</span>
