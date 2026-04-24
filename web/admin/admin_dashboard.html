@@ -194,7 +194,7 @@
             <button class="btn success" id="approveBtn" style="display:none;" onclick="batchApprove()">批量通过</button>
             <button class="btn warn" id="rejectBtn" style="display:none;" onclick="batchReject()">批量拒绝</button>
             <button class="btn" onclick="showLogs()">日志</button>
-            <button class="btn" onclick="window.open('/user_management.html', '_blank')">用户管理</button>
+            <button class="btn" onclick="window.open(apiUrl('/user_management.html'), '_blank')">用户管理</button>
         </div>
     </section>
 
@@ -282,12 +282,13 @@
 </div>
 
 <script>
-let authToken = localStorage.getItem('authToken') || '';
+let authToken = localStorage.getItem('flaskToken') || localStorage.getItem('authToken') || '';
 let currentUser = '';
 let currentRole = '';
 let dataDocs = [];
 let reviewRows = [];
 let rejectedRows = [];
+const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
 
 const DB_OPTIONS = [
     { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
@@ -302,9 +303,13 @@ function authHeaders(extra = {}) {
     return authToken ? { ...extra, Authorization: 'Bearer ' + authToken } : extra;
 }
 
+function apiUrl(path) {
+    return `${API_BASE}${path}`;
+}
+
 async function authFetch(url, options = {}) {
     const headers = authHeaders(options.headers || {});
-    const res = await fetch(url, { ...options, headers });
+    const res = await fetch(apiUrl(url), { ...options, headers });
     if (res.status === 401) {
         logout();
         throw new Error('登录失效，请重新登录');
@@ -325,6 +330,7 @@ function logout() {
     currentUser = '';
     currentRole = '';
     localStorage.removeItem('authToken');
+    localStorage.removeItem('flaskToken');
     showMain(false);
     document.getElementById('loginErr').textContent = '';
 }
@@ -337,7 +343,7 @@ async function doLogin() {
         return;
     }
 
-    const res = await fetch('/login', {
+    const res = await fetch(apiUrl('/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -352,6 +358,7 @@ async function doLogin() {
     currentUser = data.username;
     currentRole = data.role;
     localStorage.setItem('authToken', authToken);
+    localStorage.setItem('flaskToken', authToken);
     localStorage.setItem('authUsername', currentUser);
     localStorage.setItem('authRole', currentRole);
     document.getElementById('whoami').textContent = `当前用户: ${currentUser} (${currentRole})`;

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 from flask import Blueprint, current_app, jsonify, request, send_from_directory
 
@@ -10,7 +9,8 @@ bp = Blueprint("public", __name__)
 
 @bp.route("/", methods=["GET"])
 def home():
-    return "✅ Milvus 管理后台运行中... 请访问 /admin_dashboard.html"
+    prefix = (request.script_root or "").rstrip("/")
+    return f"✅ Milvus 管理后台运行中... 请访问 {prefix}/admin_dashboard.html"
 
 
 @bp.route("/login", methods=["POST"])
@@ -40,15 +40,13 @@ def whoami():
 @bp.route("/app_reject_928_2.html", methods=["GET"])  # 兼容旧路径
 def serve_admin_html():
     services = get_services(current_app)
-    admin_dir = os.path.join(services.config.base_dir, "milvus_admin")
-    return send_from_directory(admin_dir, "admin_dashboard.html")
+    return send_from_directory(services.config.web_admin_dir, "admin_dashboard.html")
 
 
 @bp.route("/user_management.html", methods=["GET"])
 def serve_user_management():
     services = get_services(current_app)
-    admin_dir = os.path.join(services.config.base_dir, "milvus_admin")
-    return send_from_directory(admin_dir, "user_management.html")
+    return send_from_directory(services.config.web_admin_dir, "user_management.html")
 
 
 @bp.route("/static/<path:filename>", methods=["GET"])

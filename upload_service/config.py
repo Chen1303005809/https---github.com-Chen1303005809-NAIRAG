@@ -8,6 +8,7 @@ from datetime import timezone, timedelta
 class UploadConfig:
     base_dir: str
     static_dir: str
+    web_dir: str
     options_file: str
     review_dir: str
     rejected_dir: str
@@ -39,6 +40,7 @@ def load_config() -> UploadConfig:
     cfg = UploadConfig(
         base_dir=base_dir,
         static_dir=static_dir,
+        web_dir=os.path.join(base_dir, "web", "upload"),
         options_file=os.path.join(static_dir, "rag_options.json"),
         review_dir=review_dir,
         rejected_dir=rejected_dir,

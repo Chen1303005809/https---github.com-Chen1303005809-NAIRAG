@@ -95,9 +95,9 @@ def create_app() -> FastAPI:
 
     @app.get("/")
     async def serve_front():
-        html_path = os.path.join(config.static_dir, "search_dashboard.html")
+        html_path = os.path.join(config.web_dir, "search_dashboard.html")
         if os.path.exists(html_path):
             return FileResponse(html_path)
-        return {"message": "前端页面未找到，请确保 search_dashboard.html 存在于 static 目录"}
+        return {"message": "前端页面未找到，请确保 search_dashboard.html 存在于 web/search 目录"}
 
     return app

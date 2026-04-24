@@ -177,6 +177,11 @@ const previewList = document.getElementById('previewList');
 const dropZone = document.getElementById('dropZone');
 const resultContainer = document.getElementById('resultContainer');
 const resultStat = document.getElementById('resultStat');
+const API_BASE = window.location.pathname.startsWith('/search') ? '/search' : '';
+
+function apiUrl(path) {
+    return `${API_BASE}${path}`;
+}
 
 (function bindWelcome() {
     const username = localStorage.getItem('authUsername');
@@ -478,7 +483,7 @@ document.getElementById('queryForm').addEventListener('submit', async event => {
     formData.set('selected_dbs', selectedDatabases().join(','));
 
     try {
-        const response = await fetch('/query', { method: 'POST', body: formData });
+        const response = await fetch(apiUrl('/query'), { method: 'POST', body: formData });
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || `请求失败: ${response.status}`);
         renderResult(data);
@@ -494,7 +499,7 @@ document.getElementById('clearBtn').addEventListener('click', async () => {
     formData.set('selected_dbs', selectedDatabases().join(','));
     try {
         setLoading();
-        const response = await fetch('/query', { method: 'POST', body: formData });
+        const response = await fetch(apiUrl('/query'), { method: 'POST', body: formData });
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || `请求失败: ${response.status}`);
         renderResult(data);

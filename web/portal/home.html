@@ -72,20 +72,20 @@
     <p class="sub">已登录成功，请选择要进入的系统模块</p>
 
     <div class="grid">
-        <div class="card" onclick="openModule('http://192.168.1.100:8001')">
-            <span class="tag upload">UPLOAD · 8001</span>
+        <div class="card" onclick="openModule('/upload/')">
+            <span class="tag upload">UPLOAD</span>
             <h2>数据采集端</h2>
             <p>结构化录入、附件上传、待审入队。支持被拒数据回改后重新提交。</p>
         </div>
 
-        <div class="card" onclick="openModule('http://192.168.1.100:8003')">
-            <span class="tag search">SEARCH · 8003</span>
+        <div class="card" onclick="openModule('/search/')">
+            <span class="tag search">SEARCH</span>
             <h2>智能查询端</h2>
             <p>支持文本 + OCR 图片查询，并按文档聚合展示 chunk，结果更清晰。</p>
         </div>
 
-        <div class="card" onclick="openModule('http://192.168.1.100:5000/admin_dashboard.html')">
-            <span class="tag admin">ADMIN · 5000</span>
+        <div class="card" onclick="openModule('/admin/admin_dashboard.html')">
+            <span class="tag admin">ADMIN</span>
             <h2>审批与管理端</h2>
             <p>处理待审数据、批量通过/拒绝、文档分组管理、用户权限维护。</p>
         </div>

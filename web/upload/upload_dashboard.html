@@ -344,6 +344,7 @@ let authUsername = localStorage.getItem('authUsername') || '';
 let authRole = localStorage.getItem('authRole') || '';
 let rejectedCache = [];
 let optionCache = {};
+const API_BASE = window.location.pathname.startsWith('/upload') ? '/upload' : '';
 
 const DBS = [
     { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
@@ -356,6 +357,10 @@ const DBS = [
 
 function authHeaders(extra = {}) {
     return authToken ? { ...extra, Authorization: `Bearer ${authToken}` } : extra;
+}
+
+function apiUrl(path) {
+    return `${API_BASE}${path}`;
 }
 
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -394,7 +399,7 @@ async function login() {
         return;
     }
 
-    const res = await fetch('/login', {
+    const res = await fetch(apiUrl('/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -437,7 +442,7 @@ async function ensureLoginByToken() {
         return;
     }
     try {
-        const res = await fetch('/rejected_records', { headers: authHeaders() });
+        const res = await fetch(apiUrl('/rejected_records'), { headers: authHeaders() });
         if (res.status === 401) return logout();
         showLoggedIn(true);
         await loadOptions();
@@ -448,7 +453,7 @@ async function ensureLoginByToken() {
 }
 
 async function loadOptions() {
-    const res = await fetch('/options');
+    const res = await fetch(apiUrl('/options'));
     optionCache = await res.json();
     selectOptions('type', optionCache.type);
     selectOptions('object', optionCache.object);
@@ -483,7 +488,7 @@ async function editOptions(category) {
     const items = text.split('\n').map(v => v.trim()).filter(Boolean);
     if (!items.length) return alert('至少保留一个选项');
 
-    const res = await fetch(`/options/${category}`, {
+    const res = await fetch(apiUrl(`/options/${category}`), {
         method: 'POST',
         headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(items)
@@ -600,7 +605,7 @@ async function submitUpload(event) {
     Array.from(document.getElementById('imgInput').files || []).forEach(f => formData.append('files', f));
     Array.from(document.getElementById('docInput').files || []).forEach(f => formData.append('doc_files', f));
 
-    const res = await fetch('/upload_json', {
+    const res = await fetch(apiUrl('/upload_json'), {
         method: 'POST',
         headers: authHeaders(),
         body: formData
@@ -626,7 +631,7 @@ function resetForm() {
 
 async function checkRejectedRecords() {
     if (!authToken) return;
-    const res = await fetch('/rejected_records', { headers: authHeaders() });
+    const res = await fetch(apiUrl('/rejected_records'), { headers: authHeaders() });
     if (res.status === 401) return logout();
     const data = await res.json();
     rejectedCache = data.rejected || [];
@@ -735,7 +740,7 @@ async function submitResubmission() {
     Array.from(document.getElementById('editNewImages').files || []).forEach(f => formData.append('new_images', f));
     Array.from(document.getElementById('editNewDocs').files || []).forEach(f => formData.append('new_docs', f));
 
-    const res = await fetch('/resubmit_rejected', {
+    const res = await fetch(apiUrl('/resubmit_rejected'), {
         method: 'POST',
         headers: authHeaders(),
         body: formData

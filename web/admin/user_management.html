@@ -56,9 +56,14 @@
 
 <script>
 const token = localStorage.getItem('authToken') || '';
+const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
 
 function headers(extra = {}) {
     return token ? { ...extra, Authorization: 'Bearer ' + token } : extra;
+}
+
+function apiUrl(path) {
+    return `${API_BASE}${path}`;
 }
 
 function show(msg, ok=true) {
@@ -68,7 +73,7 @@ function show(msg, ok=true) {
 }
 
 async function loadUsers() {
-    const res = await fetch('/admin/users', { headers: headers() });
+    const res = await fetch(apiUrl('/admin/users'), { headers: headers() });
     const data = await res.json();
     if (!res.ok || !data.success) {
         show(data.error || '加载失败', false);
@@ -104,7 +109,7 @@ async function createUser() {
     const username = document.getElementById('newUsername').value.trim();
     const password = document.getElementById('newPassword').value.trim();
     const role = document.getElementById('newRole').value;
-    const res = await fetch('/admin/users/create', {
+    const res = await fetch(apiUrl('/admin/users/create'), {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ username, password, role })
@@ -120,7 +125,7 @@ async function updateUser(id) {
     const role = rowValue(id, 'role');
     const password = prompt('如需重置密码请输入，不修改请留空', '');
     if (password === null) return;
-    const res = await fetch('/admin/users/update', {
+    const res = await fetch(apiUrl('/admin/users/update'), {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ id, username, role, password })
@@ -133,7 +138,7 @@ async function updateUser(id) {
 
 async function deleteUser(id) {
     if (!confirm('确认删除该用户？')) return;
-    const res = await fetch('/admin/users/delete', {
+    const res = await fetch(apiUrl('/admin/users/delete'), {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ id })

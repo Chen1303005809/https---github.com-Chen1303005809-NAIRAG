@@ -7,6 +7,7 @@ from dataclasses import dataclass
 class RagConfig:
     base_dir: str
     static_dir: str
+    web_dir: str
     images_dir: str
     documents_dir: str
     milvus_host: str
@@ -25,6 +26,7 @@ def load_config() -> RagConfig:
     return RagConfig(
         base_dir=base_dir,
         static_dir=static_dir,
+        web_dir=os.path.join(base_dir, "web", "search"),
         images_dir=images_dir,
         documents_dir=documents_dir,
         milvus_host=os.getenv("MILVUS_HOST", "127.0.0.1"),

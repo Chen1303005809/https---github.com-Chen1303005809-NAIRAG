@@ -21,7 +21,7 @@ def load_config() -> PortalConfig:
     return PortalConfig(
         base_dir=base_dir,
         static_dir=os.path.join(base_dir, "static"),
-        templates_dir=os.path.join(base_dir, "portal_templates"),
+        templates_dir=os.path.join(base_dir, "web", "portal"),
         db_path=os.getenv("USERS_DB_PATH", default_db),
         fastapi_secret=os.getenv("FASTAPI_SECRET", "your-secret-key-change-in-production"),
         flask_secret=os.getenv("FLASK_SECRET", "your_jwt_secret_key_change_in_production_!@#"),

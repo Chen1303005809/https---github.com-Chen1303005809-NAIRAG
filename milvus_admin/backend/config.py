@@ -7,6 +7,7 @@ from dataclasses import dataclass
 class AdminConfig:
     base_dir: str
     static_root: str
+    web_admin_dir: str
     review_dir: str
     options_file: str
     users_db_path: str
@@ -32,6 +33,7 @@ def load_config() -> AdminConfig:
     return AdminConfig(
         base_dir=base_dir,
         static_root=static_root,
+        web_admin_dir=os.path.join(base_dir, "web", "admin"),
         review_dir=review_dir,
         options_file=os.getenv("RAG_OPTIONS_FILE", os.path.join(static_root, "rag_options.json")),
         users_db_path=os.getenv("USERS_DB_PATH", os.path.join(base_dir, "users.db")),
