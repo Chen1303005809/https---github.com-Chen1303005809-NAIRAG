@@ -159,7 +159,7 @@
         </section>
 
         <section class="panel">
-            <div class="panel-head">检索结果（按 DocID 聚合）</div>
+            <div class="panel-head">检索结果（单文档结构化）</div>
             <div class="panel-body">
                 <div class="result-head">
                     <strong>结果面板</strong>
@@ -304,6 +304,10 @@ function clipText(text, max = 72) {
     return plain.length > max ? plain.slice(0, max) + '…' : plain;
 }
 
+function escapeHtml(text) {
+    return String(text || '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+}
+
 function validUrls(urls) {
     const values = Array.isArray(urls) ? urls : (urls ? [urls] : []);
     const result = [];
@@ -320,40 +324,115 @@ function summarizeFileNames(urls, limit = 2) {
     return names.slice(0, limit).join('、');
 }
 
-function buildReadableSummary(textDocs, imageDocs) {
-    const total = textDocs.length + imageDocs.length;
-    if (!total) return '未命中任何文档，请尝试更换关键词或扩展数据库范围。';
+function pickBestDoc(textDocs, imageDocs) {
+    const merged = [...(textDocs || []), ...(imageDocs || [])];
+    if (!merged.length) return { bestDoc: null, candidateCount: 0 };
 
-    const lines = [];
-    lines.push(`本次共命中 ${total} 个文档（文本 ${textDocs.length}，图像 ${imageDocs.length}）。`);
-
-    if (textDocs.length) {
-        lines.push('文本重点:');
-        textDocs.slice(0, 3).forEach((doc, idx) => {
-            const topChunk = (doc.chunks || [])[0] || {};
-            const score = Number(doc.best_score ?? topChunk.score ?? 0).toFixed(2);
-            const type = topChunk.field_type || 'text';
-            const content = clipText(topChunk.field_text, 56);
-            const files = summarizeFileNames(doc.file_urls || topChunk.file_url || []);
-            let line = `${idx + 1}. DocID ${doc.doc_id || 'UNKNOWN_DOC'} | ${type} | ${score}%`;
-            if (content) line += ` | ${content}`;
-            if (files) line += ` | 附件: ${files}`;
-            lines.push(line);
-        });
+    const byDoc = new Map();
+    for (const doc of merged) {
+        const docId = doc.doc_id || 'UNKNOWN_DOC';
+        const normalized = {
+            ...doc,
+            doc_id: docId,
+            chunks: Array.isArray(doc.chunks) ? doc.chunks : [],
+            file_urls: Array.isArray(doc.file_urls) ? doc.file_urls : [],
+            best_score: Number(doc.best_score || 0),
+        };
+        const existed = byDoc.get(docId);
+        if (!existed) {
+            byDoc.set(docId, normalized);
+            continue;
+        }
+        if (normalized.best_score > existed.best_score) {
+            byDoc.set(docId, {
+                ...normalized,
+                chunks: [...normalized.chunks, ...existed.chunks],
+                file_urls: Array.from(new Set([...normalized.file_urls, ...existed.file_urls])),
+            });
+        } else {
+            existed.chunks = [...existed.chunks, ...normalized.chunks];
+            existed.file_urls = Array.from(new Set([...existed.file_urls, ...normalized.file_urls]));
+            byDoc.set(docId, existed);
+        }
     }
 
-    if (imageDocs.length) {
-        lines.push('图像重点:');
-        imageDocs.slice(0, 3).forEach((doc, idx) => {
-            const score = Number(doc.best_score || 0).toFixed(2);
-            const files = summarizeFileNames(doc.file_urls || [], 3);
-            let line = `${idx + 1}. DocID ${doc.doc_id || 'UNKNOWN_DOC'} | ${score}%`;
-            if (files) line += ` | 文件: ${files}`;
-            lines.push(line);
+    const docs = Array.from(byDoc.values()).sort((a, b) => b.best_score - a.best_score);
+    return { bestDoc: docs[0] || null, candidateCount: docs.length };
+}
+
+function buildStructuredAnswer(bestDoc) {
+    const chunks = [...(bestDoc?.chunks || [])].sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+    const keyPoints = [];
+    const seenField = new Set();
+
+    for (const chunk of chunks) {
+        const fieldType = chunk.field_type || 'unknown';
+        const text = clipText(chunk.field_text, 150);
+        if (!text || seenField.has(fieldType)) continue;
+        keyPoints.push({
+            field_type: fieldType,
+            score: Number(chunk.score || 0),
+            text,
         });
+        seenField.add(fieldType);
+        if (keyPoints.length >= 4) break;
     }
 
-    return lines.join('\n');
+    const fallback = chunks.find(c => String(c.field_text || '').trim());
+    const conclusion = keyPoints[0]?.text || clipText(fallback?.field_text, 180) || '未提取到可读结论';
+    const evidence = chunks.slice(0, 3);
+    return { conclusion, keyPoints, evidence };
+}
+
+function renderSingleDocStructured(bestDoc, candidateCount) {
+    const structured = buildStructuredAnswer(bestDoc);
+    const node = document.createElement('div');
+    node.className = 'answer';
+
+    const keyPointsHtml = structured.keyPoints.length
+        ? `<ol style="margin:8px 0 0 18px; padding:0;">
+            ${structured.keyPoints.map(item => `<li style="margin:6px 0;"><strong>${escapeHtml(item.field_type)}</strong>（${Number(item.score || 0).toFixed(2)}%）：${escapeHtml(item.text)}</li>`).join('')}
+          </ol>`
+        : `<div style="margin-top:8px; color:#475569;">暂无可结构化要点</div>`;
+
+    const evidenceHtml = structured.evidence.length
+        ? structured.evidence.map((chunk, idx) => `
+            <div style="margin-top:8px; padding:8px; border:1px solid #bae6fd; border-radius:8px; background:#f0f9ff;">
+                <div style="font-size:12px; color:#0369a1;">证据 ${idx + 1} · ${escapeHtml(chunk.field_type || 'unknown')} · ${Number(chunk.score || 0).toFixed(2)}%</div>
+                <div style="font-size:13px; margin-top:4px; color:#0f172a; white-space:pre-wrap;">${escapeHtml(clipText(chunk.field_text, 180))}</div>
+            </div>
+          `).join('')
+        : `<div style="margin-top:8px; color:#475569;">暂无证据片段</div>`;
+
+    const filesHtml = validUrls(bestDoc.file_urls || []).length
+        ? validUrls(bestDoc.file_urls || []).map(url => {
+            const name = decodeURIComponent(url.split('/').pop() || url);
+            return `<a class="file-link" href="${url}" target="_blank">${escapeHtml(name)}</a>`;
+        }).join('')
+        : '<span style="font-size:12px; color:#64748b;">无附件</span>';
+
+    node.innerHTML = `
+        <div><strong>综合结论（仅输出 1 个最相关文档）</strong></div>
+        <div style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(structured.conclusion)}</div>
+        <div style="margin-top:10px; font-size:13px; color:#0f172a;">
+            <strong>DocID:</strong> ${escapeHtml(bestDoc.doc_id || 'UNKNOWN_DOC')} ｜ 
+            <strong>最佳相似度:</strong> ${Number(bestDoc.best_score || 0).toFixed(2)}% ｜ 
+            <strong>候选文档数:</strong> ${candidateCount}
+        </div>
+        <div style="margin-top:10px;">
+            <strong style="font-size:13px;">结构化要点</strong>
+            ${keyPointsHtml}
+        </div>
+        <div style="margin-top:10px;">
+            <strong style="font-size:13px;">核心证据</strong>
+            ${evidenceHtml}
+        </div>
+        <div style="margin-top:10px;">
+            <strong style="font-size:13px;">相关附件</strong>
+            <div class="chunk-files" style="margin-top:6px;">${filesHtml}</div>
+        </div>
+    `;
+    return node;
 }
 
 function renderDocGroup(title, grouped) {
@@ -435,29 +514,24 @@ function renderResult(data) {
 
     const textDocs = data.grouped_text_results?.length ? data.grouped_text_results : fallbackGroup(data.text_results);
     const imageDocs = data.grouped_image_results?.length ? data.grouped_image_results : fallbackGroup(data.image_results);
+    const { bestDoc, candidateCount } = pickBestDoc(textDocs, imageDocs);
 
-    const totalDocs = textDocs.length + imageDocs.length;
-    resultStat.textContent = `文本文档 ${textDocs.length} 个 · 图像文档 ${imageDocs.length} 个`;
+    if (!bestDoc) {
+        resultStat.textContent = '未命中';
+        resultContainer.className = 'empty';
+        resultContainer.textContent = '未命中任何文档，请尝试更换关键词或选择更多数据库';
+        return;
+    }
 
-    const answer = document.createElement('div');
-    answer.className = 'answer';
-    answer.textContent = buildReadableSummary(textDocs, imageDocs);
-    resultContainer.appendChild(answer);
+    resultStat.textContent = `已锁定 1 个文档（候选 ${candidateCount}）`;
+    resultContainer.appendChild(renderSingleDocStructured(bestDoc, candidateCount));
 
     const meta = document.createElement('div');
     meta.className = 'query-meta';
     meta.textContent = `查询串: ${data.query || '-'}${data.extracted_text ? ' ｜ OCR: ' + data.extracted_text : ''}`;
     resultContainer.appendChild(meta);
 
-    resultContainer.appendChild(renderDocGroup('文本检索结果', textDocs));
-    resultContainer.appendChild(renderDocGroup('图像检索结果', imageDocs));
-
-    if (totalDocs === 0) {
-        const empty = document.createElement('div');
-        empty.className = 'empty';
-        empty.textContent = '未命中任何文档，请尝试更换关键词或选择更多数据库';
-        resultContainer.appendChild(empty);
-    }
+    resultContainer.appendChild(renderDocGroup('命中片段（仅该文档）', [bestDoc]));
 
     resultContainer.className = '';
 }

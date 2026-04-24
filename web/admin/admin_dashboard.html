@@ -147,6 +147,29 @@
         .footer { padding: 12px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
         .login-box { max-width: 360px; margin: 90px auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
         .hint { color: var(--muted); font-size: 12px; }
+        .embed-lock {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            background: rgba(2, 6, 23, .72);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .embed-lock-card {
+            width: min(520px, 96vw);
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 20px 18px;
+        }
+        .embed-lock-note {
+            margin: 8px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+        }
         @media (max-width: 920px) {
             .toolbar { grid-template-columns: 1fr; }
             .toolbar-row.right { justify-content: flex-start; }
@@ -162,6 +185,20 @@
     <div>
         <span id="whoami" class="hint">未登录</span>
         <button class="btn" onclick="logout()">退出</button>
+    </div>
+</div>
+
+<div id="embedLock" class="embed-lock" style="display:none;">
+    <div class="embed-lock-card">
+        <h3 style="margin:0;">嵌入模式已锁定</h3>
+        <p class="embed-lock-note">
+            当前页面运行在嵌入容器中。为避免审批误操作，已禁用全部管理操作，请在独立窗口中打开审批端继续处理。
+        </p>
+        <div class="toolbar" style="margin-top:14px; margin-bottom:0; grid-template-columns:1fr;">
+            <div class="toolbar-row">
+                <button class="btn primary" onclick="openStandaloneFromEmbed()">在新窗口打开审批端</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -289,6 +326,7 @@ let dataDocs = [];
 let reviewRows = [];
 let rejectedRows = [];
 const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
+const IS_EMBEDDED = window.self !== window.top;
 
 const DB_OPTIONS = [
     { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
@@ -324,6 +362,18 @@ function showMain(show) {
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function openStandaloneFromEmbed() {
+    const win = window.open(window.location.href, '_blank');
+    if (!win) alert('浏览器拦截了新窗口，请允许弹窗后重试');
+}
+
+function enforceEmbeddedLock() {
+    document.getElementById('embedLock').style.display = 'flex';
+    showMain(false);
+    closeModal('editModal');
+    closeModal('logModal');
+}
 
 function logout() {
     authToken = '';
@@ -837,7 +887,11 @@ document.getElementById('collection').addEventListener('change', () => { if (sel
 document.getElementById('search').addEventListener('input', reloadData);
 window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
-checkLogin();
+if (IS_EMBEDDED) {
+    enforceEmbeddedLock();
+} else {
+    checkLogin();
+}
 </script>
 </body>
 </html>

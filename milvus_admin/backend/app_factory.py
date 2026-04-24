@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
 from pymilvus import connections
+from pymilvus.exceptions import ConnectionConfigException
 
 from .auth import AdminAuth
 from .config import load_config
@@ -20,7 +21,14 @@ def create_app() -> Flask:
     auth = AdminAuth(config, logger)
     op_log = OperationLogService(config, logger)
 
-    connections.connect(host=config.milvus_host, port=config.milvus_port)
+    try:
+        connections.connect(alias="default", host=config.milvus_host, port=config.milvus_port)
+    except ConnectionConfigException:
+        # unified_app 下可能已由其他子应用初始化 default 连接，这里直接复用已有连接
+        logger.warning(
+            "Milvus default alias 已存在且配置不一致，复用已建立连接。"
+            "建议统一设置环境变量 MILVUS_HOST/MILVUS_PORT。"
+        )
 
     app = Flask(__name__, static_folder=config.static_root, template_folder=".")
     app.extensions["services"] = Services(config=config, logger=logger, auth=auth, op_log=op_log)

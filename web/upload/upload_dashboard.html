@@ -338,6 +338,21 @@
     </div>
 </div>
 
+<div id="submitSuccessModal" class="modal">
+    <div class="modal-card" style="width:min(460px,92vw); margin:18vh auto;">
+        <div class="modal-head">
+            <strong>提交成功</strong>
+            <button class="btn" onclick="closeModal('submitSuccessModal')">关闭</button>
+        </div>
+        <div class="modal-body">
+            <p id="submitSuccessText" style="margin:0; line-height:1.75; color:#0f172a;">记录已提交审核。</p>
+            <div class="toolbar" style="margin-top:14px; justify-content:flex-end;">
+                <button class="btn success" onclick="closeModal('submitSuccessModal')">知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 let authToken = localStorage.getItem('authToken') || '';
 let authUsername = localStorage.getItem('authUsername') || '';
@@ -361,6 +376,11 @@ function authHeaders(extra = {}) {
 
 function apiUrl(path) {
     return `${API_BASE}${path}`;
+}
+
+function showSubmitSuccess(message) {
+    document.getElementById('submitSuccessText').textContent = message || '记录已提交审核。';
+    document.getElementById('submitSuccessModal').style.display = 'block';
 }
 
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -619,6 +639,7 @@ async function submitUpload(event) {
 
     document.getElementById('submitStatus').textContent = '已提交审核';
     document.getElementById('submitStatus').className = 'status ok';
+    showSubmitSuccess(`提交成功：已送审 ${dbs.length} 个目标数据库。`);
     resetForm();
     await checkRejectedRecords();
 }
