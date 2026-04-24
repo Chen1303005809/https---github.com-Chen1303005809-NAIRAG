@@ -23,6 +23,20 @@
             background: linear-gradient(100deg, #0f172a, #0c4a6e);
             color: #fff;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .top .home-btn {
+            border: 1px solid rgba(255,255,255,.45);
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            padding: 6px 10px;
+            cursor: pointer;
         }
         .container { max-width: 1220px; margin: 20px auto 40px; padding: 0 14px; }
         .layout { display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
@@ -112,7 +126,10 @@
     </style>
 </head>
 <body>
-<div class="top" id="welcome">智能检索端</div>
+<div class="top">
+    <div id="welcome">智能检索端</div>
+    <button class="home-btn" onclick="location.href='/home'">返回主页面</button>
+</div>
 <div class="container">
     <div class="layout">
         <section class="panel">

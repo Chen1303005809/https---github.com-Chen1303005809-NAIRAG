@@ -147,7 +147,7 @@
         .footer { padding: 12px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; }
         .login-box { max-width: 360px; margin: 90px auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
         .hint { color: var(--muted); font-size: 12px; }
-        .embed-lock {
+        .global-loading {
             position: fixed;
             inset: 0;
             z-index: 120;
@@ -157,18 +157,30 @@
             justify-content: center;
             padding: 16px;
         }
-        .embed-lock-card {
+        .global-loading-card {
             width: min(520px, 96vw);
             background: #fff;
             border: 1px solid var(--line);
             border-radius: 12px;
             padding: 20px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .embed-lock-note {
-            margin: 8px 0 0;
-            color: var(--muted);
-            line-height: 1.7;
+        .global-loading-text {
+            color: #0f172a;
             font-size: 14px;
+        }
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #bfdbfe;
+            border-top-color: #1d4ed8;
+            border-radius: 999px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         @media (max-width: 920px) {
             .toolbar { grid-template-columns: 1fr; }
@@ -184,21 +196,15 @@
     <strong>审批与管理端</strong>
     <div>
         <span id="whoami" class="hint">未登录</span>
+        <button class="btn" onclick="location.href='/home'">返回主页面</button>
         <button class="btn" onclick="logout()">退出</button>
     </div>
 </div>
 
-<div id="embedLock" class="embed-lock" style="display:none;">
-    <div class="embed-lock-card">
-        <h3 style="margin:0;">嵌入模式已锁定</h3>
-        <p class="embed-lock-note">
-            当前页面运行在嵌入容器中。为避免审批误操作，已禁用全部管理操作，请在独立窗口中打开审批端继续处理。
-        </p>
-        <div class="toolbar" style="margin-top:14px; margin-bottom:0; grid-template-columns:1fr;">
-            <div class="toolbar-row">
-                <button class="btn primary" onclick="openStandaloneFromEmbed()">在新窗口打开审批端</button>
-            </div>
-        </div>
+<div id="globalLoading" class="global-loading" style="display:none;">
+    <div class="global-loading-card">
+        <div class="spinner"></div>
+        <div id="globalLoadingText" class="global-loading-text">处理中，请稍候...</div>
     </div>
 </div>
 
@@ -326,7 +332,7 @@ let dataDocs = [];
 let reviewRows = [];
 let rejectedRows = [];
 const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
-const IS_EMBEDDED = window.self !== window.top;
+let busyCount = 0;
 
 const DB_OPTIONS = [
     { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
@@ -363,16 +369,28 @@ function showMain(show) {
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-function openStandaloneFromEmbed() {
-    const win = window.open(window.location.href, '_blank');
-    if (!win) alert('浏览器拦截了新窗口，请允许弹窗后重试');
+function startBusy(message = '处理中，请稍候...') {
+    busyCount += 1;
+    const layer = document.getElementById('globalLoading');
+    const text = document.getElementById('globalLoadingText');
+    if (text) text.textContent = message;
+    if (layer) layer.style.display = 'flex';
 }
 
-function enforceEmbeddedLock() {
-    document.getElementById('embedLock').style.display = 'flex';
-    showMain(false);
-    closeModal('editModal');
-    closeModal('logModal');
+function stopBusy() {
+    busyCount = Math.max(0, busyCount - 1);
+    if (busyCount > 0) return;
+    const layer = document.getElementById('globalLoading');
+    if (layer) layer.style.display = 'none';
+}
+
+async function withBusy(message, runner) {
+    startBusy(message);
+    try {
+        return await runner();
+    } finally {
+        stopBusy();
+    }
 }
 
 function logout() {
@@ -644,42 +662,48 @@ async function loadRejected() {
 async function deleteDoc(recordId) {
     if (!recordId) return;
     if (!confirm('确认删除该文档下所有分片？')) return;
-    const coll = document.getElementById('collection').value;
-    const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${recordId}`, { method: 'DELETE' });
-    const data = await res.json();
-    if (!res.ok || !data.success) return alert(data.error || '删除失败');
-    reloadData();
+    await withBusy('正在删除文档，请稍候...', async () => {
+        const coll = document.getElementById('collection').value;
+        const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${recordId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok || !data.success) return alert(data.error || '删除失败');
+        await reloadData();
+    });
 }
 
 async function batchDeleteDocs() {
     const checks = Array.from(document.querySelectorAll('.doc-check:checked')).map(c => c.value).filter(Boolean);
     if (!checks.length) return alert('请先勾选要删除的文档');
     if (!confirm(`确认批量删除 ${checks.length} 个文档？`)) return;
-    const coll = document.getElementById('collection').value;
-    const res = await authFetch(`/admin/delete_records?collection=${encodeURIComponent(coll)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: checks })
+    await withBusy('正在批量删除，请稍候...', async () => {
+        const coll = document.getElementById('collection').value;
+        const res = await authFetch(`/admin/delete_records?collection=${encodeURIComponent(coll)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: checks })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) return alert(data.error || '批量删除失败');
+        alert(data.message || '删除成功');
+        await reloadData();
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) return alert(data.error || '批量删除失败');
-    alert(data.message || '删除成功');
-    reloadData();
 }
 
 async function batchApprove() {
     const ids = Array.from(document.querySelectorAll('.review-check:checked')).map(c => c.value);
     if (!ids.length) return alert('请勾选要通过的审核记录');
-    const records = reviewRows.filter(r => ids.includes(String(r.id)));
-    const res = await authFetch('/admin/approve_records', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids, records })
+    await withBusy('正在通过审核，请稍候...', async () => {
+        const records = reviewRows.filter(r => ids.includes(String(r.id)));
+        const res = await authFetch('/admin/approve_records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids, records })
+        });
+        const data = await res.json();
+        if (!res.ok || data.success === false) return alert(data.error || '审核通过失败');
+        alert(data.message || '已通过');
+        await reloadData();
     });
-    const data = await res.json();
-    if (!res.ok || data.success === false) return alert(data.error || '审核通过失败');
-    alert(data.message || '已通过');
-    reloadData();
 }
 
 async function batchReject() {
@@ -689,28 +713,32 @@ async function batchReject() {
     if (reason === null) return;
     if (!reason.trim()) return alert('拒绝原因不能为空');
 
-    const records = reviewRows.filter(r => ids.includes(String(r.id)));
-    const res = await authFetch('/admin/reject_records', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids, records, reject_reason: reason.trim() })
+    await withBusy('正在拒绝并归档，请稍候...', async () => {
+        const records = reviewRows.filter(r => ids.includes(String(r.id)));
+        const res = await authFetch('/admin/reject_records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids, records, reject_reason: reason.trim() })
+        });
+        const data = await res.json();
+        if (!res.ok || data.success === false) return alert(data.error || '拒绝失败');
+        alert('已拒绝并归档');
+        await reloadData();
     });
-    const data = await res.json();
-    if (!res.ok || data.success === false) return alert(data.error || '拒绝失败');
-    alert('已拒绝并归档');
-    reloadData();
 }
 
 async function deleteRejected(uploader, id) {
     if (!confirm('确认删除该被拒记录？')) return;
-    const res = await authFetch('/admin/delete_rejected', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uploader, id })
+    await withBusy('正在删除被拒记录，请稍候...', async () => {
+        const res = await authFetch('/admin/delete_rejected', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ uploader, id })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) return alert(data.error || '删除失败');
+        await reloadData();
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) return alert(data.error || '删除失败');
-    reloadData();
 }
 
 function findDataDoc(recordId) {
@@ -812,45 +840,47 @@ async function saveEdit() {
     if (!recordId) return;
 
     try {
-        const files = await uploadEditFiles();
-        const payload = {
-            id: recordId,
-            object: document.getElementById('editObject').value.trim(),
-            type: document.getElementById('editType').value.trim(),
-            purpose: document.getElementById('editPurpose').value.trim(),
-            customer_type: document.getElementById('editCustomerType').value.trim(),
-            keyword: document.getElementById('editKeyword').value.trim(),
-            problem: document.getElementById('editProblem').value.split('\n').map(v => v.trim()).filter(Boolean),
-            reply_logic: document.getElementById('editReplyLogic').value.trim(),
-            feature_explanation: document.getElementById('editFeature').value.trim(),
-            example: document.getElementById('editExample').value.trim(),
-            notes: document.getElementById('editNotes').value.trim(),
-            image_url: files.image_url.length ? files.image_url : ['N/A'],
-            file_url: files.file_url.length ? files.file_url : ['N/A']
-        };
+        await withBusy('正在保存修改，请稍候...', async () => {
+            const files = await uploadEditFiles();
+            const payload = {
+                id: recordId,
+                object: document.getElementById('editObject').value.trim(),
+                type: document.getElementById('editType').value.trim(),
+                purpose: document.getElementById('editPurpose').value.trim(),
+                customer_type: document.getElementById('editCustomerType').value.trim(),
+                keyword: document.getElementById('editKeyword').value.trim(),
+                problem: document.getElementById('editProblem').value.split('\n').map(v => v.trim()).filter(Boolean),
+                reply_logic: document.getElementById('editReplyLogic').value.trim(),
+                feature_explanation: document.getElementById('editFeature').value.trim(),
+                example: document.getElementById('editExample').value.trim(),
+                notes: document.getElementById('editNotes').value.trim(),
+                image_url: files.image_url.length ? files.image_url : ['N/A'],
+                file_url: files.file_url.length ? files.file_url : ['N/A']
+            };
 
-        let res;
-        if (mode === 'data') {
-            const coll = document.getElementById('collection').value;
-            res = await authFetch(`/admin/update_record?collection=${encodeURIComponent(coll)}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        } else {
-            const selected_dbs = Array.from(document.querySelectorAll('#editDbChecks input:checked')).map(cb => cb.value);
-            if (!selected_dbs.length) return alert('审核模式下请至少选择一个目标数据库');
-            res = await authFetch('/admin/update_review_record', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: recordId, selected_dbs, data: payload })
-            });
-        }
+            let res;
+            if (mode === 'data') {
+                const coll = document.getElementById('collection').value;
+                res = await authFetch(`/admin/update_record?collection=${encodeURIComponent(coll)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } else {
+                const selected_dbs = Array.from(document.querySelectorAll('#editDbChecks input:checked')).map(cb => cb.value);
+                if (!selected_dbs.length) return alert('审核模式下请至少选择一个目标数据库');
+                res = await authFetch('/admin/update_review_record', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: recordId, selected_dbs, data: payload })
+                });
+            }
 
-        const data = await res.json();
-        if (!res.ok || data.success === false) return alert(data.error || '保存失败');
-        closeModal('editModal');
-        reloadData();
+            const data = await res.json();
+            if (!res.ok || data.success === false) return alert(data.error || '保存失败');
+            closeModal('editModal');
+            await reloadData();
+        });
     } catch (err) {
         alert(err.message || '保存失败');
     }
@@ -887,11 +917,7 @@ document.getElementById('collection').addEventListener('change', () => { if (sel
 document.getElementById('search').addEventListener('input', reloadData);
 window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
-if (IS_EMBEDDED) {
-    enforceEmbeddedLock();
-} else {
-    checkLogin();
-}
+checkLogin();
 </script>
 </body>
 </html>
