@@ -7,26 +7,49 @@ def normalize_score(raw_score: float) -> float:
     return round(max(0.0, raw_score) * 100, 2)
 
 
+def _is_invalid_url(value: Any) -> bool:
+    if value is None:
+        return True
+    text = str(value).strip()
+    if not text:
+        return True
+    return text.upper() in {"N/A", "NA", "NONE", "NULL"}
+
+
+def _normalize_single_url(value: str, base_dir: str) -> str:
+    if value.startswith(f"{base_dir}/static/"):
+        value = value.replace(f"{base_dir}/static/", "/static/")
+    elif value.startswith(base_dir + "/"):
+        value = value.replace(base_dir + "/", "/")
+
+    # 兼容历史脏数据：/static/static/xxx -> /static/xxx
+    while "/static/static/" in value:
+        value = value.replace("/static/static/", "/static/")
+    return value
+
+
 
 def normalize_urls(file_url: Any, base_dir: str) -> list[str]:
-    if not file_url or file_url == "N/A":
+    if _is_invalid_url(file_url):
         return []
     values = file_url if isinstance(file_url, list) else [file_url]
     processed: list[str] = []
 
     for value in values:
-        if not value:
+        if _is_invalid_url(value):
             continue
         if isinstance(value, str) and ";" in value:
-            parts = [p.strip() for p in value.split(";") if p.strip()]
+            parts = [p.strip() for p in value.split(";") if p.strip() and not _is_invalid_url(p)]
         else:
             parts = [value]
 
         for part in parts:
-            if isinstance(part, str) and part.startswith(base_dir):
-                processed.append(part.replace(base_dir + "/", "/static/"))
-            elif isinstance(part, str):
-                processed.append(part)
+            if _is_invalid_url(part):
+                continue
+            if isinstance(part, str):
+                normalized = _normalize_single_url(part, base_dir)
+                if normalized not in processed:
+                    processed.append(normalized)
     return processed
 
 
@@ -98,24 +121,29 @@ def group_hits_by_docid(hits: list[dict]) -> list[dict]:
 def build_answer(text_results: list[dict], image_results: list[dict]) -> str:
     answer_parts = []
     if text_results:
-        answer_parts.append("【文本匹配结果】")
+        answer_parts.append("【文本匹配】")
         for i, result in enumerate(text_results[:3]):
+            field_type = result.get("field_type") or "text"
+            field_text = (result.get("field_text") or "").strip().replace("\n", " ")
+            score = result.get("score", 0)
             part = (
-                f"  {i+1}. ({result.get('field_type', '')}) "
-                f"{result.get('field_text', '')[:100]} [相似度: {result.get('score', 0)}%]"
+                f"{i+1}. 类型: {field_type} | 相似度: {score}%"
             )
-            for url in result.get("file_url", []):
-                filename = url.split("/")[-1]
-                part += f" [📎{filename}]({url})"
+            if field_text:
+                part += f" | 内容: {field_text[:90]}"
+            file_names = [url.split("/")[-1] for url in result.get("file_url", []) if url]
+            if file_names:
+                part += f" | 附件: {', '.join(file_names[:2])}"
             answer_parts.append(part)
 
     if image_results:
-        answer_parts.append("\n【图像匹配结果】")
+        answer_parts.append("\n【图像匹配】")
         for i, result in enumerate(image_results[:3]):
-            part = f"  {i+1}. ({result.get('field_type', '')}) 图像文件 [相似度: {result.get('score', 0)}%]"
-            for url in result.get("file_url", []):
-                filename = url.split("/")[-1]
-                part += f" [🖼️{filename}]({url})"
+            score = result.get("score", 0)
+            part = f"{i+1}. 图像匹配 | 相似度: {score}%"
+            file_names = [url.split("/")[-1] for url in result.get("file_url", []) if url]
+            if file_names:
+                part += f" | 文件: {', '.join(file_names[:3])}"
             answer_parts.append(part)
 
     return "\n".join(answer_parts) if answer_parts else "未找到相关答案"

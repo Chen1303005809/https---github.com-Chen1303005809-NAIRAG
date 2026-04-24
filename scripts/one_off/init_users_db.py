@@ -1,13 +1,14 @@
-# create_users_db.py  
+# init_users_db.py
 import sqlite3
 from passlib.context import CryptContext
 import os
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# 数据库路径
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "users.db")
+# 数据库路径（写入项目根目录）
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+DB_PATH = os.path.join(PROJECT_ROOT, "users.db")
 
 conn = sqlite3.connect(DB_PATH)
 c = conn.cursor()

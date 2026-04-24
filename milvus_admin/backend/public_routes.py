@@ -10,7 +10,7 @@ bp = Blueprint("public", __name__)
 
 @bp.route("/", methods=["GET"])
 def home():
-    return "✅ Milvus 管理后台运行中... 请访问 /app_reject_928_2.html"
+    return "✅ Milvus 管理后台运行中... 请访问 /admin_dashboard.html"
 
 
 @bp.route("/login", methods=["POST"])
@@ -36,11 +36,12 @@ def whoami():
     return _handler()
 
 
-@bp.route("/app_reject_928_2.html", methods=["GET"])
+@bp.route("/admin_dashboard.html", methods=["GET"])
+@bp.route("/app_reject_928_2.html", methods=["GET"])  # 兼容旧路径
 def serve_admin_html():
     services = get_services(current_app)
     admin_dir = os.path.join(services.config.base_dir, "milvus_admin")
-    return send_from_directory(admin_dir, "app_reject_928_2.html")
+    return send_from_directory(admin_dir, "admin_dashboard.html")
 
 
 @bp.route("/user_management.html", methods=["GET"])

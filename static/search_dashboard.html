@@ -286,10 +286,69 @@ function fallbackGroup(flat) {
         row.chunks.push(hit);
         if (hit.field_type && !row.field_types.includes(hit.field_type)) row.field_types.push(hit.field_type);
         (hit.file_url || []).forEach(url => {
-            if (url && !row.file_urls.includes(url)) row.file_urls.push(url);
+            if (!url || String(url).trim().toUpperCase() === 'N/A') return;
+            if (!row.file_urls.includes(url)) row.file_urls.push(url);
         });
     });
     return Array.from(map.values()).sort((a, b) => b.best_score - a.best_score);
+}
+
+function clipText(text, max = 72) {
+    const plain = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!plain) return '';
+    return plain.length > max ? plain.slice(0, max) + '…' : plain;
+}
+
+function validUrls(urls) {
+    const values = Array.isArray(urls) ? urls : (urls ? [urls] : []);
+    const result = [];
+    values.forEach(url => {
+        const value = String(url || '').trim();
+        if (!value || value.toUpperCase() === 'N/A') return;
+        if (!result.includes(value)) result.push(value);
+    });
+    return result;
+}
+
+function summarizeFileNames(urls, limit = 2) {
+    const names = validUrls(urls).map(url => decodeURIComponent(url.split('/').pop() || url));
+    return names.slice(0, limit).join('、');
+}
+
+function buildReadableSummary(textDocs, imageDocs) {
+    const total = textDocs.length + imageDocs.length;
+    if (!total) return '未命中任何文档，请尝试更换关键词或扩展数据库范围。';
+
+    const lines = [];
+    lines.push(`本次共命中 ${total} 个文档（文本 ${textDocs.length}，图像 ${imageDocs.length}）。`);
+
+    if (textDocs.length) {
+        lines.push('文本重点:');
+        textDocs.slice(0, 3).forEach((doc, idx) => {
+            const topChunk = (doc.chunks || [])[0] || {};
+            const score = Number(doc.best_score ?? topChunk.score ?? 0).toFixed(2);
+            const type = topChunk.field_type || 'text';
+            const content = clipText(topChunk.field_text, 56);
+            const files = summarizeFileNames(doc.file_urls || topChunk.file_url || []);
+            let line = `${idx + 1}. DocID ${doc.doc_id || 'UNKNOWN_DOC'} | ${type} | ${score}%`;
+            if (content) line += ` | ${content}`;
+            if (files) line += ` | 附件: ${files}`;
+            lines.push(line);
+        });
+    }
+
+    if (imageDocs.length) {
+        lines.push('图像重点:');
+        imageDocs.slice(0, 3).forEach((doc, idx) => {
+            const score = Number(doc.best_score || 0).toFixed(2);
+            const files = summarizeFileNames(doc.file_urls || [], 3);
+            let line = `${idx + 1}. DocID ${doc.doc_id || 'UNKNOWN_DOC'} | ${score}%`;
+            if (files) line += ` | 文件: ${files}`;
+            lines.push(line);
+        });
+    }
+
+    return lines.join('\n');
 }
 
 function renderDocGroup(title, grouped) {
@@ -328,13 +387,13 @@ function renderDocGroup(title, grouped) {
         (doc.chunks || []).forEach(chunk => {
             const item = document.createElement('div');
             item.className = 'chunk';
-            const files = (chunk.file_url || []).map(url => {
+            const files = validUrls(chunk.file_url || []).map(url => {
                 const name = decodeURIComponent(url.split('/').pop() || url);
                 return `<a class="file-link" href="${url}" target="_blank">${name}</a>`;
             }).join('');
             item.innerHTML = `
                 <div class="chunk-top">
-                    <span>chunk: ${chunk.chunk_id ?? 'N/A'} · ${chunk.field_type || 'unknown'}</span>
+                    <span>chunk: ${chunk.chunk_id ?? '-'} · ${chunk.field_type || 'unknown'}</span>
                     <span>相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
                 </div>
                 <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
@@ -377,7 +436,7 @@ function renderResult(data) {
 
     const answer = document.createElement('div');
     answer.className = 'answer';
-    answer.textContent = data.answer || '未找到相关答案';
+    answer.textContent = buildReadableSummary(textDocs, imageDocs);
     resultContainer.appendChild(answer);
 
     const meta = document.createElement('div');

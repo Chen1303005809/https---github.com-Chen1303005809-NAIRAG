@@ -146,6 +146,6 @@ def create_app() -> FastAPI:
 
     @app.get("/")
     async def index():
-        return FileResponse(f"{config.static_dir}/uploadReject929_3.html")
+        return FileResponse(f"{config.static_dir}/upload_dashboard.html")
 
     return app
