@@ -125,6 +125,14 @@ def embedding(data: dict) -> list[dict]:
     meta_object = str(data.get("object") or "").strip()
     meta_purpose = str(data.get("purpose") or "").strip()
     meta_customer_type = str(data.get("customer_type") or "").strip()
+    raw_web_links = data.get("web_links", [])
+    if isinstance(raw_web_links, str):
+        web_link_items = [s.strip() for s in raw_web_links.replace("\n", ";").split(";") if s.strip()]
+    elif isinstance(raw_web_links, list):
+        web_link_items = [str(s).strip() for s in raw_web_links if str(s).strip()]
+    else:
+        web_link_items = []
+    meta_web_links = ";".join(dict.fromkeys(web_link_items))
 
     # 收集待嵌入的字段及其权重
     fields_to_embed = []
@@ -181,7 +189,8 @@ def embedding(data: dict) -> list[dict]:
                 "text_embedding": text_embedding,
                 "vl_embedding": create_zero_vector(2048),  # 使用零向量替代None，维度与schema一致
                 "weight": weight,
-                "file_url": final_file_urls
+                "file_url": final_file_urls,
+                "web_links": meta_web_links,
             })
     
     # 处理图片embedding（多模态支持）
@@ -228,7 +237,8 @@ def embedding(data: dict) -> list[dict]:
                         "text_embedding": create_zero_vector(1024),  # 使用零向量替代None，维度与schema一致
                         "vl_embedding": vec_list,
                         "weight": 1,
-                        "file_url": image_path
+                        "file_url": image_path,
+                        "web_links": meta_web_links,
                     })
                 print(f"✅ 成功处理图片向量: {len(image_files) - skipped_count}/{len(image_files)}")
             except Exception as e:

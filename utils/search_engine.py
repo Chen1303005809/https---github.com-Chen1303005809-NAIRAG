@@ -192,25 +192,39 @@ class MilvusSearchEngine:
 
             search_params: Dict[str, Any] = {"metric_type": "COSINE", "params": {"nprobe": nprobe}}
 
-            results = rag_collection.search(
-                data=[query_embedding],
-                anns_field=embedding_field,
-                limit=top_k,
-                output_fields=[
-                    "chunk_id",
-                    "doc_id",
-                    "type",
-                    "object",
-                    "purpose",
-                    "customer_type",
-                    "field_type",
-                    "field_text",
-                    "file_url",
-                    "weight",
-                ],
-                param=search_params,
-                expr=search_expr,
-            )
+            output_fields = [
+                "chunk_id",
+                "doc_id",
+                "type",
+                "object",
+                "purpose",
+                "customer_type",
+                "field_type",
+                "field_text",
+                "file_url",
+                "web_links",
+                "weight",
+            ]
+            try:
+                results = rag_collection.search(
+                    data=[query_embedding],
+                    anns_field=embedding_field,
+                    limit=top_k,
+                    output_fields=output_fields,
+                    param=search_params,
+                    expr=search_expr,
+                )
+            except Exception:
+                # 兼容旧 schema（尚未添加 web_links 字段）
+                legacy_fields = [f for f in output_fields if f != "web_links"]
+                results = rag_collection.search(
+                    data=[query_embedding],
+                    anns_field=embedding_field,
+                    limit=top_k,
+                    output_fields=legacy_fields,
+                    param=search_params,
+                    expr=search_expr,
+                )
             
             hits = []
             for hit in results[0]:
@@ -227,6 +241,7 @@ class MilvusSearchEngine:
                         "field_type": hit.entity.get("field_type"),
                         "field_text": hit.entity.get("field_text"),
                         "file_url": hit.entity.get("file_url"),
+                        "web_links": hit.entity.get("web_links"),
                         "weight": hit.entity.get("weight"),
                     }
                 )

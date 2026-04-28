@@ -40,6 +40,8 @@ def create_collection_schema() -> CollectionSchema:
         FieldSchema(name="vl_embedding", dtype=DataType.FLOAT_VECTOR, dim=VL_DIM),
         FieldSchema(name="weight", dtype=DataType.FLOAT),
         FieldSchema(name="file_url", dtype=DataType.VARCHAR, max_length=1024),
+        # 网页链接（支持多个）：建议写入时使用分号拼接或 JSON 数组字符串
+        FieldSchema(name="web_links", dtype=DataType.VARCHAR, max_length=8192),
     ]
     return CollectionSchema(fields=fields, description="RAG collection with text and vision embeddings")
 

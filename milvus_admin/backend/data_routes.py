@@ -131,6 +131,7 @@ def update_record():
                     [chunk["vl_embedding"]],
                     [chunk["weight"]],
                     [chunk["file_url"]],
+                    [chunk.get("web_links", "")],
                 ]
                 collection.insert(insert_data)
 

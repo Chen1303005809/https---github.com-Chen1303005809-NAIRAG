@@ -285,6 +285,11 @@
                     </div>
                 </div>
 
+                <div class="field">
+                    <label for="web_links">网页链接（每行一个，选填）</label>
+                    <textarea id="web_links" placeholder="https://example.com/a&#10;https://example.com/b"></textarea>
+                </div>
+
                 <div class="grid2">
                     <div class="field">
                         <label for="imgInput">图片附件（拖拽/粘贴）</label>
@@ -360,6 +365,8 @@
                 <div class="field"><label>关键词</label><input id="edit_keyword" type="text" /></div>
                 <div class="field"><label>类似问法（每行一条）</label><textarea id="edit_problem"></textarea></div>
             </div>
+
+            <div class="field"><label>网页链接（每行一个）</label><textarea id="edit_web_links"></textarea></div>
 
             <div class="field">
                 <label>保留附件（取消勾选即移除）</label>
@@ -440,6 +447,13 @@ function showLoggedIn(show) {
 
 function parseProblems(text) {
     return text.split('\n').map(v => v.trim()).filter(Boolean);
+}
+
+function parseWebLinks(text) {
+    return text
+        .split('\n')
+        .map(v => v.trim())
+        .filter(Boolean);
 }
 
 function selectedDbs(selector = '#dbChecks input:checked') {
@@ -653,7 +667,8 @@ async function submitUpload(event) {
         example: document.getElementById('example').value.trim(),
         notes: document.getElementById('notes').value.trim(),
         keyword: document.getElementById('keyword').value.trim(),
-        problem: parseProblems(document.getElementById('problem').value)
+        problem: parseProblems(document.getElementById('problem').value),
+        web_links: parseWebLinks(document.getElementById('web_links').value)
     };
 
     if (!record.reply_logic || !record.feature_explanation) {
@@ -722,6 +737,7 @@ function renderRejectedModal() {
                     <div class="hint" style="margin-top:6px; color:#b91c1c;">拒绝原因: ${escapeHtml(item.reject_reason || '管理员未填写')}</div>
                     <div style="margin-top:6px; font-size:13px;">类型: ${escapeHtml(item.data?.type || '')} ｜ 场景: ${escapeHtml(item.data?.purpose || '')}</div>
                     <div style="margin-top:6px; font-size:13px; white-space:pre-wrap;">回复逻辑: ${escapeHtml(item.data?.reply_logic || '')}</div>
+                    ${(item.data?.web_links || []).length ? `<div style="margin-top:6px; font-size:13px;">网页链接: ${(item.data.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
                     ${files ? `<div class="toolbar" style="margin-top:8px;">${files}</div>` : ''}
                 </div>
             </article>
@@ -745,6 +761,7 @@ function openRejectedEdit(recordId) {
     document.getElementById('edit_notes').value = rec.data?.notes || '';
     document.getElementById('edit_keyword').value = rec.data?.keyword || '';
     document.getElementById('edit_problem').value = (rec.data?.problem || []).join('\n');
+    document.getElementById('edit_web_links').value = (rec.data?.web_links || []).join('\n');
     document.getElementById('editNewImages').value = '';
     document.getElementById('editNewDocs').value = '';
     document.getElementById('editStatus').textContent = '';
@@ -781,7 +798,8 @@ async function submitResubmission() {
         example: document.getElementById('edit_example').value.trim(),
         notes: document.getElementById('edit_notes').value.trim(),
         keyword: document.getElementById('edit_keyword').value.trim(),
-        problem: parseProblems(document.getElementById('edit_problem').value)
+        problem: parseProblems(document.getElementById('edit_problem').value),
+        web_links: parseWebLinks(document.getElementById('edit_web_links').value)
     };
 
     const formData = new FormData();

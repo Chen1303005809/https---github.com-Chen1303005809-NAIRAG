@@ -66,6 +66,7 @@ def build_hit(raw: dict, media_type: str, base_dir: str) -> dict:
         "field_type": raw.get("field_type", ""),
         "field_text": raw.get("field_text", ""),
         "file_url": normalize_urls(raw.get("file_url", ""), base_dir),
+        "web_links": normalize_urls(raw.get("web_links", ""), base_dir),
         "media_type": media_type,
     }
 
@@ -101,10 +102,14 @@ def group_hits_by_docid(hits: list[dict]) -> list[dict]:
         chunks.sort(key=lambda x: x.get("score", 0.0), reverse=True)
         field_types = sorted({c.get("field_type", "") for c in chunks if c.get("field_type")})
         files = []
+        web_links = []
         for chunk in chunks:
             for url in chunk.get("file_url", []):
                 if url and url not in files:
                     files.append(url)
+            for url in chunk.get("web_links", []):
+                if url and url not in web_links:
+                    web_links.append(url)
 
         docs.append(
             {
@@ -117,6 +122,7 @@ def group_hits_by_docid(hits: list[dict]) -> list[dict]:
                 "customer_type": next((str(c.get("customer_type") or "").strip() for c in chunks if str(c.get("customer_type") or "").strip()), ""),
                 "field_types": field_types,
                 "file_urls": files,
+                "web_links": web_links,
                 "chunks": chunks,
             }
         )

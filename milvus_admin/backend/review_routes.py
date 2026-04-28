@@ -90,6 +90,7 @@ def update_review_record():
                         "customer_type": new_data.get("customer_type", old_data.get("customer_type", "")),
                         "keyword": new_data.get("keyword", old_data.get("keyword", "")),
                         "problem": new_data.get("problem", old_data.get("problem", [])),
+                        "web_links": new_data.get("web_links", old_data.get("web_links", [])),
                         "reply_logic": new_data.get("reply_logic", old_data.get("reply_logic", "")),
                         "feature_explanation": new_data.get(
                             "feature_explanation", old_data.get("feature_explanation", "")
@@ -158,6 +159,7 @@ def approve_records():
                                 [chunk["vl_embedding"]],
                                 [chunk["weight"]],
                                 [chunk["file_url"]],
+                                [chunk.get("web_links", "")],
                             ]
                         )
                     coll.flush()

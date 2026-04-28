@@ -20,5 +20,6 @@ class Record(BaseModel):
     notes: str = ""
     keyword: Optional[str] = None
     problem: List[str]
+    web_links: List[str] = []
     image_url: List[str] = []
     file_url: List[str] = []

@@ -318,6 +318,7 @@
             </div>
             <div class="field"><label>关键词</label><input id="editKeyword" type="text" /></div>
             <div class="field"><label>类似问题（每行一条）</label><textarea id="editProblem" rows="3"></textarea></div>
+            <div class="field"><label>网页链接（每行一条）</label><textarea id="editWebLinks" rows="2"></textarea></div>
             <div class="field"><label>回复逻辑框架</label><textarea id="editReplyLogic" rows="3"></textarea></div>
             <div class="field"><label>功能说明</label><textarea id="editFeature" rows="3"></textarea></div>
             <div class="field"><label>举例说明</label><textarea id="editExample" rows="2"></textarea></div>
@@ -581,6 +582,7 @@ function docCardBase(doc, mode = 'data') {
                 <div class="summary-item"><span class="summary-label">场景:</span>${escapeHtml(summary.purpose || '')}</div>
                 <div class="summary-item"><span class="summary-label">客户:</span>${escapeHtml(summary.customer_type || '')}</div>
                 <div class="summary-item"><span class="summary-label">关键词:</span>${escapeHtml(summary.keyword || '')}</div>
+                ${(summary.web_links || []).length ? `<div class="summary-item"><span class="summary-label">网页:</span>${(summary.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
                 ${(summary.problem || []).length ? `<div class="summary-item"><span class="summary-label">问题:</span>${escapeHtml(summary.problem.join('；'))}</div>` : ''}
                 ${summary.reply_logic ? `<div class="summary-item"><span class="summary-label">回复逻辑:</span>${escapeHtml(summary.reply_logic)}</div>` : ''}
                 ${summary.feature_explanation ? `<div class="summary-item"><span class="summary-label">说明:</span>${escapeHtml(summary.feature_explanation)}</div>` : ''}
@@ -636,6 +638,7 @@ async function loadReview() {
             customer_type: row.data?.customer_type || '',
             keyword: row.data?.keyword || '',
             problem: row.data?.problem || [],
+            web_links: row.data?.web_links || [],
             reply_logic: row.data?.reply_logic || row.data?.text || '',
             feature_explanation: row.data?.feature_explanation || '',
             example: row.data?.example || '',
@@ -704,6 +707,7 @@ async function loadRejected() {
                 <div class="summary">
                     <div class="summary-item"><span class="summary-label">功能:</span>${escapeHtml(data.object || '')}</div>
                     <div class="summary-item"><span class="summary-label">类型:</span>${escapeHtml(data.type || '')}</div>
+                    ${(data.web_links || []).length ? `<div class="summary-item"><span class="summary-label">网页:</span>${(data.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
                     <div class="summary-item"><span class="summary-label">问题:</span>${escapeHtml((data.problem || []).join('；'))}</div>
                     ${links ? `<div class="files">${links}</div>` : ''}
                 </div>
@@ -845,6 +849,7 @@ function openEdit(mode, recordId) {
     document.getElementById('editCustomerType').value = summary.customer_type || '';
     document.getElementById('editKeyword').value = summary.keyword || '';
     document.getElementById('editProblem').value = (summary.problem || []).join('\n');
+    document.getElementById('editWebLinks').value = (summary.web_links || []).join('\n');
     document.getElementById('editReplyLogic').value = summary.reply_logic || summary.text || '';
     document.getElementById('editFeature').value = summary.feature_explanation || '';
     document.getElementById('editExample').value = summary.example || '';
@@ -903,6 +908,7 @@ async function saveEdit() {
                 customer_type: document.getElementById('editCustomerType').value.trim(),
                 keyword: document.getElementById('editKeyword').value.trim(),
                 problem: document.getElementById('editProblem').value.split('\n').map(v => v.trim()).filter(Boolean),
+                web_links: document.getElementById('editWebLinks').value.split('\n').map(v => v.trim()).filter(Boolean),
                 reply_logic: document.getElementById('editReplyLogic').value.trim(),
                 feature_explanation: document.getElementById('editFeature').value.trim(),
                 example: document.getElementById('editExample').value.trim(),

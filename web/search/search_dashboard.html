@@ -396,6 +396,11 @@ function fallbackGroup(flat) {
             if (!url || String(url).trim().toUpperCase() === 'N/A') return;
             if (!row.file_urls.includes(url)) row.file_urls.push(url);
         });
+        row.web_links = row.web_links || [];
+        (hit.web_links || []).forEach(url => {
+            if (!url || String(url).trim().toUpperCase() === 'N/A') return;
+            if (!row.web_links.includes(url)) row.web_links.push(url);
+        });
     });
     return Array.from(map.values()).sort((a, b) => b.best_score - a.best_score);
 }
@@ -508,6 +513,7 @@ function pickBestDoc(textDocs, imageDocs) {
             doc_id: docId,
             chunks: Array.isArray(doc.chunks) ? doc.chunks : [],
             file_urls: Array.isArray(doc.file_urls) ? doc.file_urls : [],
+            web_links: Array.isArray(doc.web_links) ? doc.web_links : [],
             best_score: Number(doc.best_score || 0),
         };
         const existed = byDoc.get(docId);
@@ -520,10 +526,12 @@ function pickBestDoc(textDocs, imageDocs) {
                 ...normalized,
                 chunks: [...normalized.chunks, ...existed.chunks],
                 file_urls: Array.from(new Set([...normalized.file_urls, ...existed.file_urls])),
+                web_links: Array.from(new Set([...(normalized.web_links || []), ...(existed.web_links || [])])),
             });
         } else {
             existed.chunks = [...existed.chunks, ...normalized.chunks];
             existed.file_urls = Array.from(new Set([...existed.file_urls, ...normalized.file_urls]));
+            existed.web_links = Array.from(new Set([...(existed.web_links || []), ...(normalized.web_links || [])]));
             byDoc.set(docId, existed);
         }
     }
@@ -577,6 +585,9 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
         : `<div style="margin-top:8px; color:#475569;">暂无证据片段</div>`;
 
     const filesHtml = buildAttachmentHtml(bestDoc.file_urls || []);
+    const webLinksHtml = validUrls(bestDoc.web_links || [])
+        .map(u => `<a class="file-link" href="${escapeHtml(u)}" target="_blank">${escapeHtml(u)}</a>`)
+        .join('');
 
     node.innerHTML = `
         <div><strong>综合结论（仅输出 1 个最相关文档）</strong></div>
@@ -586,6 +597,7 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
             <div><strong>功能:</strong> ${escapeHtml(bestDoc.object || '-')}</div>
             <div><strong>场景:</strong> ${escapeHtml(bestDoc.purpose || '-')}</div>
             <div><strong>客户:</strong> ${escapeHtml(bestDoc.customer_type || '-')}</div>
+            <div><strong>网页链接:</strong> ${webLinksHtml || '-'}</div>
         </div>
         <div style="margin-top:10px; font-size:13px; color:#0f172a;">
             <strong>DocID:</strong> ${escapeHtml(bestDoc.doc_id || 'UNKNOWN_DOC')} ｜ 

@@ -87,6 +87,7 @@ def group_by_doc_id(rows: list[dict]) -> list[dict]:
             "feature_explanation": "",
             "example": "",
             "notes": "",
+            "web_links": [],
         }
         file_urls = []
 
@@ -99,6 +100,9 @@ def group_by_doc_id(rows: list[dict]) -> list[dict]:
                 summary["purpose"] = str(chunk.get("purpose") or "").strip()
             if not summary["customer_type"]:
                 summary["customer_type"] = str(chunk.get("customer_type") or "").strip()
+            for link in parse_file_urls(chunk.get("web_links")):
+                if link not in summary["web_links"]:
+                    summary["web_links"].append(link)
 
             field_type = str(chunk.get("field_type") or "").strip().lower()
             field_text = str(chunk.get("field_text") or "").strip()
