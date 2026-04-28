@@ -382,6 +382,14 @@ function apiUrl(path) {
     return `${API_BASE}${path}`;
 }
 
+function resolveAssetUrl(url) {
+    if (!url) return '';
+    if (/^(https?:|data:|blob:)/i.test(url)) return url;
+    if (!url.startsWith('/')) return url;
+    if (API_BASE && url.startsWith('/static/')) return `${API_BASE}${url}`;
+    return url;
+}
+
 async function authFetch(url, options = {}) {
     const headers = authHeaders(options.headers || {});
     const res = await fetch(apiUrl(url), { ...options, headers });
@@ -511,14 +519,16 @@ function docCardBase(doc, mode = 'data') {
     const summary = doc.summary || {};
     const files = doc.file_urls || [];
     const fileHtml = files.map(url => {
+        const href = resolveAssetUrl(url);
         const name = decodeURIComponent((url || '').split('/').pop() || url);
-        return `<a class="file-link" href="${url}" target="_blank">${name}</a>`;
+        return `<a class="file-link" href="${href}" target="_blank">${name}</a>`;
     }).join('');
 
     const chunksHtml = (doc.chunks || []).map(chunk => {
         const urls = (chunk.file_url || []).map(url => {
+            const href = resolveAssetUrl(url);
             const name = decodeURIComponent((url || '').split('/').pop() || url);
-            return `<a class="file-link" href="${url}" target="_blank">${name}</a>`;
+            return `<a class="file-link" href="${href}" target="_blank">${name}</a>`;
         }).join('');
         return `
             <div class="chunk">
@@ -665,7 +675,7 @@ async function loadRejected() {
         const data = r.data || {};
         const links = [...(data.image_url || []), ...(data.file_url || [])]
             .filter(u => u && u !== 'N/A')
-            .map(u => `<a class="file-link" href="${u}" target="_blank">${decodeURIComponent(u.split('/').pop() || u)}</a>`)
+            .map(u => `<a class="file-link" href="${resolveAssetUrl(u)}" target="_blank">${decodeURIComponent(u.split('/').pop() || u)}</a>`)
             .join('');
         return `
             <article class="doc-card">

@@ -20,7 +20,15 @@ def _delete_old_files(static_root: str, old_urls: list[str], logger):
     for url in old_urls or []:
         if not url or url == "N/A":
             continue
-        rel_path = url[1:] if url.startswith("/") else url
+        rel_path = url.strip()
+        if rel_path.startswith("/admin/static/"):
+            rel_path = rel_path[len("/admin/static/"):]
+        elif rel_path.startswith("/upload/static/"):
+            rel_path = rel_path[len("/upload/static/"):]
+        elif rel_path.startswith("/static/"):
+            rel_path = rel_path[len("/static/"):]
+        elif rel_path.startswith("/"):
+            rel_path = rel_path[1:]
         file_path = os.path.join(static_root, rel_path)
         if os.path.exists(file_path):
             os.remove(file_path)
