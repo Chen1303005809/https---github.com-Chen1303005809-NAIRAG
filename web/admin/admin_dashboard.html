@@ -385,9 +385,16 @@ function apiUrl(path) {
 function resolveAssetUrl(url) {
     if (!url) return '';
     if (/^(https?:|data:|blob:)/i.test(url)) return url;
-    if (!url.startsWith('/')) return url;
-    if (API_BASE && url.startsWith('/static/')) return `${API_BASE}${url}`;
-    return url;
+    const s = String(url).trim();
+    if (!s.startsWith('/')) return s;
+    const staticIdx = s.indexOf('/static/');
+    if (staticIdx >= 0) {
+        const suffix = s.slice(staticIdx);
+        if (API_BASE) return `${API_BASE}${suffix}`;
+        return suffix;
+    }
+    if (API_BASE && s.startsWith('/static/')) return `${API_BASE}${s}`;
+    return s;
 }
 
 async function authFetch(url, options = {}) {
