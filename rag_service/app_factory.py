@@ -78,10 +78,10 @@ def create_app() -> FastAPI:
             deduplicate_hits(text_hits),
             score_threshold=config.text_score_threshold,
         )[:50]
-        filtered_image_hits = filter_and_sort(
-            deduplicate_hits(image_hits),
-            score_threshold=config.image_score_threshold,
-        )[:50]
+        # For image retrieval, keep pure Top-K behavior (no score threshold filtering).
+        filtered_image_hits = deduplicate_hits(image_hits)
+        filtered_image_hits.sort(key=lambda x: x.get("score", 0.0), reverse=True)
+        filtered_image_hits = filtered_image_hits[:50]
 
         grouped_text_results = group_hits_by_docid(filtered_text_hits)
         grouped_image_results = group_hits_by_docid(filtered_image_hits)
