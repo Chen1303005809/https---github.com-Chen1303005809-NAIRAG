@@ -525,11 +525,16 @@ async function reloadData() {
 function docCardBase(doc, mode = 'data') {
     const summary = doc.summary || {};
     const files = doc.file_urls || [];
-    const fileHtml = files.map(url => {
+    const uniqueFileMap = new Map();
+    files.forEach(url => {
         const href = resolveAssetUrl(url);
+        if (!href || uniqueFileMap.has(href)) return;
         const name = decodeURIComponent((url || '').split('/').pop() || url);
-        return `<a class="file-link" href="${href}" target="_blank">${name}</a>`;
-    }).join('');
+        uniqueFileMap.set(href, { href, name });
+    });
+    const fileHtml = Array.from(uniqueFileMap.values())
+        .map(item => `<a class="file-link" href="${item.href}" target="_blank">${item.name}</a>`)
+        .join('');
 
     const chunksHtml = (doc.chunks || []).map(chunk => {
         const urls = (chunk.file_url || []).map(url => {
