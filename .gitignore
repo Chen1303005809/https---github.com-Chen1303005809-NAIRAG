@@ -9,3 +9,4 @@ __pycache__
 review_pending
 PaddleOCR/*
 static/documents
+operation_logs.json

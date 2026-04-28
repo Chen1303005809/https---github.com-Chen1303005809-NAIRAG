@@ -14,6 +14,7 @@ class RagConfig:
     documents_dir: str
     milvus_host: str
     milvus_port: str
+    device: str 
     collection_names: list[str]
 
 
@@ -32,5 +33,6 @@ def load_config() -> RagConfig:
         milvus_host=env("MILVUS_HOST", "127.0.0.1"),
         milvus_port=env("MILVUS_PORT", "19530"),
         collection_names=list(COLLECTION_NAMES),
+        device=env("DEVICE", "cuda:1") if os.getenv("CUDA_AVAILABLE", "false").lower() == "true" else "cpu",
     )
 

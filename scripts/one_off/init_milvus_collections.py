@@ -5,7 +5,8 @@ from pymilvus import Collection, CollectionSchema, DataType, FieldSchema, connec
 # ===== 一次性初始化配置（按需改这里）=====
 MILVUS_HOST = "127.0.0.1"
 MILVUS_PORT = "19530"
-COLLECTION_NAMES = ["TEST"]
+COLLECTION_NAMES = ["rag_bge_m3_structured_v4_1", "rag_bge_m3_structured_v4_2", "rag_bge_m3_structured_v4_3", "rag_bge_m3_structured_v4_4", "rag_bge_m3_structured_v4_5", "TEST"]
+
 DROP_EXISTING = True
 
 TEXT_DIM = 1024

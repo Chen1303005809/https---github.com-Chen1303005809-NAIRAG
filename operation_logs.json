@@ -169,5 +169,163 @@
     "record_id": 465743419608561975,
     "record_ids": [],
     "details": "删除了doc_id=089ef759-bbe3-4660-8055-e489b1800b8d的所有分片（通过ID=465743419608561975定位）"
+  },
+  {
+    "id": 17,
+    "timestamp": "2026-04-24T14:33:50.177361",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 18,
+    "timestamp": "2026-04-24T15:16:32.311811",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 19,
+    "timestamp": "2026-04-24T15:27:59.407688",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 20,
+    "timestamp": "2026-04-24T15:28:05.890493",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "7529b983-ba1e-4528-b875-2c1bf8aae96d"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 21,
+    "timestamp": "2026-04-24T15:43:23.126455",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 22,
+    "timestamp": "2026-04-24T16:38:04.546460",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 4 条审核记录"
+  },
+  {
+    "id": 23,
+    "timestamp": "2026-04-24T16:40:12.533158",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [
+      "465743419608562003",
+      "465743419608562007",
+      "465743419608561999",
+      "465743419608562011"
+    ],
+    "details": "批量删除了 4 个doc_id的所有分片"
+  },
+  {
+    "id": 24,
+    "timestamp": "2026-04-24T16:45:12.008027",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 3 条审核记录"
+  },
+  {
+    "id": 25,
+    "timestamp": "2026-04-24T16:45:27.453378",
+    "user": "admin",
+    "type": "reject",
+    "collection": "review_queue",
+    "record_id": null,
+    "record_ids": [
+      "6cce9a9c-8f0d-41e2-ac48-5feb4fc0cfac"
+    ],
+    "details": "拒绝 1 条审核记录"
+  },
+  {
+    "id": 26,
+    "timestamp": "2026-04-24T16:50:39.331017",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [
+      "465743419608562035",
+      "465743419608562039",
+      "465743419608562023",
+      "465743419608562029"
+    ],
+    "details": "批量删除了 4 个doc_id的所有分片"
+  },
+  {
+    "id": 27,
+    "timestamp": "2026-04-24T16:52:18.415319",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 3 条审核记录"
+  },
+  {
+    "id": 28,
+    "timestamp": "2026-04-24T16:57:57.735788",
+    "user": "admin",
+    "type": "batch_delete",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [
+      "465743419608562063",
+      "465743419608562059",
+      "465743419608562053"
+    ],
+    "details": "批量删除了 3 个doc_id的所有分片"
+  },
+  {
+    "id": 29,
+    "timestamp": "2026-04-24T16:59:58.845333",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 3 条审核记录"
+  },
+  {
+    "id": 30,
+    "timestamp": "2026-04-28T10:17:13.820573",
+    "user": "admin",
+    "type": "approve",
+    "collection": "",
+    "record_id": null,
+    "record_ids": [],
+    "details": "通过 4 条审核记录"
   }
 ]

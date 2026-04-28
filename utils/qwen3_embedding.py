@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from PIL import Image
 from transformers.models.qwen3_vl.processing_qwen3_vl import Qwen3VLProcessor
 
+from .config import load_config
 from .qwen3_modeling import (
     FPS,
     MAX_FRAMES,
@@ -21,10 +22,7 @@ from .qwen3_modeling import (
     sample_frames,
 )
 
-try:
-    from qwen_vl_utils.vision_process import process_vision_info
-except ImportError:
-    from .qwen_vl_utils_stub import process_vision_info
+from qwen_vl_utils.vision_process import process_vision_info
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +42,7 @@ class Qwen3VLEmbedder:
     ):
         # Keep device selection aligned with upstream behavior:
         # use the default CUDA device when available.
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = load_config().device
         self.max_length = max_length
         self.min_pixels = min_pixels
         self.max_pixels = max_pixels
