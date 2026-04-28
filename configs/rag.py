@@ -16,6 +16,8 @@ class RagConfig:
     milvus_port: str
     device: str 
     collection_names: list[str]
+    text_score_threshold: float
+    image_score_threshold: float
 
 
 def load_config() -> RagConfig:
@@ -34,5 +36,6 @@ def load_config() -> RagConfig:
         milvus_port=env("MILVUS_PORT", "19530"),
         collection_names=list(COLLECTION_NAMES),
         device=env("DEVICE", "cuda:1") if os.getenv("CUDA_AVAILABLE", "false").lower() == "true" else "cpu",
+        text_score_threshold=float(env("RAG_TEXT_SCORE_THRESHOLD", "30")),
+        image_score_threshold=float(env("RAG_IMAGE_SCORE_THRESHOLD", "10")),
     )
-

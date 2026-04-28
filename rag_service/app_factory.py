@@ -74,8 +74,14 @@ def create_app() -> FastAPI:
             except Exception as exc:
                 logger.error("搜索集合 %s 失败：%s", coll_name, exc)
 
-        filtered_text_hits = filter_and_sort(deduplicate_hits(text_hits))[:50]
-        filtered_image_hits = filter_and_sort(deduplicate_hits(image_hits))[:50]
+        filtered_text_hits = filter_and_sort(
+            deduplicate_hits(text_hits),
+            score_threshold=config.text_score_threshold,
+        )[:50]
+        filtered_image_hits = filter_and_sort(
+            deduplicate_hits(image_hits),
+            score_threshold=config.image_score_threshold,
+        )[:50]
 
         grouped_text_results = group_hits_by_docid(filtered_text_hits)
         grouped_image_results = group_hits_by_docid(filtered_image_hits)
