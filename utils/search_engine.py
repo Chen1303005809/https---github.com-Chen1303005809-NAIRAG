@@ -64,16 +64,14 @@ class MilvusSearchEngine:
         connections.connect(**kwargs)
 
 
-    def _embed_images(self, image_paths: List[str]) -> List[List[float]]:
+    def _embed_images(self, image_paths: List[str]) -> List[Optional[List[float]]]:
         """Embed images using Qwen3-VL model."""
         if self.visual_embedder["family"] == "qwen3_vl":
             import logging
-            import numpy as np
             from PIL import Image, ImageOps
             logger = logging.getLogger(__name__)
 
-            outputs: List[List[float]] = []
-            visual_dim = self.visual_embedder["dimension"]
+            outputs: List[Optional[List[float]]] = []
 
             def _load_safe_image(path: str):
                 with Image.open(path) as img:
@@ -107,15 +105,11 @@ class MilvusSearchEngine:
                         outputs.append(vec)
                     except Exception as exc2:
                         logger.error("Image embedding failed for %s after retry: %s", image_path, exc2)
-                        outputs.append(np.zeros(visual_dim).tolist())
+                        outputs.append(None)
             return outputs
 
-        # Fallback to dummy embeddings if visual embedder fails
-        import numpy as np
-        embeddings = []
-        for _ in image_paths:
-            embeddings.append(np.zeros(self.visual_embedder["dimension"]).tolist())
-        return embeddings
+        # Fallback: visual embedder unavailable
+        return [None for _ in image_paths]
 
     def _embed_texts(self, texts: List[str]) -> List[List[float]]:
         """Embed texts using bge-m3 model."""
@@ -167,6 +161,8 @@ class MilvusSearchEngine:
                 # For vl_embedding, always use visual embedder
                 if image_path:
                     query_embedding = self._embed_images([image_path])[0]
+                    if query_embedding is None:
+                        raise ValueError(f"Image embedding failed for query image: {image_path}")
                 else:
                     # If no image, use Qwen3-VL to embed the text query
                     if self.visual_embedder["family"] == "qwen3_vl":

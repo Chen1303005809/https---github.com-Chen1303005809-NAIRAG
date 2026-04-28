@@ -2,6 +2,7 @@
 import uuid
 import ollama
 import os
+import math
 from typing import Optional, List
 from pathlib import Path
 from utils.search_engine import MilvusSearchEngine
@@ -175,7 +176,13 @@ def embedding(data: dict) -> list[dict]:
                 embeddings = embedder._embed_images(image_files)
                 
                 # 为每个图片生成一个chunk
+                skipped_count = 0
                 for image_path, vec in zip(image_files, embeddings):
+                    if vec is None:
+                        skipped_count += 1
+                        print(f"⚠️ 跳过图片（嵌入失败）: {image_path}")
+                        continue
+
                     chunk_id += 1
                     # 检查 vec 是否已经是列表格式
                     if isinstance(vec, list):
@@ -183,6 +190,13 @@ def embedding(data: dict) -> list[dict]:
                     else:
                         # 处理可能的张量情况
                         vec_list = vec.detach().cpu().float().numpy().tolist() if hasattr(vec, 'detach') else vec.tolist()
+
+                    # 不允许零向量/近零向量入库
+                    norm = math.sqrt(sum(float(x) * float(x) for x in vec_list))
+                    if norm < 1e-8:
+                        skipped_count += 1
+                        print(f"⚠️ 跳过图片（零向量）: {image_path}")
+                        continue
                     
                     results.append({
                         "chunk_id": chunk_id,
@@ -194,7 +208,7 @@ def embedding(data: dict) -> list[dict]:
                         "weight": 1,
                         "file_url": image_path
                     })
-                print(f"✅ 成功处理 {len(image_files)} 个图片文件")
+                print(f"✅ 成功处理图片向量: {len(image_files) - skipped_count}/{len(image_files)}")
             except Exception as e:
                 print(f"❌ 处理图片嵌入失败: {e}")
     
