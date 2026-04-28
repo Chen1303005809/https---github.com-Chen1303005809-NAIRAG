@@ -460,9 +460,100 @@ const FIELD_LABELS = {
     image: '图片附件'
 };
 
+const FIELD_ALIASES = {
+    question_type: 'type',
+    module: 'object',
+    scenario: 'purpose',
+    customer: 'customer_type',
+    keywords: 'keyword',
+    question: 'problem',
+    answer_logic: 'reply_logic',
+    explanation: 'feature_explanation',
+};
+
+const DOC_FIELD_PRIMARY_ORDER = [
+    'type',
+    'object',
+    'purpose',
+    'customer_type',
+    'keyword',
+    'problem',
+    'reply_logic',
+    'feature_explanation',
+    'example',
+    'notes',
+    'web_links',
+];
+
+const DOC_FIELD_SKIP_KEYS = new Set([
+    'doc_id',
+    'best_score',
+    'chunk_count',
+    'field_types',
+    'chunks',
+    'file_urls',
+    'score',
+]);
+
 function fieldLabel(fieldType) {
     const key = String(fieldType || '').trim().toLowerCase();
     return FIELD_LABELS[key] || (fieldType || '未知字段');
+}
+
+function normalizeFieldKey(fieldType) {
+    const key = String(fieldType || '').trim().toLowerCase();
+    return FIELD_ALIASES[key] || key;
+}
+
+function isFilledValue(value) {
+    if (Array.isArray(value)) return value.some(v => String(v || '').trim());
+    if (value === null || value === undefined) return false;
+    return String(value).trim() !== '';
+}
+
+function buildStructuredFields(bestDoc) {
+    const merged = {};
+    const doc = bestDoc || {};
+    const chunks = [...(doc.chunks || [])].sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+
+    Object.entries(doc).forEach(([rawKey, rawValue]) => {
+        const key = normalizeFieldKey(rawKey);
+        if (DOC_FIELD_SKIP_KEYS.has(key)) return;
+        if (key === 'web_links') {
+            const links = validUrls(rawValue || []);
+            if (links.length) merged.web_links = links;
+            return;
+        }
+        if (Array.isArray(rawValue)) {
+            const cleaned = rawValue.map(v => String(v || '').trim()).filter(Boolean);
+            if (cleaned.length) merged[key] = cleaned;
+            return;
+        }
+        if (rawValue && typeof rawValue === 'object') return;
+        const text = String(rawValue || '').trim();
+        if (text) merged[key] = text;
+    });
+
+    chunks.forEach(chunk => {
+        const key = normalizeFieldKey(chunk.field_type || '');
+        const text = String(chunk.field_text || '').trim();
+        if (!key || !text || DOC_FIELD_SKIP_KEYS.has(key)) return;
+        if (key === 'problem') {
+            const exists = Array.isArray(merged.problem) ? merged.problem : [];
+            if (!exists.includes(text)) merged.problem = [...exists, text];
+            return;
+        }
+        if (!isFilledValue(merged[key])) merged[key] = text;
+    });
+
+    const orderedKeys = [...DOC_FIELD_PRIMARY_ORDER];
+    Object.keys(merged).forEach(key => {
+        if (!orderedKeys.includes(key)) orderedKeys.push(key);
+    });
+
+    return orderedKeys
+        .filter(key => isFilledValue(merged[key]))
+        .map(key => ({ key, label: fieldLabel(key), value: merged[key] }));
 }
 
 function summarizeFileNames(urls, limit = 2) {
@@ -566,6 +657,7 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
     const structured = buildStructuredAnswer(bestDoc);
     const node = document.createElement('div');
     node.className = 'answer';
+    const structuredFields = buildStructuredFields(bestDoc);
 
     const keyPointsHtml = structured.keyPoints.length
         ? `<ol style="margin:8px 0 0 18px; padding:0;">
@@ -576,26 +668,33 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
     const evidenceHtml = structured.evidence.length
         ? structured.evidence.map((chunk, idx) => `
             <div style="margin-top:8px; padding:8px; border:1px solid #bae6fd; border-radius:8px; background:#f0f9ff;">
-                <div style="font-size:12px; color:#0369a1;">证据 ${idx + 1} · ${escapeHtml(fieldLabel(chunk.field_type))} · ${Number(chunk.score || 0).toFixed(2)}%</div>
+                <div style="font-size:12px; color:#0369a1;">证据 ${idx + 1} · ${escapeHtml(fieldLabel(chunk.field_type))}</div>
                 <div style="font-size:13px; margin-top:4px; color:#0f172a; white-space:pre-wrap;">${escapeHtml(clipText(chunk.field_text, 180))}</div>
             </div>
           `).join('')
         : `<div style="margin-top:8px; color:#475569;">暂无证据片段</div>`;
 
     const filesHtml = buildAttachmentHtml(bestDoc.file_urls || []);
-    const webLinksHtml = validUrls(bestDoc.web_links || [])
-        .map(u => `<a class="file-link" href="${escapeHtml(u)}" target="_blank">${escapeHtml(u)}</a>`)
-        .join('');
+    const fieldsHtml = structuredFields.length
+        ? structuredFields.map(item => {
+            if (item.key === 'web_links') {
+                const links = (Array.isArray(item.value) ? item.value : [item.value])
+                    .map(u => `<a class="file-link" href="${escapeHtml(u)}" target="_blank">${escapeHtml(u)}</a>`)
+                    .join(' ');
+                return `<div><strong>${escapeHtml(item.label)}:</strong> ${links}</div>`;
+            }
+            const value = Array.isArray(item.value)
+                ? item.value.map(v => String(v || '').trim()).filter(Boolean).join('；')
+                : String(item.value || '').trim();
+            return value ? `<div><strong>${escapeHtml(item.label)}:</strong> ${escapeHtml(value)}</div>` : '';
+        }).filter(Boolean).join('')
+        : `<div style="color:#475569;">暂无可展示字段</div>`;
 
     node.innerHTML = `
         <div><strong>综合结论（仅输出 1 个最相关文档）</strong></div>
         <div style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(structured.conclusion)}</div>
         <div style="margin-top:10px; font-size:13px; color:#0f172a; line-height:1.8;">
-            <div><strong>类型:</strong> ${escapeHtml(bestDoc.type || '-')}</div>
-            <div><strong>功能:</strong> ${escapeHtml(bestDoc.object || '-')}</div>
-            <div><strong>场景:</strong> ${escapeHtml(bestDoc.purpose || '-')}</div>
-            <div><strong>客户:</strong> ${escapeHtml(bestDoc.customer_type || '-')}</div>
-            <div><strong>网页链接:</strong> ${webLinksHtml || '-'}</div>
+            ${fieldsHtml}
         </div>
         <div style="margin-top:10px; font-size:13px; color:#0f172a;">
             <strong>DocID:</strong> ${escapeHtml(bestDoc.doc_id || 'UNKNOWN_DOC')} ｜ 

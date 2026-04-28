@@ -375,6 +375,51 @@ const DB_OPTIONS = [
     { v: 'TEST', t: '多模态混合测试' }
 ];
 
+const SUMMARY_LABELS = {
+    type: '类型',
+    object: '功能',
+    purpose: '场景',
+    customer_type: '客户',
+    keyword: '关键词',
+    keywords: '关键词',
+    web_links: '网页',
+    problem: '问题',
+    question: '问题',
+    reply_logic: '回复逻辑',
+    answer_logic: '回复逻辑',
+    feature_explanation: '说明',
+    explanation: '说明',
+    example: '举例',
+    notes: '注意事项',
+};
+
+const SUMMARY_PRIMARY_ORDER = [
+    'type',
+    'object',
+    'purpose',
+    'customer_type',
+    'keyword',
+    'web_links',
+    'problem',
+    'reply_logic',
+    'feature_explanation',
+    'example',
+    'notes',
+];
+
+const SUMMARY_SKIP_KEYS = new Set([
+    'id',
+    'doc_id',
+    'chunk_id',
+    'field_type',
+    'field_text',
+    'file_url',
+    'file_urls',
+    'image_url',
+    'image_urls',
+    'text',
+]);
+
 function authHeaders(extra = {}) {
     return authToken ? { ...extra, Authorization: 'Bearer ' + authToken } : extra;
 }
@@ -509,6 +554,57 @@ function applySearch(items, keys) {
     return items.filter(item => keys.some(key => String(item[key] || '').toLowerCase().includes(kw)));
 }
 
+function isFilledValue(value) {
+    if (Array.isArray(value)) return value.some(v => String(v || '').trim());
+    if (value === null || value === undefined) return false;
+    return String(value).trim() !== '';
+}
+
+function buildSummaryItemsHtml(summary, chunks) {
+    const merged = { ...(summary || {}) };
+    const rawChunks = chunks || [];
+
+    rawChunks.forEach(chunk => {
+        const rawKey = String(chunk?.field_type || '').trim();
+        const text = String(chunk?.field_text || '').trim();
+        if (!rawKey || !text) return;
+        const key = rawKey.toLowerCase();
+        if (key === 'problem' || key === 'question') {
+            const existing = Array.isArray(merged.problem) ? merged.problem : [];
+            if (!existing.includes(text)) merged.problem = [...existing, text];
+            return;
+        }
+        if (!isFilledValue(merged[key])) merged[key] = text;
+    });
+
+    const orderedKeys = [...SUMMARY_PRIMARY_ORDER];
+    Object.keys(merged).forEach(key => {
+        if (SUMMARY_SKIP_KEYS.has(key)) return;
+        if (!orderedKeys.includes(key)) orderedKeys.push(key);
+    });
+
+    return orderedKeys
+        .filter(key => !SUMMARY_SKIP_KEYS.has(key))
+        .filter(key => isFilledValue(merged[key]))
+        .map(key => {
+            const label = SUMMARY_LABELS[key] || key;
+            if (key === 'web_links') {
+                const links = Array.isArray(merged[key]) ? merged[key] : [merged[key]];
+                const validLinks = links.filter(v => String(v || '').trim());
+                if (!validLinks.length) return '';
+                return `<div class="summary-item"><span class="summary-label">${escapeHtml(label)}:</span>${validLinks.map(u => `<a class="file-link" href="${escapeAttr(resolveAssetUrl(u))}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>`;
+            }
+
+            const value = Array.isArray(merged[key])
+                ? merged[key].filter(v => String(v || '').trim()).join('；')
+                : String(merged[key] || '').trim();
+            if (!value) return '';
+            return `<div class="summary-item"><span class="summary-label">${escapeHtml(label)}:</span>${escapeHtml(value)}</div>`;
+        })
+        .filter(Boolean)
+        .join('');
+}
+
 function toggleActionButtons(mode) {
     document.getElementById('batchDeleteBtn').style.display = mode === 'data' ? 'inline-block' : 'none';
     document.getElementById('approveBtn').style.display = mode === 'review' ? 'inline-block' : 'none';
@@ -561,6 +657,7 @@ function docCardBase(doc, mode = 'data') {
         ? `<button class="btn danger" onclick="deleteDoc('${doc.record_id}')">删除</button>`
         : '';
     const docIdentity = doc.doc_id || (mode === 'review' ? doc.id : 'UNKNOWN_DOC');
+    const summaryItemsHtml = buildSummaryItemsHtml(summary, doc.chunks || []);
 
     return `
         <article class="doc-card">
@@ -577,15 +674,7 @@ function docCardBase(doc, mode = 'data') {
                 </div>
             </div>
             <div class="summary">
-                <div class="summary-item"><span class="summary-label">类型:</span>${escapeHtml(summary.type || '')}</div>
-                <div class="summary-item"><span class="summary-label">功能:</span>${escapeHtml(summary.object || '')}</div>
-                <div class="summary-item"><span class="summary-label">场景:</span>${escapeHtml(summary.purpose || '')}</div>
-                <div class="summary-item"><span class="summary-label">客户:</span>${escapeHtml(summary.customer_type || '')}</div>
-                <div class="summary-item"><span class="summary-label">关键词:</span>${escapeHtml(summary.keyword || '')}</div>
-                ${(summary.web_links || []).length ? `<div class="summary-item"><span class="summary-label">网页:</span>${(summary.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
-                ${(summary.problem || []).length ? `<div class="summary-item"><span class="summary-label">问题:</span>${escapeHtml(summary.problem.join('；'))}</div>` : ''}
-                ${summary.reply_logic ? `<div class="summary-item"><span class="summary-label">回复逻辑:</span>${escapeHtml(summary.reply_logic)}</div>` : ''}
-                ${summary.feature_explanation ? `<div class="summary-item"><span class="summary-label">说明:</span>${escapeHtml(summary.feature_explanation)}</div>` : ''}
+                ${summaryItemsHtml || '<div class="summary-item"><span class="summary-label">提示:</span>暂无可展示字段</div>'}
                 ${fileHtml ? `<div class="files">${fileHtml}</div>` : ''}
             </div>
             <div class="chunk-list">${chunksHtml || '<div class="hint">无 chunk 详情</div>'}</div>
@@ -705,10 +794,7 @@ async function loadRejected() {
                     </div>
                 </div>
                 <div class="summary">
-                    <div class="summary-item"><span class="summary-label">功能:</span>${escapeHtml(data.object || '')}</div>
-                    <div class="summary-item"><span class="summary-label">类型:</span>${escapeHtml(data.type || '')}</div>
-                    ${(data.web_links || []).length ? `<div class="summary-item"><span class="summary-label">网页:</span>${(data.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
-                    <div class="summary-item"><span class="summary-label">问题:</span>${escapeHtml((data.problem || []).join('；'))}</div>
+                    ${buildSummaryItemsHtml(data, []) || '<div class="summary-item"><span class="summary-label">提示:</span>暂无可展示字段</div>'}
                     ${links ? `<div class="files">${links}</div>` : ''}
                 </div>
             </article>

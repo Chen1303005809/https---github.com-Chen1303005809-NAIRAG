@@ -418,6 +418,46 @@ const DBS = [
     { v: 'TEST', t: '多模态混合测试' }
 ];
 
+const DISPLAY_LABELS = {
+    type: '类型',
+    object: '功能',
+    purpose: '场景',
+    customer_type: '客户',
+    keyword: '关键词',
+    keywords: '关键词',
+    web_links: '网页链接',
+    problem: '问题',
+    question: '问题',
+    reply_logic: '回复逻辑',
+    answer_logic: '回复逻辑',
+    feature_explanation: '说明',
+    explanation: '说明',
+    example: '举例',
+    notes: '注意事项',
+};
+
+const DISPLAY_PRIMARY_ORDER = [
+    'type',
+    'object',
+    'purpose',
+    'customer_type',
+    'keyword',
+    'problem',
+    'reply_logic',
+    'feature_explanation',
+    'example',
+    'notes',
+    'web_links',
+];
+
+const DISPLAY_SKIP_KEYS = new Set([
+    'id',
+    'doc_id',
+    'image_url',
+    'file_url',
+    'text',
+]);
+
 function authHeaders(extra = {}) {
     return authToken ? { ...extra, Authorization: `Bearer ${authToken}` } : extra;
 }
@@ -723,10 +763,12 @@ function renderRejectedModal() {
     }
 
     body.innerHTML = rejectedCache.map((item, idx) => {
+        const data = item.data || {};
         const files = [...(item.data?.image_url || []), ...(item.data?.file_url || [])]
             .filter(u => u && u !== 'N/A')
             .map(u => `<a class="file-link" href="${u}" target="_blank">${escapeHtml((u || '').split('/').pop())}</a>`)
             .join('');
+        const fieldsHtml = buildDisplayFieldsHtml(data);
         return `
             <article class="panel" style="margin-bottom:8px;">
                 <div class="panel-body">
@@ -735,9 +777,7 @@ function renderRejectedModal() {
                         <button class="btn primary" onclick="openRejectedEdit('${escapeAttr(item.id)}')">修改后重提</button>
                     </div>
                     <div class="hint" style="margin-top:6px; color:#b91c1c;">拒绝原因: ${escapeHtml(item.reject_reason || '管理员未填写')}</div>
-                    <div style="margin-top:6px; font-size:13px;">类型: ${escapeHtml(item.data?.type || '')} ｜ 场景: ${escapeHtml(item.data?.purpose || '')}</div>
-                    <div style="margin-top:6px; font-size:13px; white-space:pre-wrap;">回复逻辑: ${escapeHtml(item.data?.reply_logic || '')}</div>
-                    ${(item.data?.web_links || []).length ? `<div style="margin-top:6px; font-size:13px;">网页链接: ${(item.data.web_links || []).map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>` : ''}
+                    <div style="margin-top:6px; font-size:13px; line-height:1.7;">${fieldsHtml || '<span class="hint">暂无可展示字段</span>'}</div>
                     ${files ? `<div class="toolbar" style="margin-top:8px;">${files}</div>` : ''}
                 </div>
             </article>
@@ -842,6 +882,42 @@ function escapeHtml(text) {
     return String(text || '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
 }
 function escapeAttr(text) { return escapeHtml(text).replace(/"/g, '&quot;'); }
+
+function isFilledValue(value) {
+    if (Array.isArray(value)) return value.some(v => String(v || '').trim());
+    if (value === null || value === undefined) return false;
+    return String(value).trim() !== '';
+}
+
+function buildDisplayFieldsHtml(data) {
+    const row = data || {};
+    const orderedKeys = [...DISPLAY_PRIMARY_ORDER];
+    Object.keys(row).forEach(key => {
+        if (DISPLAY_SKIP_KEYS.has(key)) return;
+        if (!orderedKeys.includes(key)) orderedKeys.push(key);
+    });
+
+    return orderedKeys
+        .filter(key => !DISPLAY_SKIP_KEYS.has(key))
+        .filter(key => isFilledValue(row[key]))
+        .map(key => {
+            const label = DISPLAY_LABELS[key] || key;
+            if (key === 'web_links') {
+                const links = (Array.isArray(row[key]) ? row[key] : [row[key]])
+                    .map(v => String(v || '').trim())
+                    .filter(Boolean);
+                if (!links.length) return '';
+                return `<div><strong>${escapeHtml(label)}:</strong> ${links.map(u => `<a class="file-link" href="${escapeAttr(u)}" target="_blank">${escapeHtml(u)}</a>`).join(' ')}</div>`;
+            }
+            const value = Array.isArray(row[key])
+                ? row[key].map(v => String(v || '').trim()).filter(Boolean).join('；')
+                : String(row[key] || '').trim();
+            if (!value) return '';
+            return `<div><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</div>`;
+        })
+        .filter(Boolean)
+        .join('');
+}
 
 const imgInput = document.getElementById('imgInput');
 const docInput = document.getElementById('docInput');
