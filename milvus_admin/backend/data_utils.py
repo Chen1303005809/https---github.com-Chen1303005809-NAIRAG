@@ -7,9 +7,22 @@ import numpy as np
 
 
 FIELD_MAP = {
+    "type": "type",
+    "question_type": "type",
+    "object": "object",
+    "module": "object",
+    "purpose": "purpose",
+    "scenario": "purpose",
+    "customer_type": "customer_type",
+    "customer": "customer_type",
+    "keyword": "keyword",
+    "keywords": "keyword",
     "problem": "problem",
+    "question": "problem",
     "reply_logic": "reply_logic",
+    "answer_logic": "reply_logic",
     "feature_explanation": "feature_explanation",
+    "explanation": "feature_explanation",
     "example": "example",
     "notes": "notes",
 }
@@ -86,13 +99,14 @@ def group_by_doc_id(rows: list[dict]) -> list[dict]:
         file_urls = []
 
         for chunk in chunks_sorted:
-            field_type = chunk.get("field_type")
-            field_text = chunk.get("field_text", "")
+            field_type = str(chunk.get("field_type") or "").strip().lower()
+            field_text = str(chunk.get("field_text") or "").strip()
             if field_type in FIELD_MAP:
                 key = FIELD_MAP[field_type]
                 if key == "problem":
                     if field_text:
-                        summary["problem"].append(field_text)
+                        if field_text not in summary["problem"]:
+                            summary["problem"].append(field_text)
                 elif not summary.get(key) and field_text:
                     summary[key] = field_text
 

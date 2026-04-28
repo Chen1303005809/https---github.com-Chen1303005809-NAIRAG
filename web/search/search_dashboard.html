@@ -433,6 +433,33 @@ function validUrls(urls) {
     return result;
 }
 
+const FIELD_LABELS = {
+    type: '问题类型',
+    question_type: '问题类型',
+    object: '功能模块',
+    module: '功能模块',
+    purpose: '应用场景',
+    scenario: '应用场景',
+    customer_type: '客户类型',
+    customer: '客户类型',
+    keyword: '关键词',
+    keywords: '关键词',
+    problem: '问题描述',
+    question: '问题描述',
+    reply_logic: '回复逻辑',
+    answer_logic: '回复逻辑',
+    feature_explanation: '功能说明',
+    explanation: '功能说明',
+    example: '举例说明',
+    notes: '注意事项',
+    image: '图片附件'
+};
+
+function fieldLabel(fieldType) {
+    const key = String(fieldType || '').trim().toLowerCase();
+    return FIELD_LABELS[key] || (fieldType || '未知字段');
+}
+
 function summarizeFileNames(urls, limit = 2) {
     const names = validUrls(urls).map(url => decodeURIComponent(url.split('/').pop() || url));
     return names.slice(0, limit).join('、');
@@ -536,14 +563,14 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
 
     const keyPointsHtml = structured.keyPoints.length
         ? `<ol style="margin:8px 0 0 18px; padding:0;">
-            ${structured.keyPoints.map(item => `<li style="margin:6px 0;"><strong>${escapeHtml(item.field_type)}</strong>（${Number(item.score || 0).toFixed(2)}%）：${escapeHtml(item.text)}</li>`).join('')}
+            ${structured.keyPoints.map(item => `<li style="margin:6px 0;"><strong>${escapeHtml(fieldLabel(item.field_type))}</strong>（${Number(item.score || 0).toFixed(2)}%）：${escapeHtml(item.text)}</li>`).join('')}
           </ol>`
         : `<div style="margin-top:8px; color:#475569;">暂无可结构化要点</div>`;
 
     const evidenceHtml = structured.evidence.length
         ? structured.evidence.map((chunk, idx) => `
             <div style="margin-top:8px; padding:8px; border:1px solid #bae6fd; border-radius:8px; background:#f0f9ff;">
-                <div style="font-size:12px; color:#0369a1;">证据 ${idx + 1} · ${escapeHtml(chunk.field_type || 'unknown')} · ${Number(chunk.score || 0).toFixed(2)}%</div>
+                <div style="font-size:12px; color:#0369a1;">证据 ${idx + 1} · ${escapeHtml(fieldLabel(chunk.field_type))} · ${Number(chunk.score || 0).toFixed(2)}%</div>
                 <div style="font-size:13px; margin-top:4px; color:#0f172a; white-space:pre-wrap;">${escapeHtml(clipText(chunk.field_text, 180))}</div>
             </div>
           `).join('')
@@ -614,7 +641,7 @@ function renderDocGroup(title, grouped) {
             const files = buildAttachmentHtml(chunk.file_url || []);
             item.innerHTML = `
                 <div class="chunk-top">
-                    <span>chunk: ${chunk.chunk_id ?? '-'} · ${chunk.field_type || 'unknown'}</span>
+                    <span>chunk: ${chunk.chunk_id ?? '-'} · ${fieldLabel(chunk.field_type)}</span>
                     <span>相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
                 </div>
                 <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>

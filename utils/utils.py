@@ -123,8 +123,29 @@ def embedding(data: dict) -> list[dict]:
     
     # 收集待嵌入的字段及其权重
     fields_to_embed = []
+
+    # 先写入结构化标签字段，保证数据管理页可完整展示
+    meta_fields = [
+        ("type", data.get("type"), 0.8),
+        ("object", data.get("object"), 0.9),
+        ("purpose", data.get("purpose"), 0.8),
+        ("customer_type", data.get("customer_type"), 0.7),
+    ]
+    for field_name, field_value, weight in meta_fields:
+        text = str(field_value or "").strip()
+        if text:
+            fields_to_embed.append((field_name, text, weight))
+
+    if "keyword" in data and data["keyword"]:
+        keyword_val = data["keyword"]
+        if isinstance(keyword_val, list):
+            keyword_text = "，".join([str(x).strip() for x in keyword_val if str(x).strip()])
+        else:
+            keyword_text = str(keyword_val).strip()
+        if keyword_text:
+            fields_to_embed.append(("keyword", keyword_text, 1.3))
     
-    # 处理problem字段（必需）
+    # 处理problem字段（核心）
     if "problem" in data and data["problem"]:
         problems = data["problem"] if isinstance(data["problem"], list) else [data["problem"]]
         for problem_text in problems:
