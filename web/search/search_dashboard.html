@@ -551,11 +551,9 @@ function buildStructuredAnswer(bestDoc) {
         if (!text || seenField.has(fieldType)) continue;
         keyPoints.push({
             field_type: fieldType,
-            score: Number(chunk.score || 0),
             text,
         });
         seenField.add(fieldType);
-        if (keyPoints.length >= 4) break;
     }
 
     const fallback = chunks.find(c => String(c.field_text || '').trim());
@@ -571,7 +569,7 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
 
     const keyPointsHtml = structured.keyPoints.length
         ? `<ol style="margin:8px 0 0 18px; padding:0;">
-            ${structured.keyPoints.map(item => `<li style="margin:6px 0;"><strong>${escapeHtml(fieldLabel(item.field_type))}</strong>（${Number(item.score || 0).toFixed(2)}%）：${escapeHtml(item.text)}</li>`).join('')}
+            ${structured.keyPoints.map(item => `<li style="margin:6px 0;"><strong>${escapeHtml(fieldLabel(item.field_type))}</strong>：${escapeHtml(item.text)}</li>`).join('')}
           </ol>`
         : `<div style="margin-top:8px; color:#475569;">暂无可结构化要点</div>`;
 
