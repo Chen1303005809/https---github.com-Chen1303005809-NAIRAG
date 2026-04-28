@@ -121,20 +121,13 @@ def embedding(data: dict) -> list[dict]:
     all_urls = data.get("file_url", []) + data.get("image_url", [])
     final_file_urls = ";".join(all_urls)
     
+    meta_type = str(data.get("type") or "").strip()
+    meta_object = str(data.get("object") or "").strip()
+    meta_purpose = str(data.get("purpose") or "").strip()
+    meta_customer_type = str(data.get("customer_type") or "").strip()
+
     # 收集待嵌入的字段及其权重
     fields_to_embed = []
-
-    # 先写入结构化标签字段，保证数据管理页可完整展示
-    meta_fields = [
-        ("type", data.get("type"), 0.8),
-        ("object", data.get("object"), 0.9),
-        ("purpose", data.get("purpose"), 0.8),
-        ("customer_type", data.get("customer_type"), 0.7),
-    ]
-    for field_name, field_value, weight in meta_fields:
-        text = str(field_value or "").strip()
-        if text:
-            fields_to_embed.append((field_name, text, weight))
 
     if "keyword" in data and data["keyword"]:
         keyword_val = data["keyword"]
@@ -179,6 +172,10 @@ def embedding(data: dict) -> list[dict]:
             results.append({
                 "chunk_id": chunk_id,
                 "doc_id": doc_id,
+                "type": meta_type,
+                "object": meta_object,
+                "purpose": meta_purpose,
+                "customer_type": meta_customer_type,
                 "field_type": field_type,
                 "field_text": field_text,
                 "text_embedding": text_embedding,
@@ -222,6 +219,10 @@ def embedding(data: dict) -> list[dict]:
                     results.append({
                         "chunk_id": chunk_id,
                         "doc_id": doc_id,
+                        "type": meta_type,
+                        "object": meta_object,
+                        "purpose": meta_purpose,
+                        "customer_type": meta_customer_type,
                         "field_type": "image",
                         "field_text": '',
                         "text_embedding": create_zero_vector(1024),  # 使用零向量替代None，维度与schema一致

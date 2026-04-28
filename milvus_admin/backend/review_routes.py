@@ -148,6 +148,10 @@ def approve_records():
                             [
                                 [chunk["chunk_id"]],
                                 [chunk["doc_id"]],
+                                [chunk.get("type", "")],
+                                [chunk.get("object", "")],
+                                [chunk.get("purpose", "")],
+                                [chunk.get("customer_type", "")],
                                 [chunk["field_type"]],
                                 [chunk["field_text"]],
                                 [chunk["text_embedding"]],

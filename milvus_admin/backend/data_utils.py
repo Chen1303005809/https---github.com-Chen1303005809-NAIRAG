@@ -7,14 +7,6 @@ import numpy as np
 
 
 FIELD_MAP = {
-    "type": "type",
-    "question_type": "type",
-    "object": "object",
-    "module": "object",
-    "purpose": "purpose",
-    "scenario": "purpose",
-    "customer_type": "customer_type",
-    "customer": "customer_type",
     "keyword": "keyword",
     "keywords": "keyword",
     "problem": "problem",
@@ -99,6 +91,15 @@ def group_by_doc_id(rows: list[dict]) -> list[dict]:
         file_urls = []
 
         for chunk in chunks_sorted:
+            if not summary["type"]:
+                summary["type"] = str(chunk.get("type") or "").strip()
+            if not summary["object"]:
+                summary["object"] = str(chunk.get("object") or "").strip()
+            if not summary["purpose"]:
+                summary["purpose"] = str(chunk.get("purpose") or "").strip()
+            if not summary["customer_type"]:
+                summary["customer_type"] = str(chunk.get("customer_type") or "").strip()
+
             field_type = str(chunk.get("field_type") or "").strip().lower()
             field_text = str(chunk.get("field_text") or "").strip()
             if field_type in FIELD_MAP:
