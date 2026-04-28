@@ -113,8 +113,8 @@ def embedding(data: dict) -> list[dict]:
     """
     results = []
     
-    # 生成doc_id
-    doc_id = str(uuid.uuid4())
+    # 生成/复用 doc_id（编辑重建时复用原 doc_id）
+    doc_id = str(data.get("doc_id") or "").strip() or str(uuid.uuid4())
     chunk_id = 0
     
     # 收集所有附件地址

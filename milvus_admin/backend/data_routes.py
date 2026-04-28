@@ -88,15 +88,32 @@ def update_record():
         try:
             collection = Collection(collection_name)
             old_id = int(data["id"])
-            old_results = collection.query(expr=f"id == {old_id}", output_fields=["file_url"])
+            old_results = collection.query(expr=f"id == {old_id}", output_fields=["doc_id", "file_url"])
             if not old_results:
                 raise ValueError(f"原记录 ID={old_id} 不存在")
 
-            old_urls = parse_file_urls(old_results[0].get("file_url", ""))
-            collection.delete(f"id == {old_id}")
+            old_doc_id = str(old_results[0].get("doc_id") or "").strip()
+            if not old_doc_id:
+                raise ValueError(f"原记录 ID={old_id} 缺少 doc_id")
+
+            old_doc_rows = collection.query(
+                expr=f'doc_id == "{old_doc_id}"',
+                output_fields=["file_url"],
+                limit=13683,
+            )
+            old_urls = []
+            for row in old_doc_rows:
+                for u in parse_file_urls(row.get("file_url", "")):
+                    if u not in old_urls:
+                        old_urls.append(u)
+
+            # 按 doc_id 整体替换，避免只删单个 chunk 导致脏数据残留
+            collection.delete(f'doc_id == "{old_doc_id}"')
             collection.flush()
 
-            new_records = embedding_func(data)
+            payload = dict(data)
+            payload["doc_id"] = old_doc_id
+            new_records = embedding_func(payload)
             if not new_records:
                 raise ValueError("未生成任何embedding记录")
 
