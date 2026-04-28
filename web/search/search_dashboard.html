@@ -581,6 +581,12 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
     node.innerHTML = `
         <div><strong>综合结论（仅输出 1 个最相关文档）</strong></div>
         <div style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(structured.conclusion)}</div>
+        <div style="margin-top:10px; font-size:13px; color:#0f172a; line-height:1.8;">
+            <div><strong>类型:</strong> ${escapeHtml(bestDoc.type || '-')}</div>
+            <div><strong>功能:</strong> ${escapeHtml(bestDoc.object || '-')}</div>
+            <div><strong>场景:</strong> ${escapeHtml(bestDoc.purpose || '-')}</div>
+            <div><strong>客户:</strong> ${escapeHtml(bestDoc.customer_type || '-')}</div>
+        </div>
         <div style="margin-top:10px; font-size:13px; color:#0f172a;">
             <strong>DocID:</strong> ${escapeHtml(bestDoc.doc_id || 'UNKNOWN_DOC')} ｜ 
             <strong>最佳相似度:</strong> ${Number(bestDoc.best_score || 0).toFixed(2)}% ｜ 
