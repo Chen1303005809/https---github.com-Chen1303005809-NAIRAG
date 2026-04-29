@@ -1085,6 +1085,11 @@ async function showLogs() {
     const res = await authFetch('/admin/get_logs');
     const logs = await res.json();
     const body = document.getElementById('logBody');
+    const joinValues = value => {
+        const arr = Array.isArray(value) ? value : (value ? [value] : []);
+        const cleaned = arr.map(v => String(v || '').trim()).filter(Boolean);
+        return cleaned.join('，');
+    };
     body.innerHTML = (logs || []).slice().reverse().map(log => `
         <div class="doc-card">
             <div class="summary">
@@ -1092,6 +1097,9 @@ async function showLogs() {
                 <div class="summary-item"><span class="summary-label">用户:</span>${escapeHtml(log.user || '')}</div>
                 <div class="summary-item"><span class="summary-label">操作:</span>${escapeHtml(log.type || '')}</div>
                 <div class="summary-item"><span class="summary-label">集合:</span>${escapeHtml(log.collection || '')}</div>
+                <div class="summary-item"><span class="summary-label">上传时间:</span>${escapeHtml(log.upload_time || joinValues(log.upload_times) || '-')}</div>
+                <div class="summary-item"><span class="summary-label">审核通过时间:</span>${escapeHtml(log.approve_time || (log.type === 'approve' ? (log.timestamp || '') : '-') || '-')}</div>
+                <div class="summary-item"><span class="summary-label">DocID:</span>${escapeHtml(log.doc_id || joinValues(log.doc_ids) || '-')}</div>
                 <div class="summary-item"><span class="summary-label">详情:</span>${escapeHtml(log.details || '')}</div>
             </div>
         </div>

@@ -60,6 +60,11 @@ class OperationLogService:
                 "collection": data.get("collection", ""),
                 "record_id": data.get("record_id", None),
                 "record_ids": data.get("record_ids", []),
+                "doc_id": data.get("doc_id", ""),
+                "doc_ids": data.get("doc_ids", []),
+                "upload_time": data.get("upload_time", ""),
+                "upload_times": data.get("upload_times", []),
+                "approve_time": data.get("approve_time", ""),
                 "details": data.get("details", ""),
             }
             logs.append(entry)

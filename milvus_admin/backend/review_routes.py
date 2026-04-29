@@ -225,6 +225,10 @@ def approve_records():
             )
             records_to_approve = [rec for rec in pending_records if str(rec.get("id")) in approved_ids]
             handled_ids = set()
+            approved_doc_ids = []
+            upload_times = []
+            approved_collections = []
+            approve_time = datetime.now().isoformat()
 
             for rec in records_to_approve:
                 new_records = embedding_func(rec.get("data", {}))
@@ -244,8 +248,13 @@ def approve_records():
                     continue
 
                 for coll_name in target_collections:
+                    if coll_name not in approved_collections:
+                        approved_collections.append(coll_name)
                     coll = Collection(coll_name)
                     for chunk in new_records:
+                        doc_id = str(chunk.get("doc_id") or "").strip()
+                        if doc_id and doc_id not in approved_doc_ids:
+                            approved_doc_ids.append(doc_id)
                         coll.insert(
                             [
                                 [chunk["chunk_id"]],
@@ -264,6 +273,9 @@ def approve_records():
                             ]
                         )
                     coll.flush()
+                upload_time = str(rec.get("timestamp") or "").strip()
+                if upload_time and upload_time not in upload_times:
+                    upload_times.append(upload_time)
                 handled_ids.add(str(rec.get("id")))
 
             _cleanup_review_files(services.config.review_dir, handled_ids, services.logger)
@@ -272,7 +284,13 @@ def approve_records():
                     "type": "approve",
                     "user": request.current_user,
                     "details": f"通过 {len(handled_ids)} 条审核记录",
-                    "operation_time": datetime.now().isoformat(),
+                    "operation_time": approve_time,
+                    "approve_time": approve_time,
+                    "upload_time": upload_times[0] if len(upload_times) == 1 else "",
+                    "upload_times": upload_times,
+                    "doc_id": approved_doc_ids[0] if len(approved_doc_ids) == 1 else "",
+                    "doc_ids": approved_doc_ids,
+                    "collection": ",".join(approved_collections),
                 }
             )
             return jsonify({"success": True, "message": f"已通过 {len(handled_ids)} 条记录"})
