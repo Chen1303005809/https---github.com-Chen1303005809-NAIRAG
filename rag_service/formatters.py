@@ -54,11 +54,12 @@ def normalize_urls(file_url: Any, base_dir: str) -> list[str]:
 
 
 
-def build_hit(raw: dict, media_type: str, base_dir: str) -> dict:
+def build_hit(raw: dict, media_type: str, base_dir: str, source_collection: str = "") -> dict:
     return {
         "score": normalize_score(raw.get("score", 0.0)),
         "chunk_id": raw.get("chunk_id", 0),
         "doc_id": raw.get("doc_id", ""),
+        "source_collection": source_collection,
         "type": str(raw.get("type") or "").strip(),
         "object": str(raw.get("object") or "").strip(),
         "purpose": str(raw.get("purpose") or "").strip(),
@@ -76,7 +77,10 @@ def deduplicate_hits(hits: list[dict]) -> list[dict]:
     seen = set()
     unique = []
     for hit in hits:
-        identifier = f"{hit.get('doc_id', '')}_{hit.get('chunk_id', '')}_{hit.get('media_type', '')}"
+        identifier = (
+            f"{hit.get('source_collection', '')}_{hit.get('doc_id', '')}_"
+            f"{hit.get('chunk_id', '')}_{hit.get('media_type', '')}"
+        )
         if identifier not in seen:
             seen.add(identifier)
             unique.append(hit)
@@ -95,10 +99,12 @@ def group_hits_by_docid(hits: list[dict]) -> list[dict]:
     grouped = defaultdict(list)
     for hit in hits:
         doc_id = hit.get("doc_id") or "UNKNOWN_DOC"
-        grouped[doc_id].append(hit)
+        source_collection = str(hit.get("source_collection") or "").strip()
+        grouped[f"{source_collection}::{doc_id}"].append(hit)
 
     docs = []
-    for doc_id, chunks in grouped.items():
+    for group_key, chunks in grouped.items():
+        source_collection, _, doc_id = group_key.partition("::")
         chunks.sort(key=lambda x: x.get("score", 0.0), reverse=True)
         field_types = sorted({c.get("field_type", "") for c in chunks if c.get("field_type")})
         files = []
@@ -114,6 +120,7 @@ def group_hits_by_docid(hits: list[dict]) -> list[dict]:
         docs.append(
             {
                 "doc_id": doc_id,
+                "source_collection": source_collection,
                 "best_score": chunks[0].get("score", 0.0),
                 "chunk_count": len(chunks),
                 "type": next((str(c.get("type") or "").strip() for c in chunks if str(c.get("type") or "").strip()), ""),

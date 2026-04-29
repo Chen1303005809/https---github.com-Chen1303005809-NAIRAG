@@ -374,6 +374,7 @@ const DB_OPTIONS = [
     { v: 'rag_bge_m3_structured_v4_5', t: '随心易终端' },
     { v: 'TEST', t: '多模态混合测试' }
 ];
+const DB_LABEL_MAP = Object.fromEntries(DB_OPTIONS.map(item => [item.v, item.t]));
 
 const SUMMARY_LABELS = {
     type: '类型',
@@ -419,6 +420,23 @@ const SUMMARY_SKIP_KEYS = new Set([
     'image_urls',
     'text',
 ]);
+
+function dbLabel(value) {
+    const key = String(value || '').trim();
+    if (!key) return '未知向量库';
+    return DB_LABEL_MAP[key] ? `${DB_LABEL_MAP[key]} (${key})` : key;
+}
+
+function dbListText(values) {
+    const arr = Array.isArray(values) ? values : (values ? [values] : []);
+    const cleaned = [];
+    arr.forEach(v => {
+        const key = String(v || '').trim();
+        if (key && !cleaned.includes(key)) cleaned.push(key);
+    });
+    if (!cleaned.length) return '未知向量库';
+    return cleaned.map(dbLabel).join('，');
+}
 
 function authHeaders(extra = {}) {
     return authToken ? { ...extra, Authorization: 'Bearer ' + authToken } : extra;
@@ -658,6 +676,11 @@ function docCardBase(doc, mode = 'data') {
         : '';
     const docIdentity = doc.doc_id || (mode === 'review' ? doc.id : 'UNKNOWN_DOC');
     const summaryItemsHtml = buildSummaryItemsHtml(summary, doc.chunks || []);
+    const sourceDbText = dbListText(
+        mode === 'review'
+            ? (doc.selected_dbs?.length ? doc.selected_dbs : [doc.source_collection])
+            : [doc.source_collection]
+    );
 
     return `
         <article class="doc-card">
@@ -665,7 +688,7 @@ function docCardBase(doc, mode = 'data') {
                 ${check}
                 <div>
                     <div class="doc-title">DocID: ${escapeHtml(docIdentity)}</div>
-                    <div class="doc-meta">分片数 ${doc.chunk_count || 0}${mode === 'review' ? ` · 上传人 ${escapeHtml(doc.uploader || '')}` : ''}</div>
+                    <div class="doc-meta">来源向量库 ${escapeHtml(sourceDbText)} · 分片数 ${doc.chunk_count || 0}${mode === 'review' ? ` · 上传人 ${escapeHtml(doc.uploader || '')}` : ''}</div>
                 </div>
                 <div class="doc-actions">
                     <button class="btn" onclick="toggleChunks(this)">展开 chunks</button>
@@ -693,7 +716,7 @@ async function loadDataDocs() {
     const coll = document.getElementById('collection').value;
     const res = await authFetch(`/admin/get_data_paginated?collection=${encodeURIComponent(coll)}&page=1&page_size=13683`);
     const data = await res.json();
-    dataDocs = data.grouped_data || [];
+    dataDocs = (data.grouped_data || []).map(doc => ({ ...doc, source_collection: doc.source_collection || coll }));
 
     const filtered = applySearch(
         dataDocs.map(d => ({ ...d, __search: `${d.doc_id} ${(d.summary?.problem || []).join(' ')} ${d.summary?.reply_logic || ''} ${d.summary?.feature_explanation || ''}` })),
@@ -720,6 +743,7 @@ async function loadReview() {
         uploader: row.uploader,
         chunk_count: 1,
         selected_dbs: row.selected_dbs || [],
+        source_collection: row.source_collection || (row.selected_dbs || [])[0] || '',
         summary: {
             type: row.data?.type || '',
             object: row.data?.object || '',
@@ -738,7 +762,7 @@ async function loadReview() {
     }));
 
     const filtered = applySearch(
-        docs.map(d => ({ ...d, __search: `${d.uploader} ${d.summary.object} ${d.summary.reply_logic}` })),
+        docs.map(d => ({ ...d, __search: `${d.uploader} ${d.summary.object} ${d.summary.reply_logic} ${dbListText(d.selected_dbs?.length ? d.selected_dbs : [d.source_collection])}` })),
         ['__search']
     );
 
@@ -757,12 +781,12 @@ async function loadRejected() {
 
     Object.entries(data.rejected || {}).forEach(([uploader, records]) => {
         (records || []).forEach(rec => {
-            rejectedRows.push({ uploader, ...rec });
+            rejectedRows.push({ uploader, ...rec, source_collection: rec.source_collection || (rec.selected_dbs || [])[0] || '' });
         });
     });
 
     const filtered = applySearch(
-        rejectedRows.map(r => ({ ...r, __search: `${r.uploader} ${r.data?.object || ''} ${r.reject_reason || ''}` })),
+        rejectedRows.map(r => ({ ...r, __search: `${r.uploader} ${r.data?.object || ''} ${r.reject_reason || ''} ${dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection])}` })),
         ['__search']
     );
 
@@ -787,7 +811,7 @@ async function loadRejected() {
                     <div class="chip">#${idx + 1}</div>
                     <div>
                         <div class="doc-title">${escapeHtml(r.uploader)} · ${escapeHtml(r.id || '')}</div>
-                        <div class="doc-meta">拒绝原因: ${escapeHtml(r.reject_reason || '未填写')}</div>
+                        <div class="doc-meta">来源向量库: ${escapeHtml(dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection]))} · 拒绝原因: ${escapeHtml(r.reject_reason || '未填写')}</div>
                     </div>
                     <div class="doc-actions">
                         <button class="btn danger" onclick="deleteRejected('${escapeAttr(r.uploader)}','${escapeAttr(r.id)}')">删除</button>
@@ -922,7 +946,7 @@ function openEdit(mode, recordId) {
         summary = row?.data || {};
         urls = [...(row?.data?.image_url || []), ...(row?.data?.file_url || [])];
         dbWrap.style.display = 'block';
-        (row?.selected_dbs || []).forEach(v => {
+        ((row?.selected_dbs && row.selected_dbs.length) ? row.selected_dbs : [row?.source_collection].filter(Boolean)).forEach(v => {
             const cb = dbChecks.querySelector(`input[value="${v}"]`);
             if (cb) cb.checked = true;
         });

@@ -280,6 +280,15 @@ const dropZone = document.getElementById('dropZone');
 const resultContainer = document.getElementById('resultContainer');
 const resultStat = document.getElementById('resultStat');
 const API_BASE = window.location.pathname.startsWith('/search') ? '/search' : '';
+const DB_OPTIONS = [
+    { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
+    { v: 'rag_bge_m3_structured_v4_2', t: '融航AMS资管平台' },
+    { v: 'rag_bge_m3_structured_v4_3', t: '融航HMS资产管理平台' },
+    { v: 'rag_bge_m3_structured_v4_4', t: '核算模块' },
+    { v: 'rag_bge_m3_structured_v4_5', t: '随心易终端' },
+    { v: 'TEST', t: '多模态混合测试' },
+];
+const DB_LABEL_MAP = Object.fromEntries(DB_OPTIONS.map(item => [item.v, item.t]));
 
 function apiUrl(path) {
     return `${API_BASE}${path}`;
@@ -380,14 +389,30 @@ function selectedDatabases() {
     return checks.map(c => c.value);
 }
 
+function dbLabel(value) {
+    const key = String(value || '').trim();
+    if (!key) return '未知向量库';
+    return DB_LABEL_MAP[key] ? `${DB_LABEL_MAP[key]} (${key})` : key;
+}
+
 function fallbackGroup(flat) {
     const map = new Map();
     (flat || []).forEach(hit => {
         const doc = hit.doc_id || 'UNKNOWN_DOC';
-        if (!map.has(doc)) {
-            map.set(doc, { doc_id: doc, best_score: hit.score || 0, chunk_count: 0, field_types: [], file_urls: [], chunks: [] });
+        const sourceCollection = String(hit.source_collection || '').trim();
+        const groupKey = `${sourceCollection}::${doc}`;
+        if (!map.has(groupKey)) {
+            map.set(groupKey, {
+                doc_id: doc,
+                source_collection: sourceCollection,
+                best_score: hit.score || 0,
+                chunk_count: 0,
+                field_types: [],
+                file_urls: [],
+                chunks: [],
+            });
         }
-        const row = map.get(doc);
+        const row = map.get(groupKey);
         row.chunk_count += 1;
         row.best_score = Math.max(row.best_score, hit.score || 0);
         row.chunks.push(hit);
@@ -487,6 +512,7 @@ const DOC_FIELD_PRIMARY_ORDER = [
 
 const DOC_FIELD_SKIP_KEYS = new Set([
     'doc_id',
+    'source_collection',
     'best_score',
     'chunk_count',
     'field_types',
@@ -599,21 +625,24 @@ function pickBestDoc(textDocs, imageDocs) {
     const byDoc = new Map();
     for (const doc of merged) {
         const docId = doc.doc_id || 'UNKNOWN_DOC';
+        const sourceCollection = String(doc.source_collection || '').trim();
+        const docKey = `${sourceCollection}::${docId}`;
         const normalized = {
             ...doc,
             doc_id: docId,
+            source_collection: sourceCollection,
             chunks: Array.isArray(doc.chunks) ? doc.chunks : [],
             file_urls: Array.isArray(doc.file_urls) ? doc.file_urls : [],
             web_links: Array.isArray(doc.web_links) ? doc.web_links : [],
             best_score: Number(doc.best_score || 0),
         };
-        const existed = byDoc.get(docId);
+        const existed = byDoc.get(docKey);
         if (!existed) {
-            byDoc.set(docId, normalized);
+            byDoc.set(docKey, normalized);
             continue;
         }
         if (normalized.best_score > existed.best_score) {
-            byDoc.set(docId, {
+            byDoc.set(docKey, {
                 ...normalized,
                 chunks: [...normalized.chunks, ...existed.chunks],
                 file_urls: Array.from(new Set([...normalized.file_urls, ...existed.file_urls])),
@@ -623,7 +652,7 @@ function pickBestDoc(textDocs, imageDocs) {
             existed.chunks = [...existed.chunks, ...normalized.chunks];
             existed.file_urls = Array.from(new Set([...existed.file_urls, ...normalized.file_urls]));
             existed.web_links = Array.from(new Set([...(existed.web_links || []), ...(normalized.web_links || [])]));
-            byDoc.set(docId, existed);
+            byDoc.set(docKey, existed);
         }
     }
 
@@ -698,6 +727,7 @@ function renderSingleDocStructured(bestDoc, candidateCount) {
         </div>
         <div style="margin-top:10px; font-size:13px; color:#0f172a;">
             <strong>DocID:</strong> ${escapeHtml(bestDoc.doc_id || 'UNKNOWN_DOC')} ｜ 
+            <strong>来源向量库:</strong> ${escapeHtml(dbLabel(bestDoc.source_collection || ''))} ｜ 
             <strong>最佳相似度:</strong> ${Number(bestDoc.best_score || 0).toFixed(2)}% ｜ 
             <strong>候选文档数:</strong> ${candidateCount}
         </div>
@@ -741,7 +771,7 @@ function renderDocGroup(title, grouped) {
         header.innerHTML = `
             <div>
                 <div class="doc-title">DocID: ${doc.doc_id || 'UNKNOWN_DOC'}</div>
-                <div class="doc-meta">最佳相似度 ${Number(doc.best_score || 0).toFixed(2)}% · ${doc.chunk_count || 0} 个 chunk</div>
+                <div class="doc-meta">来源向量库 ${escapeHtml(dbLabel(doc.source_collection || ''))} · 最佳相似度 ${Number(doc.best_score || 0).toFixed(2)}% · ${doc.chunk_count || 0} 个 chunk</div>
             </div>
             <button type="button" class="toggle">展开 chunks</button>
         `;
@@ -757,7 +787,7 @@ function renderDocGroup(title, grouped) {
             item.innerHTML = `
                 <div class="chunk-top">
                     <span>chunk: ${chunk.chunk_id ?? '-'} · ${fieldLabel(chunk.field_type)}</span>
-                    <span>相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
+                    <span>${escapeHtml(dbLabel(chunk.source_collection || doc.source_collection || ''))} · 相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
                 </div>
                 <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
                 ${files ? `<div class="chunk-files">${files}</div>` : ''}

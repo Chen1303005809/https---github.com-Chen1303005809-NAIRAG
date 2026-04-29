@@ -56,7 +56,7 @@ def get_data_paginated():
             offset = (page - 1) * page_size
             results = collection.query(expr=expr, output_fields=["*"], limit=page_size, offset=offset)
             rows = [serialize_item(item) for item in results]
-            grouped = group_by_doc_id(rows)
+            grouped = group_by_doc_id(rows, source_collection=collection_name)
             return jsonify(
                 {
                     "data": rows,

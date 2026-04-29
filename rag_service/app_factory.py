@@ -69,8 +69,8 @@ def create_app() -> FastAPI:
                 continue
             try:
                 text_results, image_results = runtime.search_collection(coll_name, final_query)
-                text_hits.extend(build_hit(hit, "text", config.base_dir) for hit in text_results)
-                image_hits.extend(build_hit(hit, "image", config.base_dir) for hit in image_results)
+                text_hits.extend(build_hit(hit, "text", config.base_dir, coll_name) for hit in text_results)
+                image_hits.extend(build_hit(hit, "image", config.base_dir, coll_name) for hit in image_results)
             except Exception as exc:
                 logger.error("搜索集合 %s 失败：%s", coll_name, exc)
 

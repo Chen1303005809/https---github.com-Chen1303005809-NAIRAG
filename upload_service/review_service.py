@@ -58,7 +58,10 @@ class ReviewService:
             raise HTTPException(400, f"无效的 JSON 数据: {exc}")
 
         self._validate_records(dicts)
-        selected = [name for name in selected_dbs if name in self.config.collection_names]
+        selected = []
+        for name in selected_dbs:
+            if name in self.config.collection_names and name not in selected:
+                selected.append(name)
         if not selected:
             raise HTTPException(
                 400,
@@ -74,29 +77,31 @@ class ReviewService:
 
         review_records = []
         for record in dicts:
-            review_records.append(
-                {
-                    "id": str(uuid.uuid4()),
-                    "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
-                    "selected_dbs": selected,
-                    "uploader": uploader,
-                    "data": {
-                        "type": record.get("type", ""),
-                        "object": record.get("object", ""),
-                        "purpose": record.get("purpose", ""),
-                        "customer_type": record.get("customer_type", ""),
-                        "keyword": record.get("keyword", ""),
-                        "problem": record.get("problem", []),
-                        "web_links": record.get("web_links", []),
-                        "reply_logic": record.get("reply_logic", ""),
-                        "feature_explanation": record.get("feature_explanation", ""),
-                        "example": record.get("example", ""),
-                        "notes": record.get("notes", ""),
-                        "image_url": image_url_list,
-                        "file_url": file_url_list,
-                    },
-                }
-            )
+            for coll_name in selected:
+                review_records.append(
+                    {
+                        "id": str(uuid.uuid4()),
+                        "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
+                        "selected_dbs": [coll_name],
+                        "source_collection": coll_name,
+                        "uploader": uploader,
+                        "data": {
+                            "type": record.get("type", ""),
+                            "object": record.get("object", ""),
+                            "purpose": record.get("purpose", ""),
+                            "customer_type": record.get("customer_type", ""),
+                            "keyword": record.get("keyword", ""),
+                            "problem": record.get("problem", []),
+                            "web_links": record.get("web_links", []),
+                            "reply_logic": record.get("reply_logic", ""),
+                            "feature_explanation": record.get("feature_explanation", ""),
+                            "example": record.get("example", ""),
+                            "notes": record.get("notes", ""),
+                            "image_url": image_url_list,
+                            "file_url": file_url_list,
+                        },
+                    }
+                )
 
         timestamp = datetime.now(self.config.beijing_tz).strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{uploader}_{timestamp}.json"
@@ -186,31 +191,43 @@ class ReviewService:
         final_image_urls = list(keep_image_urls) + image_result.get("image_paths", [])
         final_file_urls = list(keep_file_urls) + doc_result.get("document_paths", [])
 
-        final_record = {
-            "id": str(uuid.uuid4()),
-            "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
-            "selected_dbs": [db for db in selected_dbs if db in self.config.collection_names],
-            "uploader": current_user,
-            "data": {
-                "type": new_data.get("type", ""),
-                "object": new_data.get("object", ""),
-                "purpose": new_data.get("purpose", ""),
-                "customer_type": new_data.get("customer_type", ""),
-                "keyword": new_data.get("keyword", ""),
-                "problem": new_data.get("problem", []),
-                "web_links": new_data.get("web_links", []),
-                "reply_logic": new_data.get("reply_logic", ""),
-                "feature_explanation": new_data.get("feature_explanation", ""),
-                "example": new_data.get("example", ""),
-                "notes": new_data.get("notes", ""),
-                "image_url": final_image_urls,
-                "file_url": final_file_urls,
-            },
-        }
+        selected = []
+        for db in selected_dbs:
+            if db in self.config.collection_names and db not in selected:
+                selected.append(db)
+        if not selected:
+            raise HTTPException(status_code=400, detail="请至少选择一个有效目标数据库")
+
+        final_records = []
+        for coll_name in selected:
+            final_records.append(
+                {
+                    "id": str(uuid.uuid4()),
+                    "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
+                    "selected_dbs": [coll_name],
+                    "source_collection": coll_name,
+                    "uploader": current_user,
+                    "data": {
+                        "type": new_data.get("type", ""),
+                        "object": new_data.get("object", ""),
+                        "purpose": new_data.get("purpose", ""),
+                        "customer_type": new_data.get("customer_type", ""),
+                        "keyword": new_data.get("keyword", ""),
+                        "problem": new_data.get("problem", []),
+                        "web_links": new_data.get("web_links", []),
+                        "reply_logic": new_data.get("reply_logic", ""),
+                        "feature_explanation": new_data.get("feature_explanation", ""),
+                        "example": new_data.get("example", ""),
+                        "notes": new_data.get("notes", ""),
+                        "image_url": final_image_urls,
+                        "file_url": final_file_urls,
+                    },
+                }
+            )
 
         timestamp = datetime.now(self.config.beijing_tz).strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_user}_{timestamp}_resubmit.json"
-        self._save_json(os.path.join(self.config.review_dir, filename), [final_record])
+        self._save_json(os.path.join(self.config.review_dir, filename), final_records)
         self._delete_rejected_by_id(uploader=uploader, record_id=old_record_id)
 
         return {

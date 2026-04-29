@@ -64,7 +64,7 @@ def serialize_item(item: dict) -> dict:
 
 
 
-def group_by_doc_id(rows: list[dict]) -> list[dict]:
+def group_by_doc_id(rows: list[dict], source_collection: str = "") -> list[dict]:
     grouped = defaultdict(list)
     for row in rows:
         doc_id = row.get("doc_id") or "UNKNOWN_DOC"
@@ -122,6 +122,7 @@ def group_by_doc_id(rows: list[dict]) -> list[dict]:
         docs.append(
             {
                 "doc_id": doc_id,
+                "source_collection": source_collection,
                 "chunk_count": len(chunks_sorted),
                 "record_id": chunks_sorted[0].get("id"),
                 "summary": summary,

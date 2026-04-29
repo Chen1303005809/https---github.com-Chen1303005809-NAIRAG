@@ -417,6 +417,7 @@ const DBS = [
     { v: 'rag_bge_m3_structured_v4_5', t: '随心易终端' },
     { v: 'TEST', t: '多模态混合测试' }
 ];
+const DB_LABEL_MAP = Object.fromEntries(DBS.map(item => [item.v, item.t]));
 
 const DISPLAY_LABELS = {
     type: '类型',
@@ -498,6 +499,23 @@ function parseWebLinks(text) {
 
 function selectedDbs(selector = '#dbChecks input:checked') {
     return Array.from(document.querySelectorAll(selector)).map(cb => cb.value);
+}
+
+function dbLabel(value) {
+    const key = String(value || '').trim();
+    if (!key) return '未知向量库';
+    return DB_LABEL_MAP[key] ? `${DB_LABEL_MAP[key]} (${key})` : key;
+}
+
+function dbListText(values) {
+    const arr = Array.isArray(values) ? values : (values ? [values] : []);
+    const cleaned = [];
+    arr.forEach(v => {
+        const key = String(v || '').trim();
+        if (key && !cleaned.includes(key)) cleaned.push(key);
+    });
+    if (!cleaned.length) return '未知向量库';
+    return cleaned.map(dbLabel).join('，');
 }
 
 function selectOptions(id, values) {
@@ -777,6 +795,7 @@ function renderRejectedModal() {
                         <button class="btn primary" onclick="openRejectedEdit('${escapeAttr(item.id)}')">修改后重提</button>
                     </div>
                     <div class="hint" style="margin-top:6px; color:#b91c1c;">拒绝原因: ${escapeHtml(item.reject_reason || '管理员未填写')}</div>
+                    <div class="hint" style="margin-top:4px;">来源向量库: ${escapeHtml(dbListText(item.selected_dbs?.length ? item.selected_dbs : [item.source_collection]))}</div>
                     <div style="margin-top:6px; font-size:13px; line-height:1.7;">${fieldsHtml || '<span class="hint">暂无可展示字段</span>'}</div>
                     ${files ? `<div class="toolbar" style="margin-top:8px;">${files}</div>` : ''}
                 </div>
@@ -806,7 +825,7 @@ function openRejectedEdit(recordId) {
     document.getElementById('editNewDocs').value = '';
     document.getElementById('editStatus').textContent = '';
 
-    const selected = rec.selected_dbs || [];
+    const selected = (rec.selected_dbs && rec.selected_dbs.length) ? rec.selected_dbs : [rec.source_collection].filter(Boolean);
     document.getElementById('editDbChecks').innerHTML = DBS.map(db => {
         const checked = selected.includes(db.v) ? 'checked' : '';
         return `<label><input type="checkbox" value="${db.v}" ${checked} /> ${db.t}</label>`;
