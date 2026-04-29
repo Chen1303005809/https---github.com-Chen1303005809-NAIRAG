@@ -572,6 +572,31 @@ function applySearch(items, keys) {
     return items.filter(item => keys.some(key => String(item[key] || '').toLowerCase().includes(kw)));
 }
 
+function toTimestamp(value) {
+    if (value === null || value === undefined) return 0;
+    const text = String(value).trim();
+    if (!text) return 0;
+    const n = Number(text);
+    if (Number.isFinite(n)) return n;
+    const ts = Date.parse(text);
+    return Number.isFinite(ts) ? ts : 0;
+}
+
+function dataDocSortTime(doc) {
+    const candidate = toTimestamp(doc.updated_at || doc.timestamp || doc.summary?.updated_at || doc.summary?.timestamp);
+    if (candidate > 0) return candidate;
+    const chunkTimes = (doc.chunks || []).map(c => toTimestamp(c.updated_at || c.timestamp));
+    const maxChunk = chunkTimes.length ? Math.max(...chunkTimes) : 0;
+    if (maxChunk > 0) return maxChunk;
+    return toTimestamp(doc.record_id);
+}
+
+function reviewDocSortTime(doc) {
+    const candidate = toTimestamp(doc.timestamp || doc.updated_at || doc.summary?.updated_at || doc.summary?.timestamp);
+    if (candidate > 0) return candidate;
+    return toTimestamp(doc.id);
+}
+
 function isFilledValue(value) {
     if (Array.isArray(value)) return value.some(v => String(v || '').trim());
     if (value === null || value === undefined) return false;
@@ -721,7 +746,7 @@ async function loadDataDocs() {
     const filtered = applySearch(
         dataDocs.map(d => ({ ...d, __search: `${d.doc_id} ${(d.summary?.problem || []).join(' ')} ${d.summary?.reply_logic || ''} ${d.summary?.feature_explanation || ''}` })),
         ['__search']
-    );
+    ).sort((a, b) => dataDocSortTime(b) - dataDocSortTime(a));
 
     document.getElementById('panelTitle').textContent = '数据管理（按 DocID 聚合）';
     document.getElementById('panelStat').textContent = `共 ${dataDocs.length} 个文档，当前 ${filtered.length}`;
@@ -740,6 +765,7 @@ async function loadReview() {
     const docs = rows.map(row => ({
         id: row.id,
         doc_id: row.id,
+        timestamp: row.timestamp || '',
         uploader: row.uploader,
         chunk_count: 1,
         selected_dbs: row.selected_dbs || [],
@@ -764,7 +790,7 @@ async function loadReview() {
     const filtered = applySearch(
         docs.map(d => ({ ...d, __search: `${d.uploader} ${d.summary.object} ${d.summary.reply_logic} ${dbListText(d.selected_dbs?.length ? d.selected_dbs : [d.source_collection])}` })),
         ['__search']
-    );
+    ).sort((a, b) => reviewDocSortTime(b) - reviewDocSortTime(a));
 
     document.getElementById('panelTitle').textContent = '审核队列';
     document.getElementById('panelStat').textContent = `待审核 ${docs.length} 条，当前 ${filtered.length}`;
