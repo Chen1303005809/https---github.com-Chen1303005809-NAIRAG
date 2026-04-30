@@ -114,10 +114,15 @@
 </div>
 
 <script>
-const token = localStorage.getItem('authToken') || '';
 const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
 
+function getToken() {
+    // 管理端统一使用 Flask JWT；兼容旧会话时回退 authToken。
+    return localStorage.getItem('flaskToken') || localStorage.getItem('authToken') || '';
+}
+
 function headers(extra = {}) {
+    const token = getToken();
     return token ? { ...extra, Authorization: 'Bearer ' + token } : extra;
 }
 
@@ -131,11 +136,16 @@ function show(msg, ok=true) {
     el.style.color = ok ? '#047857' : '#b91c1c';
 }
 
+function formatApiError(res, data, fallback) {
+    if (res.status === 401) return '认证失效或令牌无效，请返回门户重新登录';
+    return data.error || fallback;
+}
+
 async function loadUsers() {
     const res = await fetch(apiUrl('/admin/users'), { headers: headers() });
     const data = await res.json();
     if (!res.ok || !data.success) {
-        show(data.error || '加载失败', false);
+        show(formatApiError(res, data, '加载失败'), false);
         return;
     }
     const rows = document.getElementById('rows');
@@ -174,7 +184,7 @@ async function createUser() {
         body: JSON.stringify({ username, password, role })
     });
     const data = await res.json();
-    if (!res.ok || !data.success) return show(data.error || '创建失败', false);
+    if (!res.ok || !data.success) return show(formatApiError(res, data, '创建失败'), false);
     show('创建成功');
     loadUsers();
 }
@@ -190,7 +200,7 @@ async function updateUser(id) {
         body: JSON.stringify({ id, username, role, password })
     });
     const data = await res.json();
-    if (!res.ok || !data.success) return show(data.error || '更新失败', false);
+    if (!res.ok || !data.success) return show(formatApiError(res, data, '更新失败'), false);
     show('更新成功');
     loadUsers();
 }
@@ -203,7 +213,7 @@ async function deleteUser(id) {
         body: JSON.stringify({ id })
     });
     const data = await res.json();
-    if (!res.ok || !data.success) return show(data.error || '删除失败', false);
+    if (!res.ok || !data.success) return show(formatApiError(res, data, '删除失败'), false);
     show('删除成功');
     loadUsers();
 }
