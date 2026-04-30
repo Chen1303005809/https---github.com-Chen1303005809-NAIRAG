@@ -321,10 +321,19 @@ def reject_records():
         )
         rejected_by_user = {}
         handled_ids = set()
+        upload_times = []
+        rejected_collections = []
+        reject_time = datetime.now().isoformat()
         for rec in pending_records:
             if str(rec.get("id")) not in rejected_ids:
                 continue
             uploader = rec.get("uploader") or "anonymous"
+            upload_time = str(rec.get("timestamp") or "").strip()
+            if upload_time and upload_time not in upload_times:
+                upload_times.append(upload_time)
+            source_collection = str(rec.get("source_collection") or "").strip()
+            if source_collection and source_collection not in rejected_collections:
+                rejected_collections.append(source_collection)
             rejected_by_user.setdefault(uploader, []).append(
                 {
                     "id": rec.get("id"),
@@ -360,8 +369,11 @@ def reject_records():
                 "type": "reject",
                 "user": request.current_user,
                 "details": f"拒绝 {len(handled_ids)} 条审核记录",
-                "operation_time": datetime.now().isoformat(),
-                "collection": "review_queue",
+                "operation_time": reject_time,
+                "reject_time": reject_time,
+                "upload_time": upload_times[0] if len(upload_times) == 1 else "",
+                "upload_times": upload_times,
+                "collection": ",".join(rejected_collections) if rejected_collections else "review_queue",
                 "record_ids": list(handled_ids),
             }
         )

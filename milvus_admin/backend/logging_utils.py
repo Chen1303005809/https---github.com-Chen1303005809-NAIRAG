@@ -65,6 +65,7 @@ class OperationLogService:
                 "upload_time": data.get("upload_time", ""),
                 "upload_times": data.get("upload_times", []),
                 "approve_time": data.get("approve_time", ""),
+                "reject_time": data.get("reject_time", ""),
                 "details": data.get("details", ""),
             }
             logs.append(entry)

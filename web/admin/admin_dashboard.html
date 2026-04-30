@@ -1188,6 +1188,34 @@ async function showLogs() {
     const res = await authFetch('/admin/get_logs');
     const logs = await res.json();
     const body = document.getElementById('logBody');
+    const normalizeDateParts = date => {
+        const parts = new Intl.DateTimeFormat('zh-CN', {
+            timeZone: 'Asia/Shanghai',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        }).formatToParts(date);
+        const pick = type => parts.find(p => p.type === type)?.value || '00';
+        return `${pick('year')}-${pick('month')}-${pick('day')} ${pick('hour')}:${pick('minute')}:${pick('second')}`;
+    };
+    const formatTime = value => {
+        const text = String(value || '').trim();
+        if (!text) return '-';
+        const localIsoNoTz = text.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/);
+        if (localIsoNoTz) return `${localIsoNoTz[1]} ${localIsoNoTz[2]}`;
+        const dt = new Date(text);
+        if (Number.isNaN(dt.getTime())) return text;
+        return normalizeDateParts(dt);
+    };
+    const formatTimeList = value => {
+        const arr = Array.isArray(value) ? value : (value ? [value] : []);
+        const cleaned = arr.map(v => formatTime(v)).filter(v => v && v !== '-');
+        return cleaned.join('，');
+    };
     const joinValues = value => {
         const arr = Array.isArray(value) ? value : (value ? [value] : []);
         const cleaned = arr.map(v => String(v || '').trim()).filter(Boolean);
@@ -1196,12 +1224,13 @@ async function showLogs() {
     body.innerHTML = (logs || []).slice().reverse().map(log => `
         <div class="doc-card">
             <div class="summary">
-                <div class="summary-item"><span class="summary-label">时间:</span>${escapeHtml(log.timestamp || '')}</div>
+                <div class="summary-item"><span class="summary-label">时间:</span>${escapeHtml(formatTime(log.timestamp || ''))}</div>
                 <div class="summary-item"><span class="summary-label">用户:</span>${escapeHtml(log.user || '')}</div>
                 <div class="summary-item"><span class="summary-label">操作:</span>${escapeHtml(log.type || '')}</div>
                 <div class="summary-item"><span class="summary-label">集合:</span>${escapeHtml(log.collection || '')}</div>
-                <div class="summary-item"><span class="summary-label">上传时间:</span>${escapeHtml(log.upload_time || joinValues(log.upload_times) || '-')}</div>
-                <div class="summary-item"><span class="summary-label">审核通过时间:</span>${escapeHtml(log.approve_time || (log.type === 'approve' ? (log.timestamp || '') : '-') || '-')}</div>
+                <div class="summary-item"><span class="summary-label">上传时间:</span>${escapeHtml(formatTime(log.upload_time || '') !== '-' ? formatTime(log.upload_time || '') : (formatTimeList(log.upload_times) || '-'))}</div>
+                <div class="summary-item"><span class="summary-label">审核通过时间:</span>${escapeHtml(formatTime(log.approve_time || (log.type === 'approve' ? (log.timestamp || '') : '')))}</div>
+                <div class="summary-item"><span class="summary-label">审核拒绝时间:</span>${escapeHtml(formatTime(log.reject_time || (log.type === 'reject' ? (log.timestamp || '') : '')))}</div>
                 <div class="summary-item"><span class="summary-label">DocID:</span>${escapeHtml(log.doc_id || joinValues(log.doc_ids) || '-')}</div>
                 <div class="summary-item"><span class="summary-label">详情:</span>${escapeHtml(log.details || '')}</div>
             </div>
