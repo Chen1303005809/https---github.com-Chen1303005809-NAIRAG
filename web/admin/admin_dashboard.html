@@ -141,6 +141,14 @@
         .files { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
         .file-link { font-size: 12px; color: #34639c; background: #e8f1ff; text-decoration: none; padding: 4px 8px; border-radius: 999px; }
         .empty { border: 1px dashed #cad5e8; border-radius: 10px; padding: 16px; color: var(--muted); background: #fbfcff; }
+        .pager {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -281,6 +289,17 @@
         </div>
         <div class="panel-body">
             <div id="list" class="doc-grid"></div>
+            <div id="pager" class="pager" style="display:none;">
+                <label class="hint" for="pageSize">每页</label>
+                <select id="pageSize">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                </select>
+                <button class="btn" id="prevPageBtn" type="button">上一页</button>
+                <span id="pageInfo" class="hint">第 1 / 1 页</span>
+                <button class="btn" id="nextPageBtn" type="button">下一页</button>
+            </div>
         </div>
     </section>
 </div>
@@ -365,6 +384,11 @@ let reviewRows = [];
 let rejectedRows = [];
 const API_BASE = window.location.pathname.startsWith('/admin') ? '/admin' : '';
 let busyCount = 0;
+const pageState = {
+    data: { page: 1, pageSize: 20, total: 0 },
+    review: { page: 1, pageSize: 20, total: 0 },
+    rejected: { page: 1, pageSize: 20, total: 0 },
+};
 
 const DB_OPTIONS = [
     { v: 'rag_bge_m3_structured_v4_1', t: '融航期货交易平台' },
@@ -572,6 +596,54 @@ function applySearch(items, keys) {
     return items.filter(item => keys.some(key => String(item[key] || '').toLowerCase().includes(kw)));
 }
 
+function getPageState(mode = selectedMode()) {
+    return pageState[mode] || pageState.data;
+}
+
+function clampPage(mode, total) {
+    const state = getPageState(mode);
+    const totalPages = Math.max(1, Math.ceil((total || 0) / Math.max(1, state.pageSize)));
+    state.total = total;
+    if (state.page > totalPages) state.page = totalPages;
+    if (state.page < 1) state.page = 1;
+    return totalPages;
+}
+
+function paginateItems(mode, items) {
+    const state = getPageState(mode);
+    const total = items.length;
+    const totalPages = clampPage(mode, total);
+    const start = (state.page - 1) * state.pageSize;
+    const end = start + state.pageSize;
+    return {
+        pagedItems: items.slice(start, end),
+        total,
+        totalPages,
+    };
+}
+
+function updatePager(mode, total, totalPages) {
+    const state = getPageState(mode);
+    const pager = document.getElementById('pager');
+    const pageInfo = document.getElementById('pageInfo');
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    const pageSizeEl = document.getElementById('pageSize');
+
+    if (!pager || !pageInfo || !prevBtn || !nextBtn || !pageSizeEl) return;
+
+    if (!total) {
+        pager.style.display = 'none';
+        return;
+    }
+
+    pager.style.display = 'flex';
+    pageSizeEl.value = String(state.pageSize);
+    pageInfo.textContent = `第 ${state.page} / ${totalPages} 页 · 共 ${total} 条`;
+    prevBtn.disabled = state.page <= 1;
+    nextBtn.disabled = state.page >= totalPages;
+}
+
 function toTimestamp(value) {
     if (value === null || value === undefined) return 0;
     const text = String(value).trim();
@@ -595,6 +667,11 @@ function reviewDocSortTime(doc) {
     const candidate = toTimestamp(doc.timestamp || doc.updated_at || doc.summary?.updated_at || doc.summary?.timestamp);
     if (candidate > 0) return candidate;
     return toTimestamp(doc.id);
+}
+
+function formatUploadTime(value) {
+    const text = String(value || '').trim();
+    return text || '-';
 }
 
 function isFilledValue(value) {
@@ -706,6 +783,7 @@ function docCardBase(doc, mode = 'data') {
             ? (doc.selected_dbs?.length ? doc.selected_dbs : [doc.source_collection])
             : [doc.source_collection]
     );
+    const uploadTimeText = formatUploadTime(doc.upload_time || doc.timestamp);
 
     return `
         <article class="doc-card">
@@ -713,7 +791,7 @@ function docCardBase(doc, mode = 'data') {
                 ${check}
                 <div>
                     <div class="doc-title">DocID: ${escapeHtml(docIdentity)}</div>
-                    <div class="doc-meta">来源向量库 ${escapeHtml(sourceDbText)} · 分片数 ${doc.chunk_count || 0}${mode === 'review' ? ` · 上传人 ${escapeHtml(doc.uploader || '')}` : ''}</div>
+                    <div class="doc-meta">来源向量库 ${escapeHtml(sourceDbText)} · 上传时间 ${escapeHtml(uploadTimeText)} · 分片数 ${doc.chunk_count || 0}${mode === 'review' ? ` · 上传人 ${escapeHtml(doc.uploader || '')}` : ''}</div>
                 </div>
                 <div class="doc-actions">
                     <button class="btn" onclick="toggleChunks(this)">展开 chunks</button>
@@ -741,19 +819,25 @@ async function loadDataDocs() {
     const coll = document.getElementById('collection').value;
     const res = await authFetch(`/admin/get_data_paginated?collection=${encodeURIComponent(coll)}&page=1&page_size=13683`);
     const data = await res.json();
-    dataDocs = (data.grouped_data || []).map(doc => ({ ...doc, source_collection: doc.source_collection || coll }));
+    dataDocs = (data.grouped_data || []).map(doc => ({
+        ...doc,
+        source_collection: doc.source_collection || coll,
+        upload_time: doc.upload_time || '',
+    }));
 
     const filtered = applySearch(
         dataDocs.map(d => ({ ...d, __search: `${d.doc_id} ${(d.summary?.problem || []).join(' ')} ${d.summary?.reply_logic || ''} ${d.summary?.feature_explanation || ''}` })),
         ['__search']
     ).sort((a, b) => dataDocSortTime(b) - dataDocSortTime(a));
 
+    const { pagedItems, total, totalPages } = paginateItems('data', filtered);
     document.getElementById('panelTitle').textContent = '数据管理（按 DocID 聚合）';
-    document.getElementById('panelStat').textContent = `共 ${dataDocs.length} 个文档，当前 ${filtered.length}`;
+    document.getElementById('panelStat').textContent = `共 ${dataDocs.length} 个文档，筛选后 ${total}`;
+    updatePager('data', total, totalPages);
 
     const list = document.getElementById('list');
-    list.innerHTML = filtered.length
-        ? filtered.map(doc => docCardBase(doc, 'data')).join('')
+    list.innerHTML = total
+        ? pagedItems.map(doc => docCardBase(doc, 'data')).join('')
         : `<div class="empty">暂无数据</div>`;
 }
 
@@ -766,6 +850,7 @@ async function loadReview() {
         id: row.id,
         doc_id: row.id,
         timestamp: row.timestamp || '',
+        upload_time: row.timestamp || '',
         uploader: row.uploader,
         chunk_count: 1,
         selected_dbs: row.selected_dbs || [],
@@ -792,11 +877,13 @@ async function loadReview() {
         ['__search']
     ).sort((a, b) => reviewDocSortTime(b) - reviewDocSortTime(a));
 
+    const { pagedItems, total, totalPages } = paginateItems('review', filtered);
     document.getElementById('panelTitle').textContent = '审核队列';
-    document.getElementById('panelStat').textContent = `待审核 ${docs.length} 条，当前 ${filtered.length}`;
+    document.getElementById('panelStat').textContent = `待审核 ${docs.length} 条，筛选后 ${total}`;
+    updatePager('review', total, totalPages);
     const list = document.getElementById('list');
-    list.innerHTML = filtered.length
-        ? filtered.map(doc => docCardBase(doc, 'review')).join('')
+    list.innerHTML = total
+        ? pagedItems.map(doc => docCardBase(doc, 'review')).join('')
         : `<div class="empty">暂无待审核记录</div>`;
 }
 
@@ -816,16 +903,19 @@ async function loadRejected() {
         ['__search']
     );
 
+    const { pagedItems, total, totalPages } = paginateItems('rejected', filtered);
     document.getElementById('panelTitle').textContent = '被拒记录';
-    document.getElementById('panelStat').textContent = `共 ${rejectedRows.length} 条，当前 ${filtered.length}`;
+    document.getElementById('panelStat').textContent = `共 ${rejectedRows.length} 条，筛选后 ${total}`;
+    updatePager('rejected', total, totalPages);
 
     const list = document.getElementById('list');
-    if (!filtered.length) {
+    if (!total) {
         list.innerHTML = `<div class="empty">暂无被拒记录</div>`;
         return;
     }
 
-    list.innerHTML = filtered.map((r, idx) => {
+    const startIdx = (getPageState('rejected').page - 1) * getPageState('rejected').pageSize;
+    list.innerHTML = pagedItems.map((r, idx) => {
         const data = r.data || {};
         const links = [...(data.image_url || []), ...(data.file_url || [])]
             .filter(u => u && u !== 'N/A')
@@ -834,7 +924,7 @@ async function loadRejected() {
         return `
             <article class="doc-card">
                 <div class="doc-top">
-                    <div class="chip">#${idx + 1}</div>
+                    <div class="chip">#${startIdx + idx + 1}</div>
                     <div>
                         <div class="doc-title">${escapeHtml(r.uploader)} · ${escapeHtml(r.id || '')}</div>
                         <div class="doc-meta">来源向量库: ${escapeHtml(dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection]))} · 拒绝原因: ${escapeHtml(r.reject_reason || '未填写')}</div>
@@ -1117,7 +1207,27 @@ function escapeAttr(text) {
 
 document.getElementById('mode').addEventListener('change', reloadData);
 document.getElementById('collection').addEventListener('change', () => { if (selectedMode() === 'data') reloadData(); });
-document.getElementById('search').addEventListener('input', reloadData);
+document.getElementById('search').addEventListener('input', () => {
+    getPageState().page = 1;
+    reloadData();
+});
+document.getElementById('pageSize').addEventListener('change', () => {
+    const state = getPageState();
+    const nextSize = Number(document.getElementById('pageSize').value || 20);
+    state.pageSize = Number.isFinite(nextSize) && nextSize > 0 ? nextSize : 20;
+    state.page = 1;
+    reloadData();
+});
+document.getElementById('prevPageBtn').addEventListener('click', () => {
+    const state = getPageState();
+    state.page = Math.max(1, state.page - 1);
+    reloadData();
+});
+document.getElementById('nextPageBtn').addEventListener('click', () => {
+    const state = getPageState();
+    state.page += 1;
+    reloadData();
+});
 window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
 checkLogin();

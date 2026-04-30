@@ -171,6 +171,27 @@
             padding: 10px;
             background: #fff;
         }
+        .chunk-pager {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px 10px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .chunk-pager button {
+            border: 1px solid #bed7ff;
+            border-radius: 9px;
+            background: #edf4ff;
+            color: #3569a8;
+            padding: 4px 10px;
+            cursor: pointer;
+        }
+        .chunk-pager button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
         .chunk-top { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
         .chunk-text { white-space: pre-wrap; line-height: 1.6; font-size: 13px; }
         .chunk-files { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -779,32 +800,78 @@ function renderDocGroup(title, grouped) {
         const chunks = document.createElement('div');
         chunks.className = 'chunk-list';
         chunks.style.display = idx === 0 ? 'grid' : 'none';
+        const allChunks = Array.isArray(doc.chunks) ? doc.chunks : [];
+        const pageSize = 8;
+        let chunkPage = 1;
+        const totalPages = Math.max(1, Math.ceil(allChunks.length / pageSize));
+        const pager = document.createElement('div');
+        pager.className = 'chunk-pager';
 
-        (doc.chunks || []).forEach(chunk => {
-            const item = document.createElement('div');
-            item.className = 'chunk';
-            const files = buildAttachmentHtml(chunk.file_url || []);
-            item.innerHTML = `
-                <div class="chunk-top">
-                    <span>chunk: ${chunk.chunk_id ?? '-'} · ${fieldLabel(chunk.field_type)}</span>
-                    <span>${escapeHtml(dbLabel(chunk.source_collection || doc.source_collection || ''))} · 相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
-                </div>
-                <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-                ${files ? `<div class="chunk-files">${files}</div>` : ''}
-            `;
-            chunks.appendChild(item);
-        });
+        const prevBtn = document.createElement('button');
+        prevBtn.type = 'button';
+        prevBtn.textContent = '上一页';
+
+        const pageInfo = document.createElement('span');
+        pageInfo.textContent = `第 1 / ${totalPages} 页`;
+
+        const nextBtn = document.createElement('button');
+        nextBtn.type = 'button';
+        nextBtn.textContent = '下一页';
+
+        function renderChunkPage() {
+            chunks.innerHTML = '';
+            const start = (chunkPage - 1) * pageSize;
+            const end = start + pageSize;
+            allChunks.slice(start, end).forEach(chunk => {
+                const item = document.createElement('div');
+                item.className = 'chunk';
+                const files = buildAttachmentHtml(chunk.file_url || []);
+                item.innerHTML = `
+                    <div class="chunk-top">
+                        <span>chunk: ${chunk.chunk_id ?? '-'} · ${fieldLabel(chunk.field_type)}</span>
+                        <span>${escapeHtml(dbLabel(chunk.source_collection || doc.source_collection || ''))} · 相似度: ${Number(chunk.score || 0).toFixed(2)}%</span>
+                    </div>
+                    <div class="chunk-text">${(chunk.field_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    ${files ? `<div class="chunk-files">${files}</div>` : ''}
+                `;
+                chunks.appendChild(item);
+            });
+            pageInfo.textContent = `第 ${chunkPage} / ${totalPages} 页`;
+            prevBtn.disabled = chunkPage <= 1;
+            nextBtn.disabled = chunkPage >= totalPages;
+        }
+
+        prevBtn.onclick = () => {
+            if (chunkPage <= 1) return;
+            chunkPage -= 1;
+            renderChunkPage();
+        };
+        nextBtn.onclick = () => {
+            if (chunkPage >= totalPages) return;
+            chunkPage += 1;
+            renderChunkPage();
+        };
+
+        pager.appendChild(prevBtn);
+        pager.appendChild(pageInfo);
+        pager.appendChild(nextBtn);
+        renderChunkPage();
 
         const toggle = header.querySelector('.toggle');
         toggle.onclick = () => {
             const open = chunks.style.display !== 'none';
             chunks.style.display = open ? 'none' : 'grid';
+            if (totalPages > 1) pager.style.display = open ? 'none' : 'flex';
             toggle.textContent = open ? '展开 chunks' : '收起 chunks';
         };
         if (idx === 0) toggle.textContent = '收起 chunks';
 
         group.appendChild(header);
         group.appendChild(chunks);
+        if (totalPages > 1) {
+            if (idx !== 0) pager.style.display = 'none';
+            group.appendChild(pager);
+        }
         block.appendChild(group);
     });
 

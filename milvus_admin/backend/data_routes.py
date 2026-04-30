@@ -15,6 +15,35 @@ from .services import get_services
 bp = Blueprint("data", __name__)
 
 
+def _build_doc_upload_time_map(logs: list[dict]) -> dict[str, str]:
+    doc_upload_time: dict[str, str] = {}
+    for log in logs:
+        if str(log.get("type") or "").strip() != "approve":
+            continue
+
+        single_doc = str(log.get("doc_id") or "").strip()
+        single_upload_time = str(log.get("upload_time") or "").strip()
+        if single_doc and single_upload_time:
+            doc_upload_time[single_doc] = single_upload_time
+
+        doc_ids = [str(v).strip() for v in (log.get("doc_ids") or []) if str(v).strip()]
+        upload_times = [str(v).strip() for v in (log.get("upload_times") or []) if str(v).strip()]
+        if not doc_ids:
+            continue
+
+        if len(upload_times) == len(doc_ids):
+            for doc_id, upload_time in zip(doc_ids, upload_times):
+                if upload_time:
+                    doc_upload_time[doc_id] = upload_time
+            continue
+
+        fallback_time = upload_times[0] if upload_times else single_upload_time
+        if fallback_time:
+            for doc_id in doc_ids:
+                doc_upload_time[doc_id] = fallback_time
+
+    return doc_upload_time
+
 
 def _delete_old_files(static_root: str, old_urls: list[str], logger):
     for url in old_urls or []:
@@ -57,6 +86,11 @@ def get_data_paginated():
             results = collection.query(expr=expr, output_fields=["*"], limit=page_size, offset=offset)
             rows = [serialize_item(item) for item in results]
             grouped = group_by_doc_id(rows, source_collection=collection_name)
+            logs = services.op_log.list_all()
+            doc_upload_time = _build_doc_upload_time_map(logs)
+            for doc in grouped:
+                doc_id = str(doc.get("doc_id") or "").strip()
+                doc["upload_time"] = doc_upload_time.get(doc_id, "")
             return jsonify(
                 {
                     "data": rows,
