@@ -2,7 +2,7 @@
 import os
 from dataclasses import dataclass
 
-from .common import ROOT_DIR, ensure_dirs, env
+from .common import COLLECTION_NAMES, ROOT_DIR, ensure_dirs, env
 
 
 @dataclass(frozen=True)
@@ -20,6 +20,7 @@ class AdminConfig:
     jwt_expire_hours: int
     milvus_host: str
     milvus_port: str
+    collection_names: list[str]
 
 
 def load_config() -> AdminConfig:
@@ -46,5 +47,5 @@ def load_config() -> AdminConfig:
         jwt_expire_hours=24,
         milvus_host=env("MILVUS_HOST", "127.0.0.1"),
         milvus_port=env("MILVUS_PORT", "19530"),
+        collection_names=list(COLLECTION_NAMES),
     )
-
