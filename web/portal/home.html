@@ -126,29 +126,7 @@ function openModule(url) {
         location.href = '/';
         return;
     }
-
-    const win = window.open(url, '_blank');
-    if (!win) {
-        alert('浏览器拦截了新窗口，请允许弹窗后重试');
-        return;
-    }
-
-    const payload = {
-        authToken: authToken,
-        flaskToken: localStorage.getItem('flaskToken') || '',
-        authUsername: localStorage.getItem('authUsername') || '',
-        authRole: localStorage.getItem('authRole') || ''
-    };
-
-    const inject = () => {
-        try {
-            Object.entries(payload).forEach(([k, v]) => win.localStorage.setItem(k, v));
-        } catch (_) {}
-    };
-
-    inject();
-    setTimeout(inject, 300);
-    setTimeout(inject, 1000);
+    location.href = url;
 }
 </script>
 </body>

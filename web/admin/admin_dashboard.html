@@ -276,7 +276,7 @@
             <button class="btn success" id="approveBtn" style="display:none;" onclick="batchApprove()">批量通过</button>
             <button class="btn warn" id="rejectBtn" style="display:none;" onclick="batchReject()">批量拒绝</button>
             <button class="btn" onclick="showLogs()">日志</button>
-            <button class="btn" onclick="window.open(apiUrl('/user_management.html'), '_blank')">用户管理</button>
+            <button class="btn" onclick="location.href=apiUrl('/user_management.html')">用户管理</button>
         </div>
     </section>
 
@@ -674,6 +674,13 @@ function formatUploadTime(value) {
     return text || '-';
 }
 
+function buildDataDeleteSelector(doc) {
+    const recordId = String(doc?.record_id ?? '').trim();
+    if (recordId) return `id:${recordId}`;
+    const docId = String(doc?.doc_id ?? '').trim();
+    return docId ? `doc:${docId}` : '';
+}
+
 function isFilledValue(value) {
     if (Array.isArray(value)) return value.some(v => String(v || '').trim());
     if (value === null || value === undefined) return false;
@@ -771,10 +778,16 @@ function docCardBase(doc, mode = 'data') {
         `;
     }).join('');
 
-    const check = mode === 'data' ? `<input type="checkbox" class="doc-check" value="${doc.record_id}" />` : `<input type="checkbox" class="review-check" value="${doc.id}" />`;
-    const edit = `<button class="btn" onclick="openEdit('${mode}', '${mode === 'review' ? doc.id : doc.record_id}')">编辑</button>`;
+    const dataSelector = buildDataDeleteSelector(doc);
+    const hasRecordId = String(doc?.record_id ?? '').trim() !== '';
+    const check = mode === 'data'
+        ? `<input type="checkbox" class="doc-check" value="${escapeAttr(dataSelector)}" />`
+        : `<input type="checkbox" class="review-check" value="${doc.id}" />`;
+    const edit = mode === 'data' && !hasRecordId
+        ? `<button class="btn" disabled title="该记录缺少 record_id，暂不支持编辑">编辑</button>`
+        : `<button class="btn" onclick="openEdit('${mode}', '${mode === 'review' ? doc.id : doc.record_id}')">编辑</button>`;
     const del = mode === 'data'
-        ? `<button class="btn danger" onclick="deleteDoc('${doc.record_id}')">删除</button>`
+        ? `<button class="btn danger" onclick="deleteDoc('${escapeAttr(dataSelector)}')">删除</button>`
         : '';
     const docIdentity = doc.doc_id || (mode === 'review' ? doc.id : 'UNKNOWN_DOC');
     const summaryItemsHtml = buildSummaryItemsHtml(summary, doc.chunks || []);
@@ -942,12 +955,12 @@ async function loadRejected() {
     }).join('');
 }
 
-async function deleteDoc(recordId) {
-    if (!recordId) return;
+async function deleteDoc(recordSelector) {
+    if (!recordSelector) return alert('当前记录缺少可删除标识');
     if (!confirm('确认删除该文档下所有分片？')) return;
     await withBusy('正在删除文档，请稍候...', async () => {
         const coll = document.getElementById('collection').value;
-        const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${recordId}`, { method: 'DELETE' });
+        const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${encodeURIComponent(recordSelector)}`, { method: 'DELETE' });
         const data = await res.json();
         if (!res.ok || !data.success) return alert(data.error || '删除失败');
         await reloadData();
@@ -955,7 +968,7 @@ async function deleteDoc(recordId) {
 }
 
 async function batchDeleteDocs() {
-    const checks = Array.from(document.querySelectorAll('.doc-check:checked')).map(c => c.value).filter(Boolean);
+    const checks = Array.from(document.querySelectorAll('.doc-check:checked')).map(c => String(c.value || '').trim()).filter(Boolean);
     if (!checks.length) return alert('请先勾选要删除的文档');
     if (!confirm(`确认批量删除 ${checks.length} 个文档？`)) return;
     await withBusy('正在批量删除，请稍候...', async () => {
@@ -1205,7 +1218,10 @@ function escapeAttr(text) {
     return String(text || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-document.getElementById('mode').addEventListener('change', reloadData);
+document.getElementById('mode').addEventListener('change', () => {
+    getPageState().page = 1;
+    reloadData();
+});
 document.getElementById('collection').addEventListener('change', () => { if (selectedMode() === 'data') reloadData(); });
 document.getElementById('search').addEventListener('input', () => {
     getPageState().page = 1;

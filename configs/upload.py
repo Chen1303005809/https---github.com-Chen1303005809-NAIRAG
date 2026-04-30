@@ -33,7 +33,7 @@ DEFAULT_OPTIONS = {
 
 
 def load_config() -> UploadConfig:
-    review_dir = os.path.join(ROOT_DIR, "review_pending")
+    review_dir = env("REVIEW_DIR", os.path.join(ROOT_DIR, "review_pending"))
     rejected_dir = os.path.join(review_dir, "rejected")
     static_dir = os.path.join(ROOT_DIR, "static")
     db_path = env("USERS_DB_PATH", os.path.join(ROOT_DIR, "users.db"))
@@ -64,4 +64,3 @@ def load_config() -> UploadConfig:
         os.path.dirname(cfg.log_file_path),
     )
     return cfg
-

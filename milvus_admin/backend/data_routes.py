@@ -15,6 +15,34 @@ from .services import get_services
 bp = Blueprint("data", __name__)
 
 
+def _resolve_doc_id_by_selector(collection: Collection, selector: str) -> tuple[str | None, str | None]:
+    raw = str(selector or "").strip()
+    if not raw:
+        return None, "选择器为空"
+
+    if raw.startswith("doc:"):
+        doc_id = raw[4:].strip()
+        if not doc_id:
+            return None, "doc_id 为空"
+        return doc_id, None
+
+    if raw.startswith("id:"):
+        raw = raw[3:].strip()
+
+    try:
+        record_id = int(raw)
+    except Exception:
+        return None, f"无效记录ID: {selector}"
+
+    result = collection.query(expr=f"id == {record_id}", output_fields=["doc_id"])
+    if not result:
+        return None, f"记录 ID={record_id} 不存在"
+    doc_id = str(result[0].get("doc_id") or "").strip()
+    if not doc_id:
+        return None, f"记录 ID={record_id} 缺少 doc_id"
+    return doc_id, None
+
+
 def _build_doc_upload_time_map(logs: list[dict]) -> dict[str, str]:
     doc_upload_time: dict[str, str] = {}
     for log in logs:
@@ -202,17 +230,15 @@ def delete_single_record():
     @services.auth.require_login
     def _handler():
         collection_name = request.args.get("collection")
-        record_id = request.args.get("id")
-        if not collection_name or not record_id:
+        record_selector = request.args.get("id") or request.args.get("selector")
+        if not collection_name or not record_selector:
             return jsonify({"error": "缺少必要参数"}), 400
 
         try:
             collection = Collection(collection_name)
-            query_results = collection.query(expr=f"id == {int(record_id)}", output_fields=["doc_id"])
-            if not query_results:
-                return jsonify({"error": f"记录 ID={record_id} 不存在"}), 404
-
-            doc_id = query_results[0].get("doc_id")
+            doc_id, err = _resolve_doc_id_by_selector(collection, record_selector)
+            if err:
+                return jsonify({"error": err}), 404
             collection.delete(f'doc_id == "{doc_id}"')
             collection.flush()
             try:
@@ -225,8 +251,10 @@ def delete_single_record():
                 {
                     "type": "delete",
                     "collection": collection_name,
-                    "record_id": int(record_id),
-                    "details": f"删除了doc_id={doc_id}的所有分片",
+                    "record_id": None,
+                    "doc_id": doc_id,
+                    "doc_ids": [doc_id],
+                    "details": f"删除了doc_id={doc_id}的所有分片（选择器={record_selector}）",
                     "operation_time": datetime.now().isoformat(),
                 }
             )
@@ -246,19 +274,18 @@ def delete_multiple_records():
     @services.auth.require_login
     def _handler():
         collection_name = request.args.get("collection")
-        ids = (request.get_json() or {}).get("ids", [])
-        if not collection_name or not ids:
+        selectors = (request.get_json() or {}).get("ids", [])
+        if not collection_name or not selectors:
             return jsonify({"error": "缺少必要参数"}), 400
 
         try:
             collection = Collection(collection_name)
             doc_ids_to_delete = set()
-            for id_str in ids:
-                try:
-                    result = collection.query(expr=f"id == {int(id_str)}", output_fields=["doc_id"])
-                    if result:
-                        doc_ids_to_delete.add(result[0].get("doc_id"))
-                except Exception:
+            for selector in selectors:
+                doc_id, _ = _resolve_doc_id_by_selector(collection, str(selector))
+                if doc_id:
+                    doc_ids_to_delete.add(doc_id)
+                else:
                     continue
 
             deleted_count = 0
@@ -280,7 +307,8 @@ def delete_multiple_records():
                 {
                     "type": "batch_delete",
                     "collection": collection_name,
-                    "record_ids": ids,
+                    "record_ids": selectors,
+                    "doc_ids": sorted(doc_ids_to_delete),
                     "details": f"批量删除了 {deleted_count} 个doc_id的所有分片",
                     "operation_time": datetime.now().isoformat(),
                 }
