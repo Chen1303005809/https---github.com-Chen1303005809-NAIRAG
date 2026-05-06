@@ -35,7 +35,7 @@
         }
         .head { padding: 13px 14px; border-bottom: 1px solid var(--line); font-weight: 700; color: var(--primary); }
         .body { padding: 13px 14px; }
-        .grid { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
+        .grid { display: grid; gap: 8px; grid-template-columns: 1.2fr 1fr 1fr 0.8fr; }
         input, select {
             width: 100%;
             border: 1px solid #cfd7e6;
@@ -66,12 +66,42 @@
             box-shadow: 0 8px 16px rgba(26,32,53,0.24);
         }
         .btn.danger { background: linear-gradient(135deg, #f56565, #ea0606); color: #fff; }
+        .btn.small { padding: 7px 10px; font-size: 12px; }
         .topbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+        .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { border-bottom: 1px solid #e5eaf3; padding: 9px 8px; font-size: 13px; text-align: left; }
         th { color: #415272; }
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(24, 33, 50, 0.42);
+            z-index: 10;
+        }
+        .modal {
+            width: min(420px, 100%);
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: 0 24px 60px rgba(24, 33, 50, 0.24);
+            overflow: hidden;
+        }
+        .modal-foot {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 14px;
+            border-top: 1px solid var(--line);
+            background: #f8fafd;
+        }
         @media (max-width: 900px) {
             .grid { grid-template-columns: 1fr; }
+            .actions { min-width: 180px; }
         }
     </style>
 </head>
@@ -85,7 +115,8 @@
         <div class="body">
             <div class="grid">
                 <input id="newUsername" placeholder="用户名" />
-                <input id="newPassword" placeholder="密码" type="password" />
+                <input id="newPassword" placeholder="密码，至少 6 位" type="password" />
+                <input id="newPasswordConfirm" placeholder="确认密码" type="password" />
                 <select id="newRole">
                     <option value="user">user</option>
                     <option value="editor">editor</option>
@@ -96,6 +127,7 @@
                 <button class="btn primary" onclick="createUser()">创建</button>
                 <button class="btn" onclick="loadUsers()">刷新</button>
                 <span id="msg" style="margin-left:8px;"></span>
+                <div class="hint">保存用户信息不会修改密码；需要重置密码时使用列表中的“修改密码”。</div>
             </div>
         </div>
     </div>
@@ -109,6 +141,25 @@
                 </thead>
                 <tbody id="rows"></tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div id="passwordModal" class="modal-mask" onclick="closePasswordDialog(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="head">修改密码</div>
+        <div class="body">
+            <input id="passwordUserId" type="hidden" />
+            <div class="hint" style="margin:0 0 10px;">正在为 <strong id="passwordUsername"></strong> 设置新密码</div>
+            <div style="display:grid; gap:8px;">
+                <input id="changePassword" placeholder="新密码，至少 6 位" type="password" />
+                <input id="changePasswordConfirm" placeholder="再次输入新密码" type="password" />
+            </div>
+            <div id="passwordMsg" class="hint"></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn" onclick="closePasswordDialog()">取消</button>
+            <button class="btn primary" onclick="changePassword()">确认修改</button>
         </div>
     </div>
 </div>
@@ -136,9 +187,31 @@ function show(msg, ok=true) {
     el.style.color = ok ? '#047857' : '#b91c1c';
 }
 
+function showPasswordMsg(msg, ok=false) {
+    const el = document.getElementById('passwordMsg');
+    el.textContent = msg;
+    el.style.color = ok ? '#047857' : '#b91c1c';
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function formatApiError(res, data, fallback) {
     if (res.status === 401) return '认证失效或令牌无效，请返回门户重新登录';
     return data.error || fallback;
+}
+
+function validatePassword(password, confirmPassword) {
+    if (!password) return '请输入密码';
+    if (password.length < 6) return '密码长度不能少于 6 位';
+    if (password !== confirmPassword) return '两次输入的密码不一致';
+    return '';
 }
 
 async function loadUsers() {
@@ -152,7 +225,7 @@ async function loadUsers() {
     rows.innerHTML = data.users.map(u => `
         <tr>
             <td>${u.id}</td>
-            <td><input value="${u.username}" data-f="username" data-id="${u.id}" /></td>
+            <td><input value="${escapeHtml(u.username)}" data-f="username" data-id="${u.id}" /></td>
             <td>
                 <select data-f="role" data-id="${u.id}">
                     <option value="user" ${u.role === 'user' ? 'selected' : ''}>user</option>
@@ -162,8 +235,11 @@ async function loadUsers() {
             </td>
             <td>${u.created_at || ''}</td>
             <td>
-                <button class="btn primary" onclick="updateUser(${u.id})">保存</button>
-                <button class="btn danger" onclick="deleteUser(${u.id})">删除</button>
+                <div class="actions">
+                    <button class="btn primary small" onclick="updateUser(${u.id})">保存</button>
+                    <button class="btn small" data-id="${u.id}" data-username="${escapeHtml(u.username)}" onclick="openPasswordDialog(this)">修改密码</button>
+                    <button class="btn danger small" onclick="deleteUser(${u.id})">删除</button>
+                </div>
             </td>
         </tr>
     `).join('');
@@ -177,7 +253,11 @@ function rowValue(id, field) {
 async function createUser() {
     const username = document.getElementById('newUsername').value.trim();
     const password = document.getElementById('newPassword').value.trim();
+    const passwordConfirm = document.getElementById('newPasswordConfirm').value.trim();
     const role = document.getElementById('newRole').value;
+    const passwordError = validatePassword(password, passwordConfirm);
+    if (!username) return show('请输入用户名', false);
+    if (passwordError) return show(passwordError, false);
     const res = await fetch(apiUrl('/admin/users/create'), {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
@@ -186,23 +266,61 @@ async function createUser() {
     const data = await res.json();
     if (!res.ok || !data.success) return show(formatApiError(res, data, '创建失败'), false);
     show('创建成功');
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('newPasswordConfirm').value = '';
+    document.getElementById('newRole').value = 'user';
     loadUsers();
 }
 
 async function updateUser(id) {
     const username = rowValue(id, 'username');
     const role = rowValue(id, 'role');
-    const password = prompt('如需重置密码请输入，不修改请留空', '');
-    if (password === null) return;
+    if (!username.trim()) return show('用户名不能为空', false);
     const res = await fetch(apiUrl('/admin/users/update'), {
         method: 'POST',
         headers: headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ id, username, role, password })
+        body: JSON.stringify({ id, username, role })
     });
     const data = await res.json();
     if (!res.ok || !data.success) return show(formatApiError(res, data, '更新失败'), false);
     show('更新成功');
     loadUsers();
+}
+
+function openPasswordDialog(button) {
+    document.getElementById('passwordUserId').value = button.dataset.id;
+    document.getElementById('passwordUsername').textContent = button.dataset.username || '';
+    document.getElementById('changePassword').value = '';
+    document.getElementById('changePasswordConfirm').value = '';
+    showPasswordMsg('');
+    document.getElementById('passwordModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('changePassword').focus(), 0);
+}
+
+function closePasswordDialog(event) {
+    if (event && event.target.id !== 'passwordModal') return;
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+async function changePassword() {
+    const id = document.getElementById('passwordUserId').value;
+    const password = document.getElementById('changePassword').value.trim();
+    const passwordConfirm = document.getElementById('changePasswordConfirm').value.trim();
+    const passwordError = validatePassword(password, passwordConfirm);
+    if (passwordError) return showPasswordMsg(passwordError);
+
+    const res = await fetch(apiUrl('/admin/users/change_password'), {
+        method: 'POST',
+        headers: headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ id, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return showPasswordMsg(formatApiError(res, data, '密码修改失败'));
+
+    showPasswordMsg('密码修改成功', true);
+    show('密码修改成功');
+    setTimeout(() => closePasswordDialog(), 500);
 }
 
 async function deleteUser(id) {

@@ -9,6 +9,16 @@ from .services import get_services
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 bp = Blueprint("users", __name__)
+VALID_ROLES = {"admin", "editor", "user"}
+MIN_PASSWORD_LENGTH = 6
+
+
+def _validate_password(password: str):
+    if not password:
+        return "密码不能为空"
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return f"密码长度不能少于 {MIN_PASSWORD_LENGTH} 位"
+    return None
 
 
 @bp.route("/admin/users", methods=["GET"])
@@ -44,7 +54,10 @@ def create_user():
 
         if not username or not password:
             return jsonify({"error": "用户名和密码不能为空"}), 400
-        if role not in ["admin", "editor", "user"]:
+        password_error = _validate_password(password)
+        if password_error:
+            return jsonify({"error": password_error}), 400
+        if role not in VALID_ROLES:
             return jsonify({"error": "无效的角色"}), 400
 
         conn = sqlite3.connect(services.config.users_db_path)
@@ -82,6 +95,12 @@ def update_user():
 
         if not user_id or not username or not role:
             return jsonify({"error": "参数不完整"}), 400
+        if role not in VALID_ROLES:
+            return jsonify({"error": "无效的角色"}), 400
+        if password:
+            password_error = _validate_password(password)
+            if password_error:
+                return jsonify({"error": password_error}), 400
 
         conn = sqlite3.connect(services.config.users_db_path)
         cursor = conn.cursor()
@@ -101,6 +120,45 @@ def update_user():
         conn.commit()
         conn.close()
         return jsonify({"success": True})
+
+    return _handler()
+
+
+@bp.route("/admin/users/change_password", methods=["POST"])
+def change_user_password():
+    services = get_services(current_app)
+
+    @services.auth.require_role("admin")
+    def _handler():
+        data = request.get_json() or {}
+        user_id = data.get("id")
+        password = (data.get("password") or "").strip()
+
+        if not user_id:
+            return jsonify({"error": "缺少用户ID"}), 400
+        password_error = _validate_password(password)
+        if password_error:
+            return jsonify({"error": password_error}), 400
+
+        conn = sqlite3.connect(services.config.users_db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM users WHERE id = ?", (user_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return jsonify({"error": "用户不存在"}), 404
+
+        cursor.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (pwd_context.hash(password), user_id),
+        )
+        conn.commit()
+        conn.close()
+        services.op_log.append(
+            {"type": "change_user_password", "details": f"修改用户 {row['username']} 的密码", "user": request.current_user}
+        )
+        return jsonify({"success": True, "message": "密码修改成功"})
 
     return _handler()
 
