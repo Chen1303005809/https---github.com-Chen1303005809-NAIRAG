@@ -511,11 +511,15 @@ function startBusy(message = '处理中，请稍候...') {
     if (layer) layer.style.display = 'flex';
 }
 
+function hideBusyLayer() {
+    const layer = document.getElementById('globalLoading');
+    if (layer) layer.style.display = 'none';
+}
+
 function stopBusy() {
     busyCount = Math.max(0, busyCount - 1);
     if (busyCount > 0) return;
-    const layer = document.getElementById('globalLoading');
-    if (layer) layer.style.display = 'none';
+    hideBusyLayer();
 }
 
 async function withBusy(message, runner) {
@@ -958,48 +962,62 @@ async function loadRejected() {
 async function deleteDoc(recordSelector) {
     if (!recordSelector) return alert('当前记录缺少可删除标识');
     if (!confirm('确认删除该文档下所有分片？')) return;
-    await withBusy('正在删除文档，请稍候...', async () => {
-        const coll = document.getElementById('collection').value;
-        const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${encodeURIComponent(recordSelector)}`, { method: 'DELETE' });
-        const data = await res.json();
-        if (!res.ok || !data.success) return alert(data.error || '删除失败');
-        await reloadData();
-    });
+    try {
+        await withBusy('正在删除文档，请稍候...', async () => {
+            const coll = document.getElementById('collection').value;
+            const res = await authFetch(`/admin/delete_record?collection=${encodeURIComponent(coll)}&id=${encodeURIComponent(recordSelector)}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || '删除失败');
+            await reloadData();
+        });
+    } catch (err) {
+        alert(err.message || '删除失败');
+    }
 }
 
 async function batchDeleteDocs() {
     const checks = Array.from(document.querySelectorAll('.doc-check:checked')).map(c => String(c.value || '').trim()).filter(Boolean);
     if (!checks.length) return alert('请先勾选要删除的文档');
     if (!confirm(`确认批量删除 ${checks.length} 个文档？`)) return;
-    await withBusy('正在批量删除，请稍候...', async () => {
-        const coll = document.getElementById('collection').value;
-        const res = await authFetch(`/admin/delete_records?collection=${encodeURIComponent(coll)}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ids: checks })
+    try {
+        const message = await withBusy('正在批量删除，请稍候...', async () => {
+            const coll = document.getElementById('collection').value;
+            const res = await authFetch(`/admin/delete_records?collection=${encodeURIComponent(coll)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: checks })
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || '批量删除失败');
+            await reloadData();
+            return data.message || '删除成功';
         });
-        const data = await res.json();
-        if (!res.ok || !data.success) return alert(data.error || '批量删除失败');
-        alert(data.message || '删除成功');
-        await reloadData();
-    });
+        alert(message);
+    } catch (err) {
+        alert(err.message || '批量删除失败');
+    }
 }
 
 async function batchApprove() {
     const ids = Array.from(document.querySelectorAll('.review-check:checked')).map(c => c.value);
     if (!ids.length) return alert('请勾选要通过的审核记录');
-    await withBusy('正在通过审核，请稍候...', async () => {
-        const records = reviewRows.filter(r => ids.includes(String(r.id)));
-        const res = await authFetch('/admin/approve_records', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ids, records })
+    try {
+        const message = await withBusy('正在通过审核，请稍候...', async () => {
+            const records = reviewRows.filter(r => ids.includes(String(r.id)));
+            const res = await authFetch('/admin/approve_records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids, records })
+            });
+            const data = await res.json();
+            if (!res.ok || data.success === false) throw new Error(data.error || '审核通过失败');
+            await reloadData();
+            return data.message || '已通过';
         });
-        const data = await res.json();
-        if (!res.ok || data.success === false) return alert(data.error || '审核通过失败');
-        alert(data.message || '已通过');
-        await reloadData();
-    });
+        alert(message);
+    } catch (err) {
+        alert(err.message || '审核通过失败');
+    }
 }
 
 async function batchReject() {
@@ -1009,32 +1027,41 @@ async function batchReject() {
     if (reason === null) return;
     if (!reason.trim()) return alert('拒绝原因不能为空');
 
-    await withBusy('正在拒绝并归档，请稍候...', async () => {
-        const records = reviewRows.filter(r => ids.includes(String(r.id)));
-        const res = await authFetch('/admin/reject_records', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ids, records, reject_reason: reason.trim() })
+    try {
+        const message = await withBusy('正在拒绝并归档，请稍候...', async () => {
+            const records = reviewRows.filter(r => ids.includes(String(r.id)));
+            const res = await authFetch('/admin/reject_records', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids, records, reject_reason: reason.trim() })
+            });
+            const data = await res.json();
+            if (!res.ok || data.success === false) throw new Error(data.error || '拒绝失败');
+            await reloadData();
+            return '已拒绝并归档';
         });
-        const data = await res.json();
-        if (!res.ok || data.success === false) return alert(data.error || '拒绝失败');
-        alert('已拒绝并归档');
-        await reloadData();
-    });
+        alert(message);
+    } catch (err) {
+        alert(err.message || '拒绝失败');
+    }
 }
 
 async function deleteRejected(uploader, id) {
     if (!confirm('确认删除该被拒记录？')) return;
-    await withBusy('正在删除被拒记录，请稍候...', async () => {
-        const res = await authFetch('/admin/delete_rejected', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ uploader, id })
+    try {
+        await withBusy('正在删除被拒记录，请稍候...', async () => {
+            const res = await authFetch('/admin/delete_rejected', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ uploader, id })
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || '删除失败');
+            await reloadData();
         });
-        const data = await res.json();
-        if (!res.ok || !data.success) return alert(data.error || '删除失败');
-        await reloadData();
-    });
+    } catch (err) {
+        alert(err.message || '删除失败');
+    }
 }
 
 function findDataDoc(recordId) {
@@ -1166,7 +1193,7 @@ async function saveEdit() {
                 });
             } else {
                 const selected_dbs = Array.from(document.querySelectorAll('#editDbChecks input:checked')).map(cb => cb.value);
-                if (!selected_dbs.length) return alert('审核模式下请至少选择一个目标数据库');
+                if (!selected_dbs.length) throw new Error('审核模式下请至少选择一个目标数据库');
                 res = await authFetch('/admin/update_review_record', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1175,7 +1202,7 @@ async function saveEdit() {
             }
 
             const data = await res.json();
-            if (!res.ok || data.success === false) return alert(data.error || '保存失败');
+            if (!res.ok || data.success === false) throw new Error(data.error || '保存失败');
             closeModal('editModal');
             await reloadData();
         });
