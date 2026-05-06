@@ -965,7 +965,6 @@ document.getElementById('docDrop').addEventListener('drop', e => { e.preventDefa
 
 document.getElementById('uploadForm').addEventListener('submit', submitUpload);
 document.getElementById('rejectedBadge').addEventListener('click', () => { renderRejectedModal(); document.getElementById('rejectedModal').style.display = 'block'; });
-window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 
 ensureLoginByToken();
 setInterval(checkRejectedRecords, 30000);

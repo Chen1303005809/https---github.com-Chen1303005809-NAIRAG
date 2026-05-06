@@ -145,8 +145,8 @@
     </div>
 </div>
 
-<div id="passwordModal" class="modal-mask" onclick="closePasswordDialog(event)">
-    <div class="modal" onclick="event.stopPropagation()">
+<div id="passwordModal" class="modal-mask">
+    <div class="modal">
         <div class="head">修改密码</div>
         <div class="body">
             <input id="passwordUserId" type="hidden" />
@@ -298,8 +298,7 @@ function openPasswordDialog(button) {
     setTimeout(() => document.getElementById('changePassword').focus(), 0);
 }
 
-function closePasswordDialog(event) {
-    if (event && event.target.id !== 'passwordModal') return;
+function closePasswordDialog() {
     document.getElementById('passwordModal').style.display = 'none';
 }
 
