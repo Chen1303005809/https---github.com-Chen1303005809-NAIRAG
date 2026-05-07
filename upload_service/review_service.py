@@ -80,6 +80,14 @@ class ReviewService:
                 return record
         return None
 
+    @staticmethod
+    def _record_batch_id(record: dict) -> str:
+        return str(
+            (record or {}).get("batch_id")
+            or (record or {}).get("submission_id")
+            or ""
+        ).strip()
+
     @classmethod
     def _same_batch_rejected_ids(
         cls,
@@ -88,7 +96,7 @@ class ReviewService:
         selected_dbs: list[str],
     ) -> set[str]:
         selected = {str(db or "").strip() for db in selected_dbs if str(db or "").strip()}
-        source_timestamp = str((source_record or {}).get("timestamp") or "").strip()
+        source_batch_id = cls._record_batch_id(source_record)
         source_reason = str((source_record or {}).get("reject_reason") or "").strip()
         source_uploader = str((source_record or {}).get("uploader") or "").strip()
         source_data = cls._comparable_rejected_data(source_record)
@@ -102,8 +110,7 @@ class ReviewService:
                 continue
             if str((record or {}).get("reject_reason") or "").strip() != source_reason:
                 continue
-            record_timestamp = str((record or {}).get("timestamp") or "").strip()
-            if source_timestamp and record_timestamp != source_timestamp:
+            if not source_batch_id or cls._record_batch_id(record) != source_batch_id:
                 continue
             if cls._comparable_rejected_data(record) != source_data:
                 continue
@@ -151,10 +158,12 @@ class ReviewService:
 
         review_records = []
         for record in dicts:
+            batch_id = str(uuid.uuid4())
             for coll_name in selected:
                 review_records.append(
                     {
                         "id": str(uuid.uuid4()),
+                        "batch_id": batch_id,
                         "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
                         "selected_dbs": [coll_name],
                         "source_collection": coll_name,
@@ -295,10 +304,12 @@ class ReviewService:
             raise HTTPException(status_code=400, detail="请至少选择一个有效目标数据库")
 
         final_records = []
+        batch_id = str(uuid.uuid4())
         for coll_name in selected:
             final_records.append(
                 {
                     "id": str(uuid.uuid4()),
+                    "batch_id": batch_id,
                     "timestamp": datetime.now(self.config.beijing_tz).isoformat(),
                     "selected_dbs": [coll_name],
                     "source_collection": coll_name,

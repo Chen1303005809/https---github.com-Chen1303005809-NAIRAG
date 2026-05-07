@@ -4,6 +4,7 @@ from upload_service.review_service import ReviewService
 def test_rejected_cleanup_matches_same_batch_selected_targets():
     base = {
         "id": "r1",
+        "batch_id": "batch-1",
         "timestamp": "2026-05-07T10:00:00+08:00",
         "reject_reason": "缺少说明",
         "uploader": "alice",
@@ -42,6 +43,7 @@ def test_rejected_cleanup_matches_same_batch_selected_targets():
 def test_rejected_cleanup_does_not_match_different_timestamp():
     source = {
         "id": "r1",
+        "batch_id": "batch-1",
         "timestamp": "2026-05-07T10:00:00+08:00",
         "reject_reason": "缺少说明",
         "uploader": "alice",
@@ -52,6 +54,7 @@ def test_rejected_cleanup_does_not_match_different_timestamp():
     other_batch = {
         **source,
         "id": "r2",
+        "batch_id": "batch-2",
         "timestamp": "2026-05-07T11:00:00+08:00",
         "selected_dbs": ["db_b"],
         "source_collection": "db_b",
@@ -66,9 +69,71 @@ def test_rejected_cleanup_does_not_match_different_timestamp():
     assert cleanup_ids == {"r1"}
 
 
+def test_rejected_cleanup_requires_batch_id():
+    source = {
+        "id": "r1",
+        "timestamp": "2026-05-07T10:00:00+08:00",
+        "reject_reason": "缺少说明",
+        "uploader": "alice",
+        "selected_dbs": ["db_a"],
+        "source_collection": "db_a",
+        "data": {"object": "模块A", "reply_logic": "逻辑", "feature_explanation": "说明"},
+    }
+    sibling_without_batch = {
+        **source,
+        "id": "r2",
+        "selected_dbs": ["db_b"],
+        "source_collection": "db_b",
+    }
+
+    cleanup_ids = ReviewService._same_batch_rejected_ids(
+        records=[source, sibling_without_batch],
+        source_record=source,
+        selected_dbs=["db_a", "db_b"],
+    )
+
+    assert cleanup_ids == {"r1"}
+
+
+def test_rejected_cleanup_prefers_batch_id_over_timestamp():
+    source = {
+        "id": "r1",
+        "batch_id": "batch-1",
+        "timestamp": "2026-05-07T10:00:00+08:00",
+        "reject_reason": "缺少说明",
+        "uploader": "alice",
+        "selected_dbs": ["db_a"],
+        "source_collection": "db_a",
+        "data": {"object": "模块A", "reply_logic": "逻辑", "feature_explanation": "说明"},
+    }
+    same_batch = {
+        **source,
+        "id": "r2",
+        "timestamp": "2026-05-07T11:00:00+08:00",
+        "selected_dbs": ["db_b"],
+        "source_collection": "db_b",
+    }
+    different_batch = {
+        **source,
+        "id": "r3",
+        "batch_id": "batch-2",
+        "selected_dbs": ["db_c"],
+        "source_collection": "db_c",
+    }
+
+    cleanup_ids = ReviewService._same_batch_rejected_ids(
+        records=[source, same_batch, different_batch],
+        source_record=source,
+        selected_dbs=["db_a", "db_b", "db_c"],
+    )
+
+    assert cleanup_ids == {"r1", "r2"}
+
+
 def test_rejected_cleanup_ignores_attachment_changes():
     source = {
         "id": "r1",
+        "batch_id": "batch-1",
         "timestamp": "2026-05-07T10:00:00+08:00",
         "reject_reason": "缺少说明",
         "uploader": "alice",

@@ -187,6 +187,7 @@ def update_review_record():
                         records.append(
                             {
                                 "id": str(uuid.uuid4()),
+                                "batch_id": rec.get("batch_id") or rec.get("submission_id") or "",
                                 "timestamp": datetime.now().isoformat(),
                                 "selected_dbs": [db],
                                 "source_collection": db,
@@ -351,6 +352,7 @@ def reject_records():
             rejected_by_user.setdefault(uploader, []).append(
                 {
                     "id": rec.get("id"),
+                    "batch_id": rec.get("batch_id") or rec.get("submission_id") or "",
                     "timestamp": rec.get("timestamp"),
                     "selected_dbs": rec.get("selected_dbs", []),
                     "source_collection": rec.get("source_collection") or "",
