@@ -518,6 +518,26 @@ function dbListText(values) {
     return cleaned.map(dbLabel).join('，');
 }
 
+function formatDisplayTime(value) {
+    const text = String(value || '').trim();
+    if (!text) return '-';
+    const localIsoNoTz = text.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/);
+    if (localIsoNoTz) return `${localIsoNoTz[1]} ${localIsoNoTz[2]}`;
+    const dt = new Date(text);
+    if (Number.isNaN(dt.getTime())) return text;
+    const parts = new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).formatToParts(dt);
+    const pick = type => parts.find(p => p.type === type)?.value || '00';
+    return `${pick('year')}-${pick('month')}-${pick('day')} ${pick('hour')}:${pick('minute')}:${pick('second')}`;
+}
+
 function selectOptions(id, values) {
     const el = document.getElementById(id);
     el.innerHTML = '<option value="">--请选择--</option>' + (values || []).map(v => `<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join('');
@@ -795,6 +815,7 @@ function renderRejectedModal() {
                         <button class="btn primary" onclick="openRejectedEdit('${escapeAttr(item.id)}')">修改后重提</button>
                     </div>
                     <div class="hint" style="margin-top:6px; color:#b91c1c;">拒绝原因: ${escapeHtml(item.reject_reason || '管理员未填写')}</div>
+                    <div class="hint" style="margin-top:4px;">拒绝时间: ${escapeHtml(formatDisplayTime(item.timestamp || ''))}</div>
                     <div class="hint" style="margin-top:4px;">来源向量库: ${escapeHtml(dbListText(item.selected_dbs?.length ? item.selected_dbs : [item.source_collection]))}</div>
                     <div style="margin-top:6px; font-size:13px; line-height:1.7;">${fieldsHtml || '<span class="hint">暂无可展示字段</span>'}</div>
                     ${files ? `<div class="toolbar" style="margin-top:8px;">${files}</div>` : ''}

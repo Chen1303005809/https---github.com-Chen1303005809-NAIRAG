@@ -694,6 +694,26 @@ function formatUploadTime(value) {
     return text || '-';
 }
 
+function formatDisplayTime(value) {
+    const text = String(value || '').trim();
+    if (!text) return '-';
+    const localIsoNoTz = text.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.\d+)?$/);
+    if (localIsoNoTz) return `${localIsoNoTz[1]} ${localIsoNoTz[2]}`;
+    const dt = new Date(text);
+    if (Number.isNaN(dt.getTime())) return text;
+    const parts = new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    }).formatToParts(dt);
+    const pick = type => parts.find(p => p.type === type)?.value || '00';
+    return `${pick('year')}-${pick('month')}-${pick('day')} ${pick('hour')}:${pick('minute')}:${pick('second')}`;
+}
+
 function buildDataDeleteSelector(doc) {
     const recordId = String(doc?.record_id ?? '').trim();
     if (recordId) return `id:${recordId}`;
@@ -961,7 +981,7 @@ async function loadRejected() {
                     <div class="chip">#${startIdx + idx + 1}</div>
                     <div>
                         <div class="doc-title">${escapeHtml(r.uploader)} · ${escapeHtml(r.id || '')}</div>
-                        <div class="doc-meta">来源向量库: ${escapeHtml(dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection]))} · 拒绝原因: ${escapeHtml(r.reject_reason || '未填写')}</div>
+                        <div class="doc-meta">来源向量库: ${escapeHtml(dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection]))} · 拒绝原因: ${escapeHtml(r.reject_reason || '未填写')} · 拒绝时间: ${escapeHtml(formatDisplayTime(r.timestamp || ''))}</div>
                     </div>
                     <div class="doc-actions">
                         <button class="btn danger" onclick="deleteRejected('${escapeAttr(r.uploader)}','${escapeAttr(r.id)}')">删除</button>
