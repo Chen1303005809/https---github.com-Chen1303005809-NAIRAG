@@ -891,7 +891,7 @@ async function submitResubmission() {
         return;
     }
 
-    document.getElementById('editStatus').textContent = '重提成功';
+    document.getElementById('editStatus').textContent = data.message || '重提成功';
     document.getElementById('editStatus').className = 'status ok';
     closeModal('editModal');
     await checkRejectedRecords();

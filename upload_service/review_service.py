@@ -54,6 +54,68 @@ class ReviewService:
 
         return sorted(records or [], key=_ts, reverse=True)
 
+    @staticmethod
+    def _record_target_dbs(record: dict) -> set[str]:
+        targets = set()
+        source_collection = str((record or {}).get("source_collection") or "").strip()
+        if source_collection:
+            targets.add(source_collection)
+        for db in (record or {}).get("selected_dbs", []) or []:
+            clean = str(db or "").strip()
+            if clean:
+                targets.add(clean)
+        return targets
+
+    @staticmethod
+    def _comparable_rejected_data(record: dict) -> dict:
+        data = dict((record or {}).get("data") or {})
+        data.pop("image_url", None)
+        data.pop("file_url", None)
+        return data
+
+    @staticmethod
+    def _find_rejected_record(records: list[dict], record_id: str) -> Optional[dict]:
+        for record in records or []:
+            if str((record or {}).get("id")) == str(record_id):
+                return record
+        return None
+
+    @classmethod
+    def _same_batch_rejected_ids(
+        cls,
+        records: list[dict],
+        source_record: dict,
+        selected_dbs: list[str],
+    ) -> set[str]:
+        selected = {str(db or "").strip() for db in selected_dbs if str(db or "").strip()}
+        source_timestamp = str((source_record or {}).get("timestamp") or "").strip()
+        source_reason = str((source_record or {}).get("reject_reason") or "").strip()
+        source_uploader = str((source_record or {}).get("uploader") or "").strip()
+        source_data = cls._comparable_rejected_data(source_record)
+
+        cleanup_ids = set()
+        for record in records or []:
+            record_id = str((record or {}).get("id") or "").strip()
+            if not record_id:
+                continue
+            if source_uploader and str((record or {}).get("uploader") or "").strip() != source_uploader:
+                continue
+            if str((record or {}).get("reject_reason") or "").strip() != source_reason:
+                continue
+            record_timestamp = str((record or {}).get("timestamp") or "").strip()
+            if source_timestamp and record_timestamp != source_timestamp:
+                continue
+            if cls._comparable_rejected_data(record) != source_data:
+                continue
+            if not (cls._record_target_dbs(record) & selected):
+                continue
+            cleanup_ids.add(record_id)
+
+        source_id = str((source_record or {}).get("id") or "").strip()
+        if source_id:
+            cleanup_ids.add(source_id)
+        return cleanup_ids
+
     async def submit_upload_json(
         self,
         uploader: str,
@@ -136,6 +198,19 @@ class ReviewService:
         else:
             os.remove(rejected_file)
 
+    def _delete_rejected_by_ids(self, uploader: str, record_ids: set[str]):
+        if not record_ids:
+            return
+        rejected_file = os.path.join(self.config.rejected_dir, f"{uploader}.json")
+        if not os.path.exists(rejected_file):
+            return
+        records = self._load_json(rejected_file, [])
+        cleaned = [r for r in records if str(r.get("id")) not in record_ids]
+        if cleaned:
+            self._save_json(rejected_file, cleaned)
+        else:
+            os.remove(rejected_file)
+
     def get_rejected_records(self, uploader: str) -> dict:
         rejected_file = os.path.join(self.config.rejected_dir, f"{uploader}.json")
         if not os.path.exists(rejected_file):
@@ -194,6 +269,14 @@ class ReviewService:
         if current_user != uploader and not is_admin:
             raise HTTPException(status_code=403, detail="只能修改自己的被拒记录")
 
+        rejected_file = os.path.join(self.config.rejected_dir, f"{uploader}.json")
+        if not os.path.exists(rejected_file):
+            raise HTTPException(status_code=404, detail="记录不存在")
+        rejected_records = self._load_json(rejected_file, [])
+        source_rejected = self._find_rejected_record(rejected_records, old_record_id)
+        if not source_rejected:
+            raise HTTPException(status_code=404, detail="记录未找到，可能已被处理")
+
         try:
             new_data = json.loads(record_data)
         except json.JSONDecodeError:
@@ -241,10 +324,15 @@ class ReviewService:
         timestamp = datetime.now(self.config.beijing_tz).strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_user}_{timestamp}_resubmit.json"
         self._save_json(os.path.join(self.config.review_dir, filename), final_records)
-        self._delete_rejected_by_id(uploader=uploader, record_id=old_record_id)
+        cleanup_ids = self._same_batch_rejected_ids(
+            records=rejected_records,
+            source_record=source_rejected,
+            selected_dbs=selected,
+        )
+        self._delete_rejected_by_ids(uploader=uploader, record_ids=cleanup_ids)
 
         return {
             "status": "success",
-            "message": "修改成功，已重新提交审核，原被拒记录已清除",
+            "message": "修改成功，已重新提交审核，同批被拒记录已自动清除",
             "new_pending_file": filename,
         }
