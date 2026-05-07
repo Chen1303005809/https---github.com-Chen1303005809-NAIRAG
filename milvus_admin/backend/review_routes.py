@@ -15,6 +15,20 @@ from .services import get_services
 bp = Blueprint("review", __name__)
 
 
+def _record_ts(rec: dict) -> float:
+    raw = str((rec or {}).get("timestamp") or "").strip()
+    if not raw:
+        return 0.0
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00")).timestamp()
+    except ValueError:
+        return 0.0
+
+
+def _sort_rejected_records(records: list[dict]) -> list[dict]:
+    return sorted(records or [], key=_record_ts, reverse=True)
+
+
 
 def _iter_pending_files(review_dir: str):
     for filename in os.listdir(review_dir):
@@ -398,7 +412,7 @@ def get_all_rejected():
                     continue
                 uploader = file.replace(".json", "")
                 with open(os.path.join(rejected_dir, file), "r", encoding="utf-8") as f:
-                    rejected_data[uploader] = json.load(f)
+                    rejected_data[uploader] = _sort_rejected_records(json.load(f))
         return jsonify({"rejected": rejected_data})
 
     return _handler()

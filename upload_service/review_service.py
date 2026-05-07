@@ -42,6 +42,18 @@ class ReviewService:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
+    def _sort_rejected_records(self, records: list[dict]) -> list[dict]:
+        def _ts(rec: dict) -> float:
+            raw = str((rec or {}).get("timestamp") or "").strip()
+            if not raw:
+                return 0.0
+            try:
+                return datetime.fromisoformat(raw.replace("Z", "+00:00")).timestamp()
+            except ValueError:
+                return 0.0
+
+        return sorted(records or [], key=_ts, reverse=True)
+
     async def submit_upload_json(
         self,
         uploader: str,
@@ -128,7 +140,8 @@ class ReviewService:
         rejected_file = os.path.join(self.config.rejected_dir, f"{uploader}.json")
         if not os.path.exists(rejected_file):
             return {"rejected": []}
-        return {"rejected": self._load_json(rejected_file, [])}
+        records = self._load_json(rejected_file, [])
+        return {"rejected": self._sort_rejected_records(records)}
 
     def delete_rejected_record(self, current_user: str, uploader: str, record_id: str):
         current = self.auth.get_user_from_db(current_user)

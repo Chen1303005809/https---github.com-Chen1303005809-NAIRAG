@@ -930,6 +930,7 @@ async function loadRejected() {
             rejectedRows.push({ uploader, ...rec, source_collection: rec.source_collection || (rec.selected_dbs || [])[0] || '' });
         });
     });
+    rejectedRows.sort((a, b) => reviewDocSortTime(b) - reviewDocSortTime(a));
 
     const filtered = applySearch(
         rejectedRows.map(r => ({ ...r, __search: `${r.uploader} ${r.data?.object || ''} ${r.reject_reason || ''} ${dbListText(r.selected_dbs?.length ? r.selected_dbs : [r.source_collection])}` })),
