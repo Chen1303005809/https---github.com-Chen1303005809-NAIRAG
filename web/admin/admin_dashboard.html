@@ -267,7 +267,7 @@
                 <option value="TEST">多模态混合测试</option>
             </select>
 
-            <input id="search" type="text" placeholder="按 doc_id / 文本内容搜索" style="min-width:220px;" />
+            <input id="search" type="text" placeholder="按 doc_id / 文本内容 / 上传人搜索" style="min-width:260px;" />
         </div>
 
         <div class="toolbar-row right">
@@ -844,7 +844,7 @@ function docCardBase(doc, mode = 'data') {
                 ${check}
                 <div>
                     <div class="doc-title">DocID: ${escapeHtml(docIdentity)}</div>
-                    <div class="doc-meta">来源向量库 ${escapeHtml(sourceDbText)} · 上传时间 ${escapeHtml(uploadTimeText)} · 分片数 ${doc.chunk_count || 0}${mode === 'review' ? ` · 上传人 ${escapeHtml(doc.uploader || '')}` : ''}</div>
+                    <div class="doc-meta">来源向量库 ${escapeHtml(sourceDbText)} · 上传时间 ${escapeHtml(uploadTimeText)} · 分片数 ${doc.chunk_count || 0}${doc.uploader ? ` · 上传人 ${escapeHtml(doc.uploader)}` : ''}</div>
                 </div>
                 <div class="doc-actions">
                     <button class="btn" onclick="toggleChunks(this)">展开 chunks</button>
@@ -876,10 +876,11 @@ async function loadDataDocs() {
         ...doc,
         source_collection: doc.source_collection || coll,
         upload_time: doc.upload_time || '',
+        uploader: doc.uploader || '',
     }));
 
     const filtered = applySearch(
-        dataDocs.map(d => ({ ...d, __search: `${d.doc_id} ${(d.summary?.problem || []).join(' ')} ${d.summary?.reply_logic || ''} ${d.summary?.feature_explanation || ''}` })),
+        dataDocs.map(d => ({ ...d, __search: `${d.doc_id} ${d.uploader || ''} ${(d.summary?.problem || []).join(' ')} ${d.summary?.reply_logic || ''} ${d.summary?.feature_explanation || ''}` })),
         ['__search']
     ).sort((a, b) => dataDocSortTime(b) - dataDocSortTime(a));
 

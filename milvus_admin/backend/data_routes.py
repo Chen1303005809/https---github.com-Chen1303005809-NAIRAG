@@ -73,6 +73,36 @@ def _build_doc_upload_time_map(logs: list[dict]) -> dict[str, str]:
     return doc_upload_time
 
 
+def _build_doc_uploader_map(logs: list[dict]) -> dict[str, str]:
+    doc_uploader: dict[str, str] = {}
+    for log in logs:
+        if str(log.get("type") or "").strip() != "approve":
+            continue
+
+        single_doc = str(log.get("doc_id") or "").strip()
+        single_uploader = str(log.get("uploader") or "").strip()
+        if single_doc and single_uploader:
+            doc_uploader[single_doc] = single_uploader
+
+        doc_ids = [str(v).strip() for v in (log.get("doc_ids") or []) if str(v).strip()]
+        uploaders = [str(v).strip() for v in (log.get("uploaders") or []) if str(v).strip()]
+        if not doc_ids:
+            continue
+
+        if len(uploaders) == len(doc_ids):
+            for doc_id, uploader in zip(doc_ids, uploaders):
+                if uploader:
+                    doc_uploader[doc_id] = uploader
+            continue
+
+        fallback_uploader = uploaders[0] if uploaders else single_uploader
+        if fallback_uploader:
+            for doc_id in doc_ids:
+                doc_uploader[doc_id] = fallback_uploader
+
+    return doc_uploader
+
+
 def _delete_old_files(static_root: str, old_urls: list[str], logger):
     for url in old_urls or []:
         if not url or url == "N/A":
@@ -116,9 +146,11 @@ def get_data_paginated():
             grouped = group_by_doc_id(rows, source_collection=collection_name)
             logs = services.op_log.list_all()
             doc_upload_time = _build_doc_upload_time_map(logs)
+            doc_uploader = _build_doc_uploader_map(logs)
             for doc in grouped:
                 doc_id = str(doc.get("doc_id") or "").strip()
                 doc["upload_time"] = doc_upload_time.get(doc_id, "")
+                doc["uploader"] = doc_uploader.get(doc_id, "")
             return jsonify(
                 {
                     "data": rows,

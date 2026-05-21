@@ -62,6 +62,8 @@ class OperationLogService:
                 "record_ids": data.get("record_ids", []),
                 "doc_id": data.get("doc_id", ""),
                 "doc_ids": data.get("doc_ids", []),
+                "uploader": data.get("uploader", ""),
+                "uploaders": data.get("uploaders", []),
                 "upload_time": data.get("upload_time", ""),
                 "upload_times": data.get("upload_times", []),
                 "approve_time": data.get("approve_time", ""),

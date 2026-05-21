@@ -241,6 +241,7 @@ def approve_records():
             records_to_approve = [rec for rec in pending_records if str(rec.get("id")) in approved_ids]
             handled_ids = set()
             approved_doc_ids = []
+            approved_uploaders = []
             upload_times = []
             approved_collections = []
             approve_time = datetime.now().isoformat()
@@ -262,6 +263,7 @@ def approve_records():
                     services.logger.warning("待审核记录 %s 缺少有效目标库，已跳过", rec.get("id"))
                     continue
 
+                uploader = str(rec.get("uploader") or "anonymous").strip() or "anonymous"
                 for coll_name in target_collections:
                     if coll_name not in approved_collections:
                         approved_collections.append(coll_name)
@@ -270,6 +272,7 @@ def approve_records():
                         doc_id = str(chunk.get("doc_id") or "").strip()
                         if doc_id and doc_id not in approved_doc_ids:
                             approved_doc_ids.append(doc_id)
+                            approved_uploaders.append(uploader)
                         coll.insert(
                             [
                                 [chunk["chunk_id"]],
@@ -303,6 +306,8 @@ def approve_records():
                     "approve_time": approve_time,
                     "upload_time": upload_times[0] if len(upload_times) == 1 else "",
                     "upload_times": upload_times,
+                    "uploader": approved_uploaders[0] if len(approved_uploaders) == 1 else "",
+                    "uploaders": approved_uploaders,
                     "doc_id": approved_doc_ids[0] if len(approved_doc_ids) == 1 else "",
                     "doc_ids": approved_doc_ids,
                     "collection": ",".join(approved_collections),

@@ -6,6 +6,7 @@
 *.sh
 *.log
 __pycache__
+.venv/
 review_pending
 PaddleOCR/*
 static/documents
