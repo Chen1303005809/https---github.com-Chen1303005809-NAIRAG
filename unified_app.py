@@ -18,18 +18,18 @@ def create_app():
 
     @app.get("/upload_dashboard.html", include_in_schema=False)
     async def legacy_upload_redirect():
-        return RedirectResponse(url="/upload/", status_code=307)
+        return RedirectResponse(url="upload/", status_code=307)
 
     @app.get("/search_dashboard.html", include_in_schema=False)
     async def legacy_search_redirect():
-        return RedirectResponse(url="/search/", status_code=307)
+        return RedirectResponse(url="search/", status_code=307)
 
     @app.get("/admin_dashboard.html", include_in_schema=False)
     async def legacy_admin_redirect():
-        return RedirectResponse(url="/admin/admin_dashboard.html", status_code=307)
+        return RedirectResponse(url="admin/admin_dashboard.html", status_code=307)
 
     @app.get("/user_management.html", include_in_schema=False)
     async def legacy_user_mgmt_redirect():
-        return RedirectResponse(url="/admin/user_management.html", status_code=307)
+        return RedirectResponse(url="admin/user_management.html", status_code=307)
 
     return app

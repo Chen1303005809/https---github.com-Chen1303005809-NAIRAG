@@ -16,7 +16,7 @@ def _login_success_html(username: str, role: str, fastapi_token: str, flask_toke
     localStorage.setItem('authUsername', '{username}');
     localStorage.setItem('authRole', '{role}');
     alert('登录成功！角色：{role}');
-    location.href = '/home';
+    location.href = 'home';
     </script></body></html>
     """
 
@@ -55,6 +55,6 @@ def create_app() -> FastAPI:
 
     @app.get("/logout")
     async def logout():
-        return HTMLResponse("<script>localStorage.clear();alert('已登出');location.href='/';</script>")
+        return HTMLResponse("<script>localStorage.clear();alert('已登出');location.href='.';</script>")
 
     return app
