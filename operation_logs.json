@@ -327,5 +327,141 @@
     "record_id": null,
     "record_ids": [],
     "details": "通过 4 条审核记录"
+  },
+  {
+    "id": 31,
+    "timestamp": "2026-06-23T11:22:54.820701",
+    "user": "admin",
+    "type": "approve",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "5e11d0aa-ca37-40e7-ab4a-4d647eab1e8d",
+    "doc_ids": [
+      "5e11d0aa-ca37-40e7-ab4a-4d647eab1e8d"
+    ],
+    "uploader": "admin",
+    "uploaders": [
+      "admin"
+    ],
+    "upload_time": "2026-06-23T11:22:47.108542+08:00",
+    "upload_times": [
+      "2026-06-23T11:22:47.108542+08:00"
+    ],
+    "approve_time": "2026-06-23T11:22:54.820701",
+    "reject_time": "",
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 32,
+    "timestamp": "2026-06-25T16:33:34.776910",
+    "user": "admin",
+    "type": "approve",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "ef9c400a-4c6d-4ba4-a5ff-9423c474385f",
+    "doc_ids": [
+      "ef9c400a-4c6d-4ba4-a5ff-9423c474385f"
+    ],
+    "uploader": "admin",
+    "uploaders": [
+      "admin"
+    ],
+    "upload_time": "2026-06-25T16:33:26.541548+08:00",
+    "upload_times": [
+      "2026-06-25T16:33:26.541548+08:00"
+    ],
+    "approve_time": "2026-06-25T16:33:34.776910",
+    "reject_time": "",
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 33,
+    "timestamp": "2026-06-25T16:41:38.601372",
+    "user": "admin",
+    "type": "delete",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "ef9c400a-4c6d-4ba4-a5ff-9423c474385f",
+    "doc_ids": [
+      "ef9c400a-4c6d-4ba4-a5ff-9423c474385f"
+    ],
+    "uploader": "",
+    "uploaders": [],
+    "upload_time": "",
+    "upload_times": [],
+    "approve_time": "",
+    "reject_time": "",
+    "details": "删除了doc_id=ef9c400a-4c6d-4ba4-a5ff-9423c474385f的所有分片（选择器=id:467188466087065549）"
+  },
+  {
+    "id": 34,
+    "timestamp": "2026-06-25T16:42:03.962861",
+    "user": "admin",
+    "type": "approve",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "c969e859-0b68-4911-b0ae-f1600f76c905",
+    "doc_ids": [
+      "c969e859-0b68-4911-b0ae-f1600f76c905"
+    ],
+    "uploader": "admin",
+    "uploaders": [
+      "admin"
+    ],
+    "upload_time": "2026-06-25T16:41:56.397911+08:00",
+    "upload_times": [
+      "2026-06-25T16:41:56.397911+08:00"
+    ],
+    "approve_time": "2026-06-25T16:42:03.962861",
+    "reject_time": "",
+    "details": "通过 1 条审核记录"
+  },
+  {
+    "id": 35,
+    "timestamp": "2026-06-25T17:08:20.201985",
+    "user": "admin",
+    "type": "delete",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "c969e859-0b68-4911-b0ae-f1600f76c905",
+    "doc_ids": [
+      "c969e859-0b68-4911-b0ae-f1600f76c905"
+    ],
+    "uploader": "",
+    "uploaders": [],
+    "upload_time": "",
+    "upload_times": [],
+    "approve_time": "",
+    "reject_time": "",
+    "details": "删除了doc_id=c969e859-0b68-4911-b0ae-f1600f76c905的所有分片（选择器=id:467188466087065555）"
+  },
+  {
+    "id": 36,
+    "timestamp": "2026-06-25T17:08:43.285717",
+    "user": "admin",
+    "type": "approve",
+    "collection": "TEST",
+    "record_id": null,
+    "record_ids": [],
+    "doc_id": "326f159a-0427-4587-b3b6-37de54afc1fe",
+    "doc_ids": [
+      "326f159a-0427-4587-b3b6-37de54afc1fe"
+    ],
+    "uploader": "admin",
+    "uploaders": [
+      "admin"
+    ],
+    "upload_time": "2026-06-25T17:08:31.549659+08:00",
+    "upload_times": [
+      "2026-06-25T17:08:31.549659+08:00"
+    ],
+    "approve_time": "2026-06-25T17:08:43.285717",
+    "reject_time": "",
+    "details": "通过 1 条审核记录"
   }
 ]

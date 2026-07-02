@@ -12,3 +12,6 @@ PaddleOCR/*
 static/documents
 operation_logs.json
 volumes
+Qwen3-VL-Embedding-2B
+operation_logs.json
+.env
