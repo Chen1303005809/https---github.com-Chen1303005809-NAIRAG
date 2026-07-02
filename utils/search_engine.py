@@ -36,7 +36,7 @@ class MilvusSearchEngine:
             self.visual_embedder = {
                 "family": "qwen3_vl",
                 "dimension": 2048,
-                "model": Qwen3VLEmbedder("Qwen/Qwen3-VL-Embedding-2B")
+                "model": Qwen3VLEmbedder("./Qwen3-VL-Embedding-2B")
             }
         except Exception as e:
             import logging
